@@ -1088,7 +1088,7 @@ function openGame(id,quiet){
   ensureGames(); const g=gdef(id), st=S.games[id], i=allGames().indexOf(g), m=me();
   let h='<div class="gtop"><div class="gtl">'+thumbHTML(g,i,st,'big')+'<span class="gunit '+g.unit+'">'+(g.unit==='person'?'개인전':'팀전')+'</span></div><h2>'+esc(g.name)+'</h2><small>'+esc(gWhen(g))+'</small></div>'
    +'<div class="gtr"><div class="gtc"><span class="gst2 '+st.status+'">'+ST_LABEL[st.status]+'</span><span>'+(g.mode==='auto'?'앱에서 자동 집계':'운영진이 결과 입력')+'</span></div><p>'+ic('bulb')+'<span>'+esc(g.desc)+'</span></p></div></div>'
-   +(id==='treasure'||id==='photo'?'':'<section class="card flat rewsec">'+(isCardGame(g)?cardPrize(g):'<div class="rew2">'+g.rewards.map((c,k)=>'<div><span class="rkl"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><small>등</small></span><b>'+coinIc+c+'</b></div>').join('')+'</div>')+'<p class="sub">'+(isCardGame(g)?CARD[g.prize].desc+'. '+(g.unit==='person'?'우승자의 조가 카드를 가져요.':'조장이 조 팝업에서 쓸 수 있어요.'):g.unit==='person'?'개인전 · 상금은 그 사람의 조로 들어가요':'조 대항전 · 상금은 조 코인으로 들어가요')+'</p></section>');
+   +(id==='treasure'||id==='photo'?'':'<section class="card flat rewsec">'+(isCardGame(g)?cardPrize(g):'<div class="rew2">'+g.rewards.map((c,k)=>'<div><span class="rkl"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><small>등</small></span><b>'+coinIc+c+'</b></div>').join('')+'</div>')+'</section>');
   if(id==='treasure'){ ensureTH(); h+=thSummary(); }
   else if(id==='photo'){ h+=bgSummary(); }
   else h+='<section class="card flat"><h3>'+ic('trophy','sm')+' 우승 기록</h3>'+(st.results.length?st.results.slice().reverse().map(r=>'<div class="gres"><div class="gres-h"><small>'+ago(r.ts)+' · '+esc(r.by)+'</small>'+(m.admin?'<button class="mini" onclick="cancelResult(\''+id+'\',\''+r.id+'\')">결과 취소</button>':'')+'</div>'+r.ranks.map((x,k)=>{ const wp=g.unit==='person'?person(x.pid):(x.mvp?person(x.mvp):null), tt=g.unit==='person'?(wp?team(wp.team):null):team(x.team);
@@ -1244,7 +1244,7 @@ function thStatHTML(){ const {ss,by,rk,left}=thStats(), my=me().team, C=S.th.cfg
 
 /* ---------- 상세 화면 ---------- */
 function thSumBody(){ const C=S.th.cfg; return '<div class="thsum"><div><b>'+(S.th.spots.length||C.count)+'개</b><small>숨긴 보물</small></div><div><b>'+coinIc+C.coin+'</b><small>보물 1개당</small></div><div><b>'+C.time+'분</b><small>제한 시간</small></div></div>'
-   +'<p class="sub">반경 '+C.radius+'m 안 어딘가에 보물이 숨겨져 있어요. 힌트는 없어요! 보물 '+C.detR+'m 안에 들어오면 탐지기가 울리고, '+C.findR+'m 안에 들어가면 먼저 온 조가 가져가요.'+(C.goldCoin?' 종료 '+C.goldAt+'분 전엔 '+coinIc+C.goldCoin+' 황금 보물이 나타나요!':'')+'</p>'; }
+   +'<div class="bglv"><span>📍 반경 '+C.radius+'m</span><span>📡 탐지 '+C.detR+'m</span><span>🎯 발견 '+C.findR+'m</span>'+(C.goldCoin?'<span>⭐ '+C.goldAt+'분 전</span>':'')+'</div>'; }
 function thSummary(){ const C=S.th.cfg, st=S.th.state, m=me();
   const lbl={setup:'운영진이 보물을 숨기기 전이에요',ready:'보물을 숨겼어요. 곧 시작해요',live:'진행 중 · 남은 시간 '+thClock(),done:'게임이 끝났어요'}[st];
   let h='<section class="card flat rewsec"><div id="thsumbox">'+thSumBody()+'</div><p class="thst '+st+'">'+lbl+'</p></section>';
@@ -1583,7 +1583,7 @@ function bgMyVote(i){ const m=me(); return S.bingo.photos.find(p=>p.cell===i&&p.
 function bgSummary(){ ensureBG(); const st=S.bingo.state, m=me(), my=m.team;
   const mine=BG_CELLS.map((c,i)=>bgFinal(i,my)).filter(Boolean).length;
   let h='<section class="card flat rewsec"><div class="thsum"><div><b>16칸</b><small>사진 미션</small></div><div><b>'+coinIc+'30~100</b><small>칸마다 상금</small></div><div><b>+'+BG_BONUS.line+'</b><small>빙고 한 줄</small></div></div>'
-   +'<p class="sub">조원 누구나 사진을 올릴 수 있어요. 한 칸에 여러 장이 올라오면 <b>우리 조원 좋아요</b>를 가장 많이 받은 사진이 그 조의 대표 컷이 돼요. 다른 조에게는 대표 컷만 보여요. 3일차 레크리에이션 때 전원이 투표해서, 칸마다 좋아요를 가장 많이 받은 조가 코인을 가져가요. 한 줄을 다 이기면 빙고 보너스! <b>🟦 SISA 라인·🟥 팀워크 라인</b>은 보너스 '+BG_BONUS.sisa+'코인이에요.</p>'
+
    +'<div class="bglv"><span>★ '+BG_LV[1].c+'코인</span><span>★★ '+BG_LV[2].c+'코인</span><span>★★★ '+BG_LV[3].c+'코인</span></div>'
    +'<p class="thst '+(st==='live'?'ready':st==='vote'?'live':'done')+'">'+(st==='live'?'사진 모으는 중 · 우리 조 '+mine+' / 16칸 채움':st==='vote'?'🗳️ 최종 투표 진행 중!':'결과가 확정됐어요')+'</p></section>'
    +'<button class="btn primary full thjoin" onclick="bgPlay()">'+ic('grid','sm')+(st==='done'?'결과 빙고판 보기':'게임 참여하기')+'</button>';
