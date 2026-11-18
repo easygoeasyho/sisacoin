@@ -636,7 +636,7 @@ body>#app .mstage,.wrap>.card.maker .mstage{top:0}
 .sheet .card.maker{background:transparent;padding:0;box-shadow:none;margin-bottom:0}.mkact{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);padding:18px 0 2px;margin-top:6px}
 .gcard small.gmeta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .pcardx{background:#fff;border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
-.ptop{display:flex;align-items:center;gap:14px}.fullc.sm{width:118px;height:118px;margin:0;flex:none}
+.pftop{display:flex;align-items:center;gap:14px}.fullc.sm{width:118px;height:118px;margin:0;flex:none}
 .pinfo{min-width:0;flex:1;padding-right:34px}.pinfo h2{font-size:21px;line-height:1.25;word-break:keep-all}.pinfo .sub{margin-top:2px}.pinfo .tags{margin-top:8px}
 .pstats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;background:#FAF9F6;border-radius:14px;padding:10px 0}
 .pstats div{text-align:center}.pstats div+div{border-left:1px solid #EAE7E0}
@@ -2225,7 +2225,7 @@ function closeModal(){ const bt=ui.backTeam; ui.backTeam=null; if(bt&&$('.pcardx
 function openProfile(id,refresh){
   const p=person(id), t=team(p.team);
   const bs=badgesOf(p);
-  modal('<section class="pcardx"><div class="ptop">'+fullChar(chO(p),p.team,'sm')
+  modal('<section class="pcardx"><div class="pftop">'+fullChar(chO(p),p.team,'sm')
    +'<div class="pinfo"><h2>'+dn(p)+'</h2>'+(SPECIAL[p.dept]?'':'<p class="sub">'+esc(p.dept)+(MASCOT_KEYS.includes(p.mascot)?' · '+esc(MASCOTS[p.mascot].name):'')+'</p>')
    +'<div class="tags left"><span class="pill" style="background:'+t.color+'40">'+esc(t.name)+'</span>'+(p.role?'<span class="pill gold">'+ROLE_LABEL[p.role]+'</span>':'')+(p.admin&&!p.role?'<span class="pill">운영진</span>':'')+'</div></div></div>'
    +'<div class="pstats"><div><b>'+coinIc+fmt(earned(p.id))+'</b><small>딴 코인</small></div><div><b id="hcount">'+fmt(heartsRecv(p.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(p.id))+'</b><small>준 하트</small></div></div>'
