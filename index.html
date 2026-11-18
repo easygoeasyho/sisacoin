@@ -1959,13 +1959,13 @@ function checkBankZero(z){ if(!z){ if(S.zeroShown){ S.zeroShown=0; save(); } ret
   setTimeout(()=>{ const el=document.createElement('div'); el.className='zpop'; el.innerHTML='<div><b>'+ic('swords')+'</b><h2>시사코인이 모두 풀렸어요!</h2><p>지금부터 쟁탈전이에요.<br>게임과 뺏기 카드로 코인을 뺏어오세요.</p><button onclick="this.closest(\'.zpop\').remove()">좋아요</button></div>'; document.body.appendChild(el); SFX.fanfare(); buzz&&buzz([80,60,120]); },300); }
 function topView(){
   const m=me(), t={home:'',games:'게임',people:'사람들',mine:'내 정보',admin:'운영진'}[ui.tab];
-  if(ui.tab==='home'){ const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100), t=team(m.team), z=b.bank<=0, nm=t.title||t.no+'조', dk=shade(t.color,.42);
+  if(ui.tab==='home'){ const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100), left=Math.max(0,Math.round(b.bank/TOTAL*100)), t=team(m.team), z=b.bank<=0, nm=t.title||t.no+'조', dk=shade(t.color,.42);
     checkBankZero(z);
     return '<header class="hb"><div class="hbtop" style="background:'+t.color+'"><div class="hbrow"><p class="eyebrow" style="color:'+dk+'">2027 워크샵 · SISA 50th anniversary</p><button class="snd" onclick="toggleMute()" aria-label="소리">'+ic(muted?'mute':'sound')+'</button></div>'
      +'<span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><h1 style="color:'+shade(t.color,.3)+'">'+esc(m.name)+'님,<br>'+(z?'이제부턴 뺏는 수밖에!':cheer())+'</h1>'
      +'<button class="hbav" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필"><span class="stk">'+charHTML(chO(m))+'</span></button></div>'
-     +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbc1"><img src="'+COIN3D+'" alt=""><b>'+fmt(b.bank)+'</b><small>남은 코인</small>'+(z?'<span class="pill red">'+ic('swords','sm')+'쟁탈전 시작</span>':'<span class="pill gold">'+pct+'% 풀림</span>')+'</div>'
-     +'<div class="meter"><i style="width:'+(z?100:pct)+'%"></i></div><p class="sub">'+(z?'10,000 코인이 전부 조들 손에 있어요 · 이제 게임과 뺏기 카드로만 코인이 움직여요':'총 '+fmt(TOTAL)+' 중 조들이 '+fmt(dist)+' 보유 · 다 떨어지면 서로 뺏어야 해요')+'</p></div></header>'; }
+     +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbc1"><img src="'+COIN3D+'" alt=""><b>'+fmt(b.bank)+'</b><small>남은 코인</small>'+(z?'<span class="pill red">'+ic('swords','sm')+'쟁탈전 시작</span>':'<span class="pill gold">'+left+'% 남음</span>')+'</div>'
+     +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div><p class="sub">'+(z?'10,000 코인이 전부 조들 손에 있어요 · 이제 게임과 뺏기 카드로만 코인이 움직여요':'총 '+fmt(TOTAL)+' 중 조들이 '+fmt(dist)+' 보유 · 다 떨어지면 서로 뺏어야 해요')+'</p></div></header>'; }
   return '<header class="bar"><h2>'+t+'</h2><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
 }
 function navView(){
@@ -2110,7 +2110,7 @@ function keepIntro(d){ if(!d) return; ['intro','like','food','color'].forEach(k=
 
 /* --- 현황 --- */
 function homeView(){
-  const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100);
+  const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100), left=Math.max(0,Math.round(b.bank/TOTAL*100));
   const ranked=TEAMS.map(t=>({...t,c:b[t.id]})).sort((x,y)=>y.c-x.c);
   const max=Math.max(...ranked.map(t=>t.c),1), my=me().team;
   let h=stampBanner();
