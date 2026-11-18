@@ -309,13 +309,21 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .swimg{flex:1;min-height:0;border-radius:18px;background:#000 center/contain no-repeat;border:3px solid var(--tc);position:relative;transition:transform .2s}
 .sws.on .swimg{border-width:5px;box-shadow:0 0 0 3px #fff}
 .swh{position:absolute;left:50%;top:50%;font-size:96px;color:#FF4D6D;transform:translate(-50%,-50%) scale(0);opacity:0;text-shadow:0 4px 18px rgba(0,0,0,.4)}
-.sws.pop .swh{animation:swh .75s ease-out}@keyframes swh{0%{transform:translate(-50%,-50%) scale(0);opacity:1}40%{transform:translate(-50%,-50%) scale(1.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+.sws.pop .swh,.x-unused{animation:swh .75s ease-out}@keyframes swh{0%{transform:translate(-50%,-50%) scale(0);opacity:1}40%{transform:translate(-50%,-50%) scale(1.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
 .swcap{padding:8px 2px 0}.swtm{display:inline-flex;align-items:center;gap:6px;font-weight:900;font-size:14px}.swtm i{width:12px;height:12px;border-radius:50%;border:2px solid #fff}.swcap p{margin:4px 0 0;font-size:13px;color:#ddd;line-height:1.4;max-height:3.6em;overflow:auto}
 .swdots{display:flex;justify-content:center;gap:6px;padding:8px 0 2px}.swdots i{width:7px;height:7px;border-radius:50%;background:#555;transition:.2s}.swdots i.on{background:#FFD84D;width:18px;border-radius:9px}
 .swtip{text-align:center;font-size:11.5px;color:#999;margin:4px 0 8px}
 .swbar{display:flex;gap:8px;padding:0 14px}.swnav{flex:none;height:54px;min-width:54px;border-radius:14px;background:#3a3a37;color:#fff;font-weight:800;font-size:14px;display:grid;place-items:center;padding:0 12px}.swnav:disabled{opacity:.3}
 .swvote{flex:1;height:54px;border-radius:14px;background:#fff;color:#D23B5C;font-weight:900;font-size:15px;border:3px solid var(--tc,#D23B5C);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 8px}.swvote.on{background:#D23B5C;color:#fff;border-color:#D23B5C}
 .swend{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;text-align:center}.swbig{font-size:72px}.swend h3{font-size:21px;margin:8px 0}.swend p{color:#bbb;font-size:14px;line-height:1.5;margin:0 0 20px}.swend .btn.ghost{background:#3a3a37;color:#fff;border-color:#3a3a37}
+.swgrid{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px 14px;align-content:start}
+.swt{display:flex;flex-direction:column;gap:5px;text-align:left;color:#fff}.swti{display:block;aspect-ratio:4/3;border-radius:12px;background:#000 center/cover;border:3px solid var(--tc);position:relative}
+.swt.on .swti{border-width:4px;box-shadow:0 0 0 3px #fff}.swhv{position:absolute;right:6px;top:4px;color:#FF4D6D;font-size:22px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.swtn{display:flex;align-items:center;gap:5px;font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.swtn i{flex:none;width:10px;height:10px;border-radius:50%;border:2px solid #fff}
+.swst{flex:1;height:54px;border-radius:14px;background:#2b2b28;color:#999;font-weight:800;font-size:14px;display:grid;place-items:center;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.swst.on{background:#D23B5C;color:#fff}
+.swpv{position:absolute;inset:0;z-index:2;background:rgba(0,0,0,.92);display:flex;flex-direction:column;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 0 calc(env(safe-area-inset-bottom,0px) + 14px)}
+.swpvb{display:flex;flex-direction:column;max-height:100%}.swpvb .swimg{flex:none;height:min(58vh,520px);margin:0 14px}.swpvb .swcap{padding:10px 16px 12px}
+.swpvb.pop .swh{animation:swh .8s ease-out}.swclose{margin:10px auto 0;color:#aaa;font-weight:800;font-size:13px;padding:6px 14px}
 .bgzoom{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}.bgzoom img{max-width:100%;max-height:75vh;border-radius:12px}.bgzoom p{margin-top:10px;font-size:13.5px;line-height:1.5}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
@@ -1725,21 +1733,20 @@ function bgSwDraw(fin){ const el=$('#bgsw'); if(!el) return; const E=bgEl(), don
   const i=BGS.i, c=BG_CELLS[i], o=bgSwOpts(i), v=bgMyVote(i), pos=E.indexOf(i);
   el.innerHTML=top
    +'<div class="swm"><small>'+(pos+1)+'번째 칸 · '+BG_LV[c.lv].s+' · '+coinIc+bgCoin(i)+'</small><h3>'+esc(c.t)+'</h3>'+(v?'<span class="swdid">✓ 투표함</span>':'')+'</div>'
-   +'<div class="swcar" id="swcar">'+o.map((p,k)=>{ const t=team(p.team), u=person(p.pid); return '<div class="sws'+(v&&v.id===p.id?' on':'')+'" style="--tc:'+t.color+'" ondblclick="bgSwVote('+k+')"><div class="swimg" style="background-image:url('+p.img+')"><span class="swh">♥</span></div><div class="swcap"><span class="swtm"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</span>'+(p.cm?'<p><b>'+esc(u?u.name:'')+'</b> '+esc(p.cm)+'</p>':'')+'</div></div>'; }).join('')+'</div>'
-   +'<div class="swdots">'+o.map((p,k)=>'<i class="'+(k===BGS.k?'on':'')+'"></i>').join('')+'</div>'
-   +'<p class="swtip">옆으로 넘겨 '+o.length+'장을 보고, 마음에 드는 사진에 투표하세요</p>'
-   +'<div class="swbar"><button class="swnav" onclick="bgSwGo(-1)" '+(pos<=0?'disabled':'')+' aria-label="이전 칸">'+ic('back')+'</button><button class="swvote" id="swvote" onclick="bgSwVote()"></button><button class="swnav swskip" onclick="bgSwGo(1)">'+(v?'다음':'건너뛰기')+'</button></div>';
-  const car=$('#swcar'); car.scrollLeft=BGS.k*car.clientWidth; bgSwBtn();
-  car.onscroll=()=>{ const k=Math.round(car.scrollLeft/car.clientWidth); if(k!==BGS.k){ BGS.k=k; el.querySelectorAll('.swdots i').forEach((d,j)=>d.classList.toggle('on',j===k)); bgSwBtn(); } }; }
-function bgSwBtn(){ const b=$('#swvote'); if(!b) return; const o=bgSwOpts(BGS.i), p=o[BGS.k], v=bgMyVote(BGS.i); if(!p) return; const t=team(p.team);
-  b.innerHTML=v&&v.id===p.id?'♥ '+esc(t.name)+'에 투표함':'♡ '+esc(t.name)+' 사진에 투표'; b.classList.toggle('on',!!(v&&v.id===p.id)); b.style.setProperty('--tc',t.color); }
+   +'<div class="swgrid">'+o.map((p,k)=>{ const t=team(p.team); return '<button class="swt'+(v&&v.id===p.id?' on':'')+'" style="--tc:'+t.color+'" onclick="bgSwPv('+k+')"><span class="swti" style="background-image:url('+p.img+')">'+(v&&v.id===p.id?'<b class="swhv">♥</b>':'')+'</span><span class="swtn"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</span></button>'; }).join('')+'</div>'
+   +'<p class="swtip">'+o.length+'개 조 사진 · 눌러서 크게 보고 투표하세요</p>'
+   +'<div class="swbar"><button class="swnav" onclick="bgSwGo(-1)" '+(pos<=0?'disabled':'')+' aria-label="이전 칸">'+ic('back')+'</button><div class="swst'+(v?' on':'')+'">'+(v?'♥ '+esc(team(v.team).name)+'에 투표함':'아직 투표 안 함')+'</div><button class="swnav swskip" onclick="bgSwGo(1)">'+(v?'다음':'건너뛰기')+'</button></div><div id="swpv"></div>'; }
+function bgSwPv(k){ BGS.k=k; const box=$('#swpv'); if(!box) return; if(k==null){ box.innerHTML=''; return; } const o=bgSwOpts(BGS.i), p=o[k], v=bgMyVote(BGS.i), t=team(p.team), u=person(p.pid), on=v&&v.id===p.id;
+  box.innerHTML='<div class="swpv" onclick="if(event.target===this)bgSwPv()"><div class="swpvb" style="--tc:'+t.color+'"><div class="swimg" style="background-image:url('+p.img+')"><span class="swh">♥</span></div><div class="swcap"><span class="swtm"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</span>'+(p.cm?'<p><b>'+esc(u?u.name:'')+'</b> '+esc(p.cm)+'</p>':'')+'</div>'
+   +'<div class="swbar"><button class="swnav" onclick="bgSwPv('+((k-1+o.length)%o.length)+')" aria-label="이전 사진">'+ic('back')+'</button><button class="swvote'+(on?' on':'')+'" style="--tc:'+t.color+'" onclick="bgSwVote()">'+(on?'♥ 투표함':'♡ 이 사진에 투표')+'</button><button class="swnav" onclick="bgSwPv('+((k+1)%o.length)+')" aria-label="다음 사진" style="transform:scaleX(-1)">'+ic('back')+'</button></div>'
+   +'<button class="swclose" onclick="bgSwPv()">목록으로</button></div></div>'; }
 function bgSwGo(d){ const E=bgEl(), pos=E.indexOf(BGS.i);
   if(d>0){ const nx=E.slice(pos+1).find(x=>!bgMyVote(x)); const n2=nx!=null?nx:E[pos+1]; if(n2==null) return bgSwDraw(1); return bgSwipe(n2); }
   if(pos>0) bgSwipe(E[pos-1]); }
-function bgSwVote(k){ if(BGS.busy) return; if(k!=null) BGS.k=k; const o=bgSwOpts(BGS.i), p=o[BGS.k], m=me(); if(!p||!bgVote()) return; const old=bgMyVote(BGS.i);
+function bgSwVote(){ if(BGS.busy) return; const o=bgSwOpts(BGS.i), p=o[BGS.k], m=me(); if(!p||!bgVote()) return; const old=bgMyVote(BGS.i);
   if(old&&old.id===p.id) return; if(old) old.vl.splice(old.vl.indexOf(m.id),1); p.vl.push(m.id); save(); SFX.coin(); buzz([25]);
-  const s=document.querySelectorAll('#swcar .sws')[BGS.k]; if(s){ s.classList.add('on','pop'); } bgSwBtn(); BGS.busy=1;
-  setTimeout(()=>{ BGS.busy=0; if($('#bgsw')) bgSwGo(1); },750); }
+  const pv=document.querySelector('#swpv .swpvb'); if(pv) pv.classList.add('pop'); const vb=document.querySelector('#swpv .swvote'); if(vb){ vb.classList.add('on'); vb.textContent='♥ 투표함'; } BGS.busy=1;
+  setTimeout(()=>{ BGS.busy=0; if($('#bgsw')) bgSwGo(1); },800); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
