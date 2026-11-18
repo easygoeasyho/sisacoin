@@ -295,6 +295,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .bgcdi{padding:5px 6px}.bgcdi small{display:block;font-size:10.5px;line-height:1.3;color:#4A4740;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.bgcdb{display:flex;justify-content:space-between;align-items:center;margin-top:4px}.bglk{font-size:13px;font-weight:900;color:#D23B5C}.bglk.on{color:#fff;background:#D23B5C;border-radius:8px;padding:0 6px}
 .bgup{margin-top:14px}.bgup label.btn{display:flex;align-items:center;justify-content:center;gap:6px;height:52px}.bgprev{aspect-ratio:4/3;border-radius:14px;background-size:cover;background-position:center;border:2.5px solid #1E1E1C}
 .bgup textarea{width:100%;margin-top:8px;min-height:72px;border-radius:12px;border:2px solid #E5E0D5;padding:10px;font:inherit;font-size:14px;resize:none;box-sizing:border-box}.bgupb{display:flex;align-items:center;gap:8px;margin-top:6px}.bgupb small{flex:1;font-size:11.5px;color:var(--sub)}.bgupb .btn{height:42px;padding:0 16px}
+.bgsh.still,.bgsh.still .bgsb{animation:none}
 .bgzoom{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}.bgzoom img{max-width:100%;max-height:75vh;border-radius:12px}.bgzoom p{margin-top:10px;font-size:13.5px;line-height:1.5}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
@@ -1582,7 +1583,7 @@ function bgMyVote(i){ const m=me(); return S.bingo.photos.find(p=>p.cell===i&&p.
 /* ---------- 상세 화면 ---------- */
 function bgSummary(){ ensureBG(); const st=S.bingo.state, m=me(), my=m.team;
   const mine=BG_CELLS.map((c,i)=>bgFinal(i,my)).filter(Boolean).length;
-  let h='<section class="card flat rewsec"><div class="thsum"><div><b>16칸</b><small>사진 미션</small></div><div><b>'+coinIc+'30~100</b><small>칸마다 상금</small></div><div><b>+'+BG_BONUS.line+'</b><small>빙고 한 줄</small></div></div>'
+  let h='<section class="card flat rewsec"><div class="thsum"><div><b>16칸</b><small>사진 미션</small></div><div><b>'+coinIc+'30~100</b><small>칸마다 상금</small></div><div><b>'+coinIc+'+'+BG_BONUS.line+'</b><small>빙고 한 줄</small></div></div>'
 
    +'<div class="bglv"><span>★ '+BG_LV[1].c+'코인</span><span>★★ '+BG_LV[2].c+'코인</span><span>★★★ '+BG_LV[3].c+'코인</span></div>'
    +'<p class="thst '+(st==='live'?'ready':st==='vote'?'live':'done')+'">'+(st==='live'?'사진 모으는 중 · 우리 조 '+mine+' / 16칸 채움':st==='vote'?'🗳️ 최종 투표 진행 중!':'결과가 확정됐어요')+'</p></section>'
@@ -1606,7 +1607,7 @@ function bgCtrl(){ const st=S.bingo.state, n=S.bingo.photos.length;
 /* ---------- 빙고판 ---------- */
 function bgPlay(){ ensureBG(); closeModal(); let el=$('#bingo'); if(!el){ el=document.createElement('div'); el.id='bingo'; el.className='bgx'; document.body.appendChild(el); document.body.style.overflow='hidden'; } bgDraw(); SFX.open(); }
 function bgQuit(){ const e=$('#bingo'); if(e) e.remove(); document.body.style.overflow=''; BG.cell=null; render(); openGame('photo',true); }
-function bgDraw(){ const el=$('#bingo'); if(!el) return; const st=S.bingo.state, my=me().team;
+function bgDraw(){ const el=$('#bingo'); if(!el) return; const cellHTML=$('#bgcell')?$('#bgcell').innerHTML:'', scy=$('#bgcell .bgsc')?$('#bgcell .bgsc').scrollTop:0; const st=S.bingo.state, my=me().team;
   const winLines=st==='done'?S.bingo.bonus:[];
   let h='<div class="bgtop"><button class="pbk" onclick="bgQuit()" aria-label="나가기">'+ic('back')+'</button><div class="bgtt"><b>게릴라 사진 미션</b><small>'+(st==='live'?'칸을 눌러 사진을 올려요':st==='vote'?'🗳️ 최종 투표 중 · 칸을 눌러 투표해요':'결과 확정')+'</small></div></div>'
    +'<div class="bgboard"><div class="bggrid">'+BG_CELLS.map((c,i)=>{ const f=bgFinal(i,my), w=S.bingo.win[i], wp=w?bgFinal(i,w):null, nT=bgFinals(i).length;
@@ -1616,18 +1617,18 @@ function bgDraw(){ const el=$('#bingo'); if(!el) return; const st=S.bingo.state,
       +'<span class="bgt">'+esc(c.t)+'</span>'+(nT&&st!=='done'?'<span class="bgn">'+nT+'개 조</span>':'')+'</button>'; }).join('')+'</div>'
    +'<div class="bglines"><span><i class="sw"></i>SISA 라인 +'+BG_BONUS.sisa+'</span><span><i class="sw bgT2"></i>팀워크 라인 +'+BG_BONUS.team+'</span><span>가로·세로 한 줄 +'+BG_BONUS.line+'</span></div>'
    +(winLines.length?'<div class="bgbonus">'+winLines.map(b=>'<span style="--tc:'+team(b.team).color+'">🎉 '+esc(team(b.team).name)+' · '+b.n+' 빙고! +'+b.coin+'</span>').join('')+'</div>':'')
-   +'</div><div id="bgcell"></div>';
-  el.innerHTML=h; if(BG.cell!==null) bgOpen(BG.cell,1); }
+   +'</div>';
+  if(!$('#bgbd')){ el.innerHTML='<div id="bgbd"></div><div id="bgcell"></div>'; } const bd=$('#bgbd'); if(bd.dataset.h!==h){ bd.dataset.h=h; bd.innerHTML=h; } if(BG.cell!==null) bgOpen(BG.cell,1); }
 
 /* ---------- 미션 상세 ---------- */
-function bgOpen(i,keep){ BG.cell=i; if(!keep) BG.draft=null; const box=$('#bgcell'); if(!box) return; const c=BG_CELLS[i], st=S.bingo.state, m=me(), my=m.team;
+function bgOpen(i,keep){ BG.cell=i; if(!keep) BG.draft=null; const box=$('#bgcell'); if(!box) return; const oldSc=$('#bgcell .bgsc'), sy=oldSc?oldSc.scrollTop:0; const c=BG_CELLS[i], st=S.bingo.state, m=me(), my=m.team;
   const fin=bgFinals(i), mineC=bgCands(i,my), voted=bgMyVote(i);
   const card=(p,big)=>{ const t=team(p.team), u=person(p.pid), n=bgCands(i,p.team).length, isMy=p.team===my, w=st==='done'&&S.bingo.win[i]===p.team;
     return '<div class="bgp'+(w?' win':'')+'" style="--tc:'+t.color+'"><div class="bgimg" style="background-image:url('+p.img+')" onclick="bgZoom(\''+p.id+'\')">'+(w?'<span class="bgcrown">👑 우승</span>':'')+'</div><div class="bgpi"><div class="bgph"><i style="background:'+t.color+'"></i><b>'+esc(t.name)+'</b>'+(isMy?'<em>우리</em>':'')+'<small>후보 '+n+'장</small></div>'
      +(p.cm?'<p class="bgcm"><b>'+esc(u?u.name:'')+'</b> '+esc(p.cm)+'</p>':'<p class="bgcm"><b>'+esc(u?u.name:'')+'</b></p>')
      +(st==='vote'&&!isMy?'<button class="bgvote'+(voted&&voted.id===p.id?' on':'')+'" onclick="bgVoteFor(\''+p.id+'\')">'+(voted&&voted.id===p.id?'♥ 좋아요 취소':'♡ 이 사진에 좋아요')+'</button>':'')
      +(st==='done'?'<span class="bgvc">♥ '+p.vl.length+'</span>':'')+'</div></div>'; };
-  let h='<div class="bgsh" onclick="if(event.target===this)bgCloseCell()"><div class="bgsb"><div class="bgshh"><div><small class="bgml">MISSION · '+BG_LV[c.lv].s+' · '+coinIc+bgCoin(i)+'</small><h3>'+esc(c.t)+'</h3></div><div class="bgvw"><button class="'+(BG.view==='grid'?'on':'')+'" onclick="BG.view=\'grid\';bgOpen('+i+',1)" aria-label="갤러리형">'+ic('grid')+'</button><button class="'+(BG.view==='list'?'on':'')+'" onclick="BG.view=\'list\';bgOpen('+i+',1)" aria-label="스크롤형">'+ic('rows')+'</button><button onclick="bgCloseCell()" aria-label="닫기">'+ic('x')+'</button></div></div>'
+  let h='<div class="bgsh'+(keep?' still':'')+'" onclick="if(event.target===this)bgCloseCell()"><div class="bgsb"><div class="bgshh"><div><small class="bgml">MISSION · '+BG_LV[c.lv].s+' · '+coinIc+bgCoin(i)+'</small><h3>'+esc(c.t)+'</h3></div><div class="bgvw"><button class="'+(BG.view==='grid'?'on':'')+'" onclick="BG.view=\'grid\';bgOpen('+i+',1)" aria-label="갤러리형">'+ic('grid')+'</button><button class="'+(BG.view==='list'?'on':'')+'" onclick="BG.view=\'list\';bgOpen('+i+',1)" aria-label="스크롤형">'+ic('rows')+'</button><button onclick="bgCloseCell()" aria-label="닫기">'+ic('x')+'</button></div></div>'
    +'<p class="bgdesc">'+esc(c.d)+'</p><div class="bgsc">';
   if(st==='vote') h+='<p class="bgnote">🗳️ 이 칸에서 <b>한 장</b>에만 좋아요를 누를 수 있어요. 우리 조 사진에는 못 눌러요.</p>';
   h+='<h4>조별 대표 컷 <small>'+fin.length+'개 조</small></h4>'+(fin.length?'<div class="bgps '+BG.view+'">'+fin.map(p=>card(p)).join('')+'</div>':'<p class="sub">아직 아무 조도 사진을 올리지 않았어요. 첫 번째로 올려보세요!</p>');
@@ -1638,14 +1639,14 @@ function bgOpen(i,keep){ BG.cell=i; if(!keep) BG.draft=null; const box=$('#bgcel
     h+='<div class="bgup">'+(d?'<div class="bgprev" style="background-image:url('+d.img+')"></div><textarea id="bgcm" maxlength="200" placeholder="코멘트를 남겨주세요 (선택, 200자 이내)" oninput="BG.draft.cm=this.value;$(\'#bgcnt\').textContent=this.value.length">'+esc(d.cm||'')+'</textarea><div class="bgupb"><small><span id="bgcnt">'+(d.cm||'').length+'</span>/200</small><button class="btn ghost" onclick="BG.draft=null;bgOpen('+i+',1)">취소</button><button class="btn primary" onclick="bgSubmit()">올리기</button></div>'
       :'<label class="btn primary full">'+ic('camera','sm')+'사진 올리기<input type="file" accept="image/*" hidden onchange="bgPick(this)"></label>')+'</div>';
   }
-  h+='</div></div></div>'; box.innerHTML=h; }
+  h+='</div></div></div>'; box.innerHTML=h; if(keep){ const sc=$('#bgcell .bgsc'); if(sc) sc.scrollTop=sy; } }
 function bgCloseCell(){ BG.cell=null; BG.draft=null; const b=$('#bgcell'); if(b) b.innerHTML=''; }
 function bgPick(inp){ const f=inp.files&&inp.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ const im=new Image(); im.onload=()=>{ const M=720, s=Math.min(1,M/Math.max(im.width,im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*s); c.height=Math.round(im.height*s); c.getContext('2d').drawImage(im,0,0,c.width,c.height);
   BG.draft={img:c.toDataURL('image/jpeg',.7),cm:''}; bgOpen(BG.cell,1); }; im.src=rd.result; }; rd.readAsDataURL(f); }
 function bgSubmit(){ if(!BG.draft||!bgLive()) return; const m=me(); const p={id:'bp'+Date.now().toString(36),cell:BG.cell,team:m.team,pid:m.id,img:BG.draft.img,cm:(BG.draft.cm||'').slice(0,200),ts:Date.now(),tl:[m.id],vl:[]};
   S.bingo.photos.push(p); BG.draft=null; try{ save(); }catch(e){ S.bingo.photos.pop(); return toast('저장 공간이 부족해요. 사진을 몇 장 지워주세요'); } SFX.coin(); buzz([30]); toast('사진을 올렸어요! 조원들의 좋아요로 대표 컷이 정해져요'); bgDraw(); }
 function bgDel(id){ S.bingo.photos=S.bingo.photos.filter(p=>p.id!==id); save(); SFX.undo(); bgDraw(); }
-function bgTeamLike(id){ const p=S.bingo.photos.find(x=>x.id===id), m=me(); if(!p||p.team!==m.team||!bgLive()) return; const k=p.tl.indexOf(m.id); if(k>=0) p.tl.splice(k,1); else p.tl.push(m.id); save(); SFX.select(); bgDraw(); }
+function bgTeamLike(id){ const p=S.bingo.photos.find(x=>x.id===id), m=me(); if(!p||p.team!==m.team||!bgLive()) return; const k=p.tl.indexOf(m.id); if(k>=0) p.tl.splice(k,1); else p.tl.push(m.id); save(); SFX.select(); buzz([15]); bgDraw(); }
 function bgVoteFor(id){ const p=S.bingo.photos.find(x=>x.id===id), m=me(); if(!p||!bgVote()||p.team===m.team) return; const old=bgMyVote(p.cell);
   if(old) old.vl.splice(old.vl.indexOf(m.id),1); if(!old||old.id!==id){ p.vl.push(m.id); SFX.coin(); buzz([20]); } else SFX.select(); save(); bgOpen(p.cell,1); }
 function bgZoom(id){ const p=S.bingo.photos.find(x=>x.id===id); if(!p) return; const el=document.createElement('div'); el.className='bgzoom'; el.onclick=()=>el.remove(); el.innerHTML='<img src="'+p.img+'" alt=""><p><b>'+esc(team(p.team).name)+'</b> '+esc((person(p.pid)||{}).name||'')+(p.cm?'<br>'+esc(p.cm):'')+'</p>'; document.body.appendChild(el); }
