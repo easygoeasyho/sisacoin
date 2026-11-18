@@ -1601,7 +1601,7 @@ function bgCtrl(){ const st=S.bingo.state, n=S.bingo.photos.length;
   if(st==='live') h+='<button class="btn primary full" onclick="bgStartVote()">🗳️ 최종 투표 시작</button><p class="sub tcp">레크리에이션 시간에 누르면 전원이 다른 조 대표 컷에 좋아요를 누를 수 있어요. 사진 업로드는 닫혀요.</p>';
   if(st==='vote') h+='<button class="btn primary full" onclick="bgClose()">투표 마감 · 결과 확정</button><button class="btn ghost full" style="margin-top:8px" onclick="S.bingo.state=\'live\';save();openGame(\'photo\',true)">투표 취소 (사진 모집으로)</button>';
   if(st==='done') h+='<button class="btn ghost full" onclick="bgUndo()">결과 취소 (코인 회수)</button>';
-  h+='<details class="tcgot"><summary>체험용 도구</summary><div class="thhb" style="margin-top:8px"><button class="mini" onclick="bgDemo()">다른 조 사진 채우기</button>'+(st==='vote'?'<button class="mini" onclick="bgDemoVote()">가짜 투표 채우기</button>':'')+'<button class="mini" onclick="bgReset()">전체 초기화</button></div></details>';
+  h+='<details class="tcgot"><summary>체험용 도구</summary><div class="thhb" style="margin-top:8px"><button class="mini" onclick="bgDemo(1)">다른 조 · 모든 칸 채우기</button><button class="mini" onclick="bgDemo(1,1)">우리 조 · 모든 칸 채우기</button><button class="mini" onclick="bgDemo()">다른 조 · 일부만 채우기</button>'+(st==='vote'?'<button class="mini" onclick="bgDemoVote()">가짜 투표 채우기</button>':'')+'<button class="mini" onclick="bgReset()">전체 초기화</button></div></details>';
   return h+'</section>'; }
 
 /* ---------- 빙고판 ---------- */
@@ -1669,12 +1669,12 @@ function bgUndo(){ const b=balances(), L=S.logs.filter(l=>(S.bingo.lids||[]).inc
 function bgReset(){ S.bingo=null; ensureBG(); ensureGames(); S.games.photo.status='live'; save(); toast('사진 미션을 초기화했어요'); openGame('photo',true); }
 
 /* ---------- 체험용 ---------- */
-function bgFake(t,i){ const c=document.createElement('canvas'); c.width=480; c.height=360; const g=c.getContext('2d'); const col=t.color;
-  g.fillStyle=col; g.fillRect(0,0,480,360); g.fillStyle='rgba(255,255,255,.25)'; for(let k=0;k<6;k++){ g.beginPath(); g.arc(Math.random()*480,Math.random()*360,30+Math.random()*80,0,7); g.fill(); }
-  g.fillStyle='#1E1E1C'; g.font='bold 34px sans-serif'; g.textAlign='center'; g.fillText(t.name,240,170); g.font='22px sans-serif'; g.fillText(BG_CELLS[i].t,240,210); return c.toDataURL('image/jpeg',.6); }
-function bgDemo(){ ensureBG(); const my=me().team; TEAMS.forEach(t=>{ if(t.id===my) return; const ppl=S.people.filter(p=>p.team===t.id); BG_CELLS.forEach((c,i)=>{ if(Math.random()<.45||bgFinal(i,t.id)) return; const p=ppl[Math.floor(Math.random()*ppl.length)]; if(!p) return;
+function bgFake(t,i){ const c=document.createElement('canvas'); c.width=320; c.height=240; const g=c.getContext('2d'); const col=t.color;
+  g.fillStyle=col; g.fillRect(0,0,320,240); g.fillStyle='rgba(255,255,255,.25)'; for(let k=0;k<6;k++){ g.beginPath(); g.arc(Math.random()*320,Math.random()*240,20+Math.random()*55,0,7); g.fill(); }
+  g.fillStyle='#1E1E1C'; g.font='bold 24px sans-serif'; g.textAlign='center'; g.fillText(t.name,160,112); g.font='15px sans-serif'; g.fillText(BG_CELLS[i].t,160,140); return c.toDataURL('image/jpeg',.5); }
+function bgDemo(all,mine){ ensureBG(); const my=me().team; TEAMS.forEach(t=>{ if(mine?t.id!==my:t.id===my) return; const ppl=S.people.filter(p=>p.team===t.id); BG_CELLS.forEach((c,i)=>{ if((!all&&Math.random()<.45)||bgFinal(i,t.id)) return; const p=ppl[Math.floor(Math.random()*ppl.length)]; if(!p) return;
   S.bingo.photos.push({id:'bp'+Date.now().toString(36)+t.id+i,cell:i,team:t.id,pid:p.id,img:bgFake(t,i),cm:['ㅋㅋㅋ 세 번 만에 성공','이게 진짜 최선이었어요','우리 조 최고!',''][Math.floor(Math.random()*4)],ts:Date.now()-Math.random()*3e6,tl:[p.id],vl:[]}); }); });
-  try{ save(); }catch(e){ return toast('저장 공간이 부족해요'); } toast('다른 조 사진을 채웠어요'); openGame('photo',true); }
+  try{ save(); }catch(e){ return toast('저장 공간이 부족해요'); } toast(mine?'우리 조 사진을 모든 칸에 채웠어요':all?'다른 조 사진을 모든 칸에 채웠어요':'다른 조 사진을 채웠어요'); if($('#bingo')) bgDraw(); else openGame('photo',true); }
 function bgDemoVote(){ BG_CELLS.forEach((c,i)=>{ const f=bgFinals(i); if(!f.length) return; S.people.forEach(u=>{ if(Math.random()<.5) return; const ok=f.filter(p=>p.team!==u.team); if(!ok.length) return; const p=ok[Math.floor(Math.random()*ok.length)]; if(!f.some(x=>x.vl.includes(u.id))) p.vl.push(u.id); }); }); save(); toast('가짜 투표를 채웠어요'); openGame('photo',true); }
 
 /* ================= 설정 ================= */
