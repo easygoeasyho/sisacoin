@@ -217,7 +217,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .pradar{flex:none;width:100px;height:100px}.rsvg{width:100%;height:100%;display:block}.rbg{fill:#1F3A2E;stroke:#1E1E1C;stroke-width:3.5}.rr{fill:none;stroke:#3E7A5C;stroke-width:1}.rlb{font-size:8px;fill:#9FE1BF;text-anchor:middle;font-weight:700}.rme{fill:#5BB0FF;stroke:#fff;stroke-width:1.5}
 .rsw{transform-origin:50px 50px;transform-box:view-box;animation:rad 3s linear infinite}.rsw path{fill:#5BE39A;opacity:.28}
 .rb{cursor:pointer}.rb circle{fill:#FFD84D;stroke:#1E1E1C;stroke-width:1.5}.rb.sel circle{fill:#FF6B5B}.rb.gd circle{fill:#FFC400}.rb text{font-size:6.5px;font-weight:900;text-anchor:middle;fill:#1E1E1C;pointer-events:none}@keyframes blip{50%{opacity:.55}}
-.rap{fill:#FF6B5B;stroke:#fff;stroke-width:1.5}
+.rap{fill:#FF6B5B;stroke:#1E1E1C;stroke-width:1.6;stroke-linejoin:round}.ral{stroke:#FF6B5B;stroke-width:1.6;stroke-dasharray:2.5 2.5;opacity:.85}.rsvg{overflow:visible}
 .rsvg.jam .rbg{fill:#555}.rsvg.jam .rsw,.rsvg.off .rsw{display:none}.rsvg.off .rbg{fill:#3A3A3A}.rsvg.off .rr{stroke:#555}.rsvg.comp.hot .rbg{fill:#5A1E1A}
 .pdr{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .pdock .pdet{position:static;padding:0;border:0;box-shadow:none;background:none!important;animation:none!important;min-height:0;display:block;color:#1E1E1C}
@@ -1209,7 +1209,7 @@ function thInRange(){ if(!TH.pos) return []; return S.th.spots.filter(s=>!s.foun
 function thRadar(L,mode){ const C=S.th.cfg, R=40, hd=TH.head||0;
   let dots=''; (L||[]).forEach((x,k)=>{ const b=(thBear(TH.pos,x.s)-hd)*Math.PI/180, r=Math.min(1,x.d/C.detR)*R*.92, cx=(50+Math.sin(b)*r).toFixed(1), cy=(50-Math.cos(b)*r).toFixed(1), sel=x.s.id===TH.sel;
     dots+='<g class="rb'+(sel?' sel':'')+(x.s.gold?' gd':'')+'" onclick="thPick(\''+x.s.id+'\')"><circle cx="'+cx+'" cy="'+cy+'" r="'+(sel?6.5:5)+'"/>'+(L.length>1&&!sel?'<text x="'+cx+'" y="'+(+cy+2.3)+'">'+String.fromCharCode(65+k)+'</text>':'')+'</g>'; });
-  let arr=''; if(mode==='comp'){ const x=L.find(y=>y.s.id===TH.sel); if(x){ const b=Math.round(thBear(TH.pos,x.s)-(TH.head===null?0:TH.head)); arr='<g transform="rotate('+b+' 50 50)"><path class="rap" d="M50 22 L57 40 L50 36 L43 40Z"/></g>'; } }
+  let arr=''; if(mode==='comp'){ const x=L.find(y=>y.s.id===TH.sel); if(x){ const b=Math.round(thBear(TH.pos,x.s)-(TH.head===null?0:TH.head)); arr='<g transform="rotate('+b+' 50 50)"><path class="ral" d="M50 50 V8"/><path class="rap" d="M50 0.5 L56.5 10 L43.5 10Z"/></g>'; } }
   return {mode:mode||'',dyn:arr+dots};
 }
 function thRadarPaint(r){ const box=$('#pradar'); if(!box) return; const C=S.th.cfg;
