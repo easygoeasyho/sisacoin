@@ -1435,14 +1435,15 @@ function thReplay(){
   ov.innerHTML='<canvas id="repcv"></canvas><div class="rpbox"><div class="rph"><b>🗺️ 탐험 리플레이</b><button onclick="thRepClose()" aria-label="닫기">'+ic('x')+'</button></div><div class="rpbar"><i id="rpbar"></i></div><div class="rplist">'+rk.map((x,k)=>'<div><span class="rkm">'+(k===0?'🥇':k===1?'🥈':k===2?'🥉':(k+1))+'</span><i style="background:'+x.t.color+'"></i><b>'+esc(x.t.name)+'</b><span class="rpd" data-d="'+x.d+'">0m</span></div>').join('')+'</div>'
    +'<p class="rpwin">'+(rk[0]?'🏃 가장 많이 돌아다닌 조: <b style="color:'+rk[0].t.color+'">'+esc(rk[0].t.name)+'</b> ('+thFmt(rk[0].d)+')':'')+'</p><button class="btn ghost full" onclick="thReplay()">다시 보기</button></div>';
   pl.appendChild(ov); const cv=ov.querySelector('#repcv'), dpr=Math.min(2,devicePixelRatio||1); cv.width=MP.W*dpr; cv.height=MP.H*dpr; const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
-  const all=[]; rk.forEach(x=>{ Object.values(S.th.trail[x.t.id]).forEach(tr=>{ if(tr.length>1) all.push({c:x.t.color,tr}); }); });
-  const t0=Math.min(...all.map(a=>a.tr[0].t||0)), t1=Math.max(...all.map(a=>a.tr[a.tr.length-1].t||1)), span=Math.max(1,t1-t0), D=12000, st=performance.now(), w=Math.max(4,18/thMPP());
-  const els=[...ov.querySelectorAll('.rpd')]; SFX.open();
-  const fr=now=>{ if(!$('#prep')) return; const f=Math.min(1,(now-st)/D), tc=t0+span*f; g.clearRect(0,0,MP.W,MP.H); g.lineCap='round'; g.lineJoin='round';
-    all.forEach(a=>{ const pts=a.tr.filter(p=>(p.t||0)<=tc); if(pts.length<2) return; g.strokeStyle=a.c; g.globalAlpha=.55; g.lineWidth=w; g.beginPath(); pts.forEach((p,i)=>{ const q=mpScr(p); i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]); }); g.stroke();
-      g.globalAlpha=1; const h=mpScr(pts[pts.length-1]); g.fillStyle=a.c; g.strokeStyle='#1E1E1C'; g.lineWidth=2.5; g.beginPath(); g.arc(h[0],h[1],6,0,7); g.fill(); g.stroke(); });
-    $('#rpbar').style.width=(f*100)+'%'; els.forEach(e=>e.textContent=thFmt(+e.dataset.d*f));
-    if(f<1) requestAnimationFrame(fr); else { SFX.fanfare(); ov.classList.add('fin'); } };
+  const all=[]; rk.forEach(x=>{ Object.values(S.th.trail[x.t.id]).forEach(tr=>{ if(tr.length<2) return; const cum=[0]; for(let i=1;i<tr.length;i++) cum.push(cum[i-1]+thDist(tr[i-1],tr[i])); all.push({c:x.t.color,tr,cum,len:cum[cum.length-1]}); }); });
+  const D=12000, st=performance.now(), w=Math.max(4,18/thMPP()), els=[...ov.querySelectorAll('.rpd')]; SFX.open();
+  const at=(a,dd)=>{ let i=1; while(i<a.cum.length&&a.cum[i]<dd) i++; if(i>=a.cum.length) return {i:a.tr.length-1,p:a.tr[a.tr.length-1]}; const p0=a.tr[i-1],p1=a.tr[i],seg=a.cum[i]-a.cum[i-1]||1,k=(dd-a.cum[i-1])/seg; return {i,p:{lat:p0.lat+(p1.lat-p0.lat)*k,lng:p0.lng+(p1.lng-p0.lng)*k}}; };
+  const fr=now=>{ if(!$('#prep')) return; const raw=Math.min(1,(now-st)/D), f=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;
+    g.clearRect(0,0,MP.W,MP.H); g.lineCap='round'; g.lineJoin='round';
+    all.forEach(a=>{ const h=at(a,a.len*f), pts=a.tr.slice(0,h.i).concat([h.p]); g.strokeStyle=a.c; g.globalAlpha=.55; g.lineWidth=w; g.beginPath(); pts.forEach((p,i)=>{ const q=mpScr(p); i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]); }); g.stroke();
+      g.globalAlpha=1; const q=mpScr(h.p); g.fillStyle=a.c; g.strokeStyle='#1E1E1C'; g.lineWidth=2.5; g.beginPath(); g.arc(q[0],q[1],6.5,0,7); g.fill(); g.stroke(); });
+    $('#rpbar').style.width=(raw*100)+'%'; els.forEach(e=>e.textContent=thFmt(+e.dataset.d*f));
+    if(raw<1) requestAnimationFrame(fr); else { SFX.fanfare(); ov.classList.add('fin'); } };
   requestAnimationFrame(fr);
 }
 function thRepClose(){ const o=$('#prep'); if(o) o.remove(); TH.rep=0; const p=$('#play'); if(p) p.classList.remove('rep'); thMapDraw(); }
