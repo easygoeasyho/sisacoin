@@ -1220,7 +1220,7 @@ let GS={id:null,tab:'info'};
 const GSET_TABS={photo:[['bg','빙고 설정'],['info','게임 정보']],bet:[['new','새 주제'],['info','게임 정보']]};
 function gSet(id,tab){ GS.id=id; const T=GSET_TABS[id]||[['info','게임 정보']]; GS.tab=tab||T[0][0]; gSetDraw(); }
 function sheetRedraw(){ const e=$('#thset'); if(!e) return; if(e.dataset.g&&e.dataset.g!=='treasure') gSetDraw(); else thSetDraw(); }
-function gSetClose(){ const e=$('#thset'); if(e) e.remove(); openGame(GS.id,true); }
+function gSetClose(){ const e=$('#thset'); if(e) e.remove(); if(GS.id==='bet'&&BET.d&&BET.d.edit) BET.d=null; if(GS.id==='bet'&&$('#betx')) return betDraw(); openGame(GS.id,true); }
 function gSetDraw(){ const id=GS.id, g=gdef(id), T=GSET_TABS[id]||[['info','게임 정보']]; let body='';
   if(GS.tab==='info') body=gameInfoHTML(id);
   else if(GS.tab==='bg') body=bgSetBody();
@@ -1868,20 +1868,22 @@ function betCtrl(){ ensureBet(); const T=S.bet.topics, o=T.filter(t=>betStat(t)=
    +'<button class="btn primary full" onclick="gSet(\'bet\',\'new\')">＋ 새 베팅 주제 올리기</button><p class="sub tcp">베팅 화면에서 주제를 누르면 마감·정답 입력·정산을 할 수 있어요.</p></section>'; }
 function betAdmin(t){ const s=betStat(t), G=betGs(t);
   let h='<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 이 주제 관리</h3></div>';
-  if(s==='open') h+='<button class="btn ghost full" style="margin-top:10px" onclick="betCloseT(\''+t.id+'\')">⏸ 지금 베팅 마감</button>';
+  h+='<button class="btn ghost full" style="margin-top:10px" onclick="betEdit(\''+t.id+'\')">✏️ 주제 수정 (질문·단위·코인·마감)</button>';
+  if(s==='open') h+='<button class="btn ghost full" style="margin-top:8px" onclick="betCloseT(\''+t.id+'\')">⏸ 지금 베팅 마감</button>';
+  if(s==='closed') h+='<button class="btn ghost full" style="margin-top:8px" onclick="betReopen(\''+t.id+'\')">🔄 베팅 다시 열기</button><p class="sub tcp">'+(t.state==='open'?'마감 시각이 지나서 닫혔어요. 다시 열면 마감 시각이 지워져요.':'운영진이 직접 마감했어요.')+'</p>';
   if(s!=='done') h+=field('정답','<div class="btin" style="margin:0"><input id="bet_ans" type="text" inputmode="decimal" placeholder="정답 숫자"><em>'+esc(t.unit)+'</em></div>',G.length+'명 참여 · 정답을 넣으면 마감되고 바로 정산돼요')+'<button class="btn primary full" onclick="betSettle(\''+t.id+'\')">✅ 정답 공개 · 정산</button>';
-  else h+='<button class="btn ghost full" style="margin-top:10px" onclick="betUndo(\''+t.id+'\')">정산 취소 (코인 되돌리기)</button>';
-  h+='<details class="tcgot"><summary>체험용 도구 · 삭제</summary><div class="thhb" style="margin-top:8px">'+(s==='open'?'<button class="mini" onclick="betDemo(\''+t.id+'\')">가짜 답 채우기</button>':'')+(s==='closed'&&t.state==='closed'?'<button class="mini" onclick="betT(\''+t.id+'\').state=\'open\';betT(\''+t.id+'\').dl=null;save();betRefresh()">마감 취소</button>':'')+'<button class="mini" onclick="betDel(\''+t.id+'\')">이 주제 삭제</button></div></details>';
+  else h+='<button class="btn ghost full" style="margin-top:8px" onclick="betUndo(\''+t.id+'\')">↩️ 정산 취소 · 정답 다시 입력</button><p class="sub tcp">코인이 되돌아가고 마감 상태로 돌아가요. 정답을 고쳐 다시 정산하거나, 다시 열 수 있어요.</p>';
+  h+='<details class="tcgot"><summary>체험용 도구 · 삭제</summary><div class="thhb" style="margin-top:8px">'+(s==='open'?'<button class="mini" onclick="betDemo(\''+t.id+'\')">가짜 답 채우기</button>':'')+'<button class="mini" onclick="betDel(\''+t.id+'\')">이 주제 삭제</button></div></details>';
   return h+'</section>'; }
-function betNewBody(){ const d=BET.d=BET.d||{q:'',unit:'초',cu:'',mode:'prize',p1:100,p2:50,stake:10,dl:''};
+function betNewBody(){ const d=BET.d=BET.d||{q:'',unit:'초',cu:'',mode:'prize',p1:100,p2:50,stake:10,dl:''}, et=d.edit&&betT(d.edit), lockC=et&&et.state==='done', dis=lockC?' disabled':'';
   const u=BET_UNITS.map(x=>'<button class="'+(d.unit===x&&!d.cu?'on':'')+'" onclick="betD();BET.d.unit=\''+x+'\';BET.d.cu=\'\';sheetRedraw()">'+x+'</button>').join('');
-  return '<h4>무엇을 맞힐까요?</h4>'+field('질문','<input id="bn_q" maxlength="60" placeholder="예) 오늘 밤 대표님 건배사는 몇 초?" value="'+esc(d.q)+'" oninput="betD()">')
+  return (et?'<p class="bgnote" style="margin-top:12px">✏️ <b>주제 수정 중</b> · '+esc(et.q)+(lockC?'<br>정산이 끝난 주제라 코인 방식은 정산 취소 후에 바꿀 수 있어요.':'')+'</p>':'')+'<h4>무엇을 맞힐까요?</h4>'+field('질문','<input id="bn_q" maxlength="60" placeholder="예) 오늘 밤 대표님 건배사는 몇 초?" value="'+esc(d.q)+'" oninput="betD()">')
    +field('단위','<div class="btun">'+u+'</div><input id="bn_cu" maxlength="6" placeholder="직접 입력 (예: 그릇, km)" value="'+esc(d.cu)+'" oninput="betD()" style="margin-top:8px">','답 옆에 붙어서 보여요')
-   +'<h4>코인은 어떻게?</h4><div class="seg2 btmode"><button class="'+(d.mode==='prize'?'on':'')+'" onclick="betD();BET.d.mode=\'prize\';sheetRedraw()">🎁 상금형</button><button class="'+(d.mode==='pot'?'on':'')+'" onclick="betD();BET.d.mode=\'pot\';sheetRedraw()">💰 판돈형</button></div>'
-   +(d.mode==='prize'?'<p class="sub tcp" style="margin:6px 0 10px">남은 코인에서 상금을 줘요. 참여자는 잃는 게 없어요.</p><label class="tcf"><span>1등 상금</span><input id="bn_p1" type="number" inputmode="numeric" value="'+d.p1+'" oninput="betD()"><em>코인</em></label><label class="tcf"><span>2등 상금<small>0이면 1등만</small></span><input id="bn_p2" type="number" inputmode="numeric" value="'+d.p2+'" oninput="betD()"><em>코인</em></label>'
-     :'<p class="sub tcp" style="margin:6px 0 10px">참여한 사람마다 판돈이 걸려요. 진 사람의 판돈이 그 사람 조 코인에서 빠져 이긴 조로 가요.</p><label class="tcf"><span>1인당 판돈</span><input id="bn_st" type="number" inputmode="numeric" value="'+d.stake+'" oninput="betD()"><em>코인</em></label>')
+   +'<h4>코인은 어떻게?</h4><div class="seg2 btmode"><button'+dis+' class="'+(d.mode==='prize'?'on':'')+'" onclick="betD();BET.d.mode=\'prize\';sheetRedraw()">🎁 상금형</button><button'+dis+' class="'+(d.mode==='pot'?'on':'')+'" onclick="betD();BET.d.mode=\'pot\';sheetRedraw()">💰 판돈형</button></div>'
+   +(d.mode==='prize'?'<p class="sub tcp" style="margin:6px 0 10px">남은 코인에서 상금을 줘요. 참여자는 잃는 게 없어요.</p><label class="tcf"><span>1등 상금</span><input id="bn_p1" type="number" inputmode="numeric" value="'+d.p1+'" oninput="betD()"'+dis+'><em>코인</em></label><label class="tcf"><span>2등 상금<small>0이면 1등만</small></span><input id="bn_p2" type="number" inputmode="numeric" value="'+d.p2+'" oninput="betD()"'+dis+'><em>코인</em></label>'
+     :'<p class="sub tcp" style="margin:6px 0 10px">참여한 사람마다 판돈이 걸려요. 진 사람의 판돈이 그 사람 조 코인에서 빠져 이긴 조로 가요.</p><label class="tcf"><span>1인당 판돈</span><input id="bn_st" type="number" inputmode="numeric" value="'+d.stake+'" oninput="betD()"'+dis+'><em>코인</em></label>')
    +'<h4>언제까지?</h4>'+field('베팅 마감','<input id="bn_dl" type="datetime-local" value="'+esc(d.dl)+'" onchange="betD()">','비우면 운영진이 직접 마감해요')
-   +'<button class="btn primary full" style="margin-top:6px" onclick="betAdd()">주제 올리기</button>'; }
+   +(et?'<button class="btn primary full" style="margin-top:6px" onclick="betSaveEdit()">수정 저장</button><button class="btn ghost full" style="margin-top:8px" onclick="BET.d=null;sheetRedraw()">수정 그만두고 새 주제 쓰기</button>':'<button class="btn primary full" style="margin-top:6px" onclick="betAdd()">주제 올리기</button>'); }
 function betD(){ const d=BET.d, v=id=>{ const e=$('#'+id); return e?e.value:null; }; if(!d) return;
   if(v('bn_q')!==null) d.q=v('bn_q'); if(v('bn_cu')!==null) d.cu=v('bn_cu').trim(); if(v('bn_p1')!==null) d.p1=+v('bn_p1')||0; if(v('bn_p2')!==null) d.p2=+v('bn_p2')||0; if(v('bn_st')!==null) d.stake=+v('bn_st')||0; if(v('bn_dl')!==null) d.dl=v('bn_dl'); }
 function betAdd(){ betD(); const d=BET.d, q=(d.q||'').trim(); if(!q){ SFX.error(); return toast('질문을 입력해주세요'); }
@@ -1905,6 +1907,16 @@ function betUndo(id){ const t=betT(id); (t.res&&t.res.lids||[]).forEach(l=>{ con
 function betDel(id){ const t=betT(id); if(t.state==='done') return toast('정산 취소 후에 삭제할 수 있어요'); if(!confirm('이 주제를 삭제할까요?')) return; S.bet.topics=S.bet.topics.filter(x=>x.id!==id); BET.view=null; save(); toast('주제를 삭제했어요'); betRefresh(); }
 function betDemo(id){ const t=betT(id); t.g=t.g||{}; const base=t.unit==='보'?9000:t.unit==='초'?60:30;
   S.people.forEach(p=>{ if(p.id!==me().id&&Math.random()<.7) t.g[p.id]={v:Math.round(base*(.4+Math.random()*1.2)),ts:Date.now()-Math.random()*3600000}; }); save(); toast('가짜 답을 채웠어요'); betRefresh(); }
+
+const betLocal=ts=>ts?new Date(ts-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16):'';
+function betEdit(id){ const t=betT(id), cu=BET_UNITS.includes(t.unit)?'':t.unit; BET.d={edit:id,q:t.q,unit:cu?'초':t.unit,cu,mode:t.mode,p1:t.prize[0],p2:t.prize[1]||0,stake:t.stake,dl:betLocal(t.dl)}; gSet('bet','new'); }
+function betSaveEdit(){ betD(); const d=BET.d, t=betT(d.edit); if(!t) return; const q=(d.q||'').trim(); if(!q){ SFX.error(); return toast('질문을 입력해주세요'); }
+  t.q=q; t.unit=d.cu||d.unit;
+  if(t.state!=='done'){ if(d.mode==='prize'&&d.p1<=0||d.mode==='pot'&&d.stake<=0){ SFX.error(); return toast('코인을 1 이상으로 정해주세요'); } t.mode=d.mode; t.prize=[d.p1,d.p2]; t.stake=d.stake; }
+  const was=betStat(t), nd=d.dl?new Date(d.dl).getTime():null; t.dl=nd;
+  let msg='주제를 수정했어요'; if(t.state==='open'&&was==='closed'&&betOpen(t)) msg='마감 시각을 바꿔서 베팅이 다시 열렸어요'; else if(t.state==='open'&&nd&&nd<=Date.now()) msg='마감 시각이 이미 지나서 베팅이 닫혀 있어요';
+  save(); SFX.select(); toast(msg); BET.d=null; const e=$('#thset'); if(e) e.remove(); render(); if($('#betx')){ BET.view=t.id; betDraw(); } else betPlay(t.id); }
+function betReopen(id){ const t=betT(id); t.state='open'; if(t.dl&&t.dl<=Date.now()) t.dl=null; save(); SFX.select(); toast('베팅을 다시 열었어요. 필요하면 ✏️ 주제 수정에서 새 마감 시각을 정하세요'); betRefresh(); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
