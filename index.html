@@ -1189,16 +1189,17 @@ function thStatHTML(){ const {ss,by,rk,left}=thStats(), my=me().team, C=S.th.cfg
    +'<div class="left"><i></i><b>남은 보물</b><span>'+left+' / '+ss.length+'</span></div></div></div>'; }
 
 /* ---------- 상세 화면 ---------- */
+function thSumBody(){ const C=S.th.cfg; return '<div class="thsum"><div><b>'+(S.th.spots.length||C.count)+'개</b><small>숨긴 보물</small></div><div><b>'+coinIc+C.coin+'</b><small>보물 1개당</small></div><div><b>'+C.time+'분</b><small>제한 시간</small></div></div>'
+   +'<p class="sub">반경 '+C.radius+'m 안 어딘가에 보물이 숨겨져 있어요. 힌트는 없어요! 보물 '+C.detR+'m 안에 들어오면 탐지기가 울리고, '+C.findR+'m 안에 들어가면 먼저 온 조가 가져가요.'+(C.goldCoin?' 종료 '+C.goldAt+'분 전엔 '+coinIc+C.goldCoin+' 황금 보물이 나타나요!':'')+'</p>'; }
 function thSummary(){ const C=S.th.cfg, st=S.th.state, m=me();
   const lbl={setup:'운영진이 보물을 숨기기 전이에요',ready:'보물을 숨겼어요. 곧 시작해요',live:'진행 중 · 남은 시간 '+thClock(),done:'게임이 끝났어요'}[st];
-  let h='<section class="card flat rewsec"><div class="thsum"><div><b>'+(S.th.spots.length||C.count)+'개</b><small>숨긴 보물</small></div><div><b>'+coinIc+C.coin+'</b><small>보물 1개당</small></div><div><b>'+C.time+'분</b><small>제한 시간</small></div></div>'
-   +'<p class="sub">반경 '+C.radius+'m 안 어딘가에 보물이 숨겨져 있어요. 힌트는 없어요! 보물 '+C.detR+'m 안에 들어오면 탐지기가 울리고, '+C.findR+'m 안에 들어가면 먼저 온 조가 가져가요.'+(C.goldCoin?' 종료 '+C.goldAt+'분 전엔 '+coinIc+C.goldCoin+' 황금 보물이 나타나요!':'')+'</p><p class="thst '+st+'">'+lbl+'</p></section>';
+  let h='<section class="card flat rewsec"><div id="thsumbox">'+thSumBody()+'</div><p class="thst '+st+'">'+lbl+'</p></section>';
   h+='<button class="btn primary full thjoin" onclick="thPlay()" '+(st==='setup'&&!m.admin?'disabled':'')+'>'+ic('map','sm')+(st==='done'?'결과 지도 보기':st==='setup'?(m.admin?'지도 미리보기':'보물을 숨기는 중이에요'):m.admin&&st==='ready'?'숨긴 보물 확인하기':'게임 참여하기')+'</button>';
   if(S.th.spots.length) h+='<section class="card flat"><h3>'+ic('trophy','sm')+' 보물 현황</h3>'+thStatHTML()+'</section>';
   h+=thHistHTML();
   const rk=thRanks(); if(!TH.viewing&&rk.length) h+='<section class="card flat"><h3>🏃 조별 이동 거리</h3>'+rk.map((x,k)=>'<div class="rk-row"><span class="medal m'+Math.min(k+1,4)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+x.t.color+'"></span><span class="rk-n"><b>'+esc(x.t.name)+'</b></span><b class="camt">'+thFmt(x.d)+'</b></div>').join('')+'<button class="btn ghost full" style="margin-top:10px" onclick="thReplay()">🗺️ 탐험 리플레이 보기</button></section>';
   return h; }
-function thAdmin(){ const C=S.th.cfg, st=S.th.state, f=(id,l,v,u)=>'<label class="tcf"><span>'+l+'</span><input id="'+id+'" type="number" inputmode="numeric" value="'+v+'"><em>'+u+'</em></label>';
+function thAdmin(){ const C=S.th.cfg, st=S.th.state, f=(id,l,v,u)=>'<label class="tcf"><span>'+l+'</span><input id="'+id+'" type="number" inputmode="numeric" value="'+v+'" onchange="thCfgLive()"><em>'+u+'</em></label>';
   let h='<section class="card flat"><h3>'+ic('tool','sm')+' 보물 숨기기 (운영진)</h3>';
   if(st==='setup'||st==='ready') h+='<div class="tcgrid">'+f('tc_r','숨길 반경',C.radius,'m')+f('tc_n','보물 개수',C.count,'개')+f('tc_c','보물 1개당',C.coin,'코인')+f('tc_f','발견 반경',C.findR,'m')+f('tc_t','제한 시간',C.time,'분')+f('tc_g','황금 보물',C.goldCoin,'코인')+f('tc_ga','황금 출현',C.goldAt,'분 전')+'</div>'
      +field('중심 위치','<input id="tc_ctr" placeholder="비우면 지금 내 위치 · 예) 34.07035, 134.54650" value="'+(C.center&&st==='ready'?C.center.lat.toFixed(5)+', '+C.center.lng.toFixed(5):'')+'">','구글 지도에서 장소를 길게 눌러 나온 좌표를 붙여넣어도 돼요')
@@ -1468,6 +1469,10 @@ function thHistHTML(){ ensureGames(); const R=S.games.treasure.results.filter(r=
 function thView(rid,rep){ const r=S.games.treasure.results.find(x=>x.id===rid); if(!r||!r.th) return; TH.keep=S.th; TH.viewing=r.no;
   S.th=Object.assign(JSON.parse(JSON.stringify(r.th)),{v:2,state:'done',saved:rid,skills:{},jam:{},boost:{},pulse:{}}); thPlay(); toast(r.no+'회차 기록을 보고 있어요'); if(rep) setTimeout(()=>thReplay(),400); }
 function thHistDel(rid){ const st=S.games.treasure; st.results=st.results.filter(x=>x.id!==rid); save(); SFX.undo(); toast('기록을 삭제했어요 (코인은 그대로예요)'); openGame('treasure',true); }
+
+function thCfgLive(){ if(!S.th||!(S.th.state==='setup'||S.th.state==='ready')) return; const C=S.th.cfg, rd=id=>Number(($('#'+id)||{}).value), map={tc_r:'radius',tc_n:'count',tc_c:'coin',tc_f:'findR',tc_t:'time',tc_g:'goldCoin',tc_ga:'goldAt'};
+  Object.keys(map).forEach(id=>{ const v=rd(id); if(v>=0&&!isNaN(v)) C[map[id]]=v; }); if(S.th.state==='ready') S.th.spots.forEach(s=>{ if(s.kind==='coin') s.coin=C.coin; else if(s.kind==='jack') s.coin=Math.round(C.coin*2.5); }); save();
+  const b=$('#thsumbox'); if(b) b.innerHTML=thSumBody(); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
