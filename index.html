@@ -243,6 +243,9 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .rpbar{height:6px;border-radius:3px;background:#EEE9DD;margin:8px 0;overflow:hidden}.rpbar i{display:block;height:100%;width:0;background:#E5483F}
 .rplist{display:flex;flex-direction:column;gap:4px;max-height:150px;overflow:auto}.rplist>div{display:flex;align-items:center;gap:6px;font-size:13px}.rplist i{width:12px;height:12px;border-radius:4px;border:1.5px solid #1E1E1C}.rplist b{flex:1}.rkm{width:22px;text-align:center;font-weight:900}.rpd{font-weight:900;font-variant-numeric:tabular-nums}
 .rpwin{margin:8px 0;font-size:13px;opacity:0;transition:.4s}.prep.fin .rpwin{opacity:1}
+.thh{padding:10px 0;border-bottom:1px solid #F1EEE7}.thh:last-child{border:0}.thhh{display:flex;justify-content:space-between;align-items:baseline}.thhh b{font-size:15px}.thhh small{font-size:12px;color:var(--sub)}
+.thhr{display:flex;flex-direction:column;gap:3px;margin:6px 0}.thhr>span{display:flex;align-items:center;gap:6px;font-size:13px}.thhr i{width:10px;height:10px;border-radius:3px;border:1.5px solid #1E1E1C}.thhr b{margin-left:auto;display:inline-flex;align-items:center;gap:2px}.thhr .medal{width:20px;height:20px;font-size:11px;border-radius:6px}
+.thhb{display:flex;gap:6px;flex-wrap:wrap}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
 .hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
@@ -1159,12 +1162,12 @@ async function thHide(){
     if(thDist(C.center,p)>R) continue; if(out.some(q=>thDist(q,p)<gap*(tries>N*200?.6:1))) continue; out.push(p); }
   S.th.spots=out.map((p,i)=>{ const r=Math.random(), k=r<.6?'coin':r<.75?'jack':r<.85?'trap':'card';
     return {id:'t'+Date.now().toString(36)+i,lat:p.lat,lng:p.lng,kind:k,coin:k==='coin'?C.coin:k==='jack'?Math.round(C.coin*2.5):0,card:k==='card'?(Math.random()<.5?'steal':'shield'):null,found:null}; });
-  S.th.news=[]; S.th.skills={}; S.th.jam={}; S.th.boost={}; S.th.pulse={}; S.th.trail={};
+  S.th.saved=null; S.th.news=[]; S.th.skills={}; S.th.jam={}; S.th.boost={}; S.th.pulse={}; S.th.trail={};
   S.th.state='ready'; S.th.gold=null; S.th.endAt=0; S.games.treasure.status='soon'; save(); SFX.coin();
   toast('보물 '+out.length+'개를 '+src+'에 숨겼어요. 지도에서 확인하고 게임을 시작하세요'); openGame('treasure',true);
 }
 function thStartGame(){ if(!S.th.spots.length) return toast('먼저 보물을 숨겨주세요'); S.th.state='live'; S.th.endAt=Date.now()+S.th.cfg.time*60000; S.th.gold=null; S.games.treasure.status='live'; save(); SFX.fanfare(); toast('보물찾기 시작! '+S.th.cfg.time+'분'); render(); openGame('treasure',true); }
-function thEndGame(){ S.th.state='done'; S.games.treasure.status='done'; save(); SFX.undo(); render(); openGame('treasure',true); }
+function thEndGame(){ S.th.state='done'; S.games.treasure.status='done'; thArchive(); save(); SFX.undo(); render(); openGame('treasure',true); }
 function thReset(){ S.th.state='setup'; S.th.spots=[]; S.th.gold=null; S.games.treasure.status='soon'; save(); openGame('treasure',true); }
 function thDel(id){ S.th.spots=S.th.spots.filter(s=>s.id!==id); save(); SFX.undo(); toast('보물 하나를 뺐어요'); thMapDraw(); thTop(); }
 function thUnfind(id){ const s=thSpot(id); if(!s||!s.found) return; const l=S.logs.find(x=>x.id===s.found.lid), b=balances();
@@ -1190,7 +1193,8 @@ function thSummary(){ const C=S.th.cfg, st=S.th.state, m=me();
    +'<p class="sub">반경 '+C.radius+'m 안 어딘가에 보물이 숨겨져 있어요. 힌트는 없어요! 보물 '+C.detR+'m 안에 들어오면 탐지기가 울리고, '+C.findR+'m 안에 들어가면 먼저 온 조가 가져가요.'+(C.goldCoin?' 종료 '+C.goldAt+'분 전엔 '+coinIc+C.goldCoin+' 황금 보물이 나타나요!':'')+'</p><p class="thst '+st+'">'+lbl+'</p></section>';
   h+='<button class="btn primary full thjoin" onclick="thPlay()" '+(st==='setup'&&!m.admin?'disabled':'')+'>'+ic('map','sm')+(st==='done'?'결과 지도 보기':st==='setup'?(m.admin?'지도 미리보기':'보물을 숨기는 중이에요'):m.admin&&st==='ready'?'숨긴 보물 확인하기':'게임 참여하기')+'</button>';
   if(S.th.spots.length) h+='<section class="card flat"><h3>'+ic('trophy','sm')+' 보물 현황</h3>'+thStatHTML()+'</section>';
-  const rk=thRanks(); if(rk.length) h+='<section class="card flat"><h3>🏃 조별 이동 거리</h3>'+rk.map((x,k)=>'<div class="rk-row"><span class="medal m'+Math.min(k+1,4)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+x.t.color+'"></span><span class="rk-n"><b>'+esc(x.t.name)+'</b></span><b class="camt">'+thFmt(x.d)+'</b></div>').join('')+'<button class="btn ghost full" style="margin-top:10px" onclick="thReplay()">🗺️ 탐험 리플레이 보기</button></section>';
+  h+=thHistHTML();
+  const rk=thRanks(); if(!TH.viewing&&rk.length) h+='<section class="card flat"><h3>🏃 조별 이동 거리</h3>'+rk.map((x,k)=>'<div class="rk-row"><span class="medal m'+Math.min(k+1,4)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+x.t.color+'"></span><span class="rk-n"><b>'+esc(x.t.name)+'</b></span><b class="camt">'+thFmt(x.d)+'</b></div>').join('')+'<button class="btn ghost full" style="margin-top:10px" onclick="thReplay()">🗺️ 탐험 리플레이 보기</button></section>';
   return h; }
 function thAdmin(){ const C=S.th.cfg, st=S.th.state, f=(id,l,v,u)=>'<label class="tcf"><span>'+l+'</span><input id="'+id+'" type="number" inputmode="numeric" value="'+v+'"><em>'+u+'</em></label>';
   let h='<section class="card flat"><h3>'+ic('tool','sm')+' 보물 숨기기 (운영진)</h3>';
@@ -1268,7 +1272,7 @@ function thClaim(id){
   thNews(s.kind==='trap'?'💥 '+team(my).name+'이(가) 함정 상자를 열었어요!':s.kind==='card'?'🃏 '+team(my).name+'이(가) '+CARD[s.card].name+'를 얻었어요':'🚩 '+team(my).name+' '+(s.gold?'황금 보물':'보물')+' 발견! +'+got);
   const lead1=thLeader(); if(lead1&&lead1!==lead0) thNews('👑 1위가 바뀌었어요! '+team(lead1).name);
   if(got>0){ ui.flash={}; ui.flash[my]=got; } TH.sel=null; TH.cnt=0;
-  if(S.th.spots.every(x=>x.found)){ S.th.state='done'; S.games.treasure.status='done'; }
+  if(S.th.spots.every(x=>x.found)){ S.th.state='done'; S.games.treasure.status='done'; thArchive(); }
   save(); s.kind==='trap'?SFX.lose():SFX.open(); render(); buzz(s.kind==='trap'?[300]:[60,40,60,40,200]);
   thChestFX(s,my,()=>{ TH.busy=false; TH.justFound=s.id; MP.c={lat:s.lat,lng:s.lng}; thPaint(); setTimeout(()=>{ TH.justFound=null; },1200); });
 }
@@ -1306,7 +1310,7 @@ function thBots(on){ clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null;
     if(s.kind==='card') grantCard(t.id,s.card,'보물찾기에서 발견',pp?pp.name:t.name,{game:'treasure'});
     thNews(s.kind==='trap'?'💥 '+t.name+'이(가) 함정 상자를 열었어요!':s.kind==='card'?'🃏 '+t.name+'이(가) '+CARD[s.card].name+'를 얻었어요':'🚩 '+t.name+' 보물 발견! +'+s.coin);
     const lead1=thLeader(); if(lead1&&lead1!==lead0) thNews('👑 1위가 바뀌었어요! '+team(lead1).name);
-    if(S.th.spots.every(x=>x.found)){ S.th.state='done'; S.games.treasure.status='done'; } save(); buzz([30]); thPaint(); },20000); }
+    if(S.th.spots.every(x=>x.found)){ S.th.state='done'; S.games.treasure.status='done'; thArchive(); } save(); buzz([30]); thPaint(); },20000); }
 
 function thChestFX(s,tm,done){
   const el=document.createElement('div'); el.className='thfx';
@@ -1323,7 +1327,7 @@ function thChestFX(s,tm,done){
 /* ---------- 황금 보물 & 타이머 ---------- */
 function thTick(){ if(!$('#play')){ clearInterval(TH.tick); TH.tick=null; return; } const C=S.th.cfg;
   if(S.th.state==='live'){
-    if(Date.now()>=S.th.endAt){ S.th.state='done'; S.games.treasure.status='done'; save(); thOver(); }
+    if(Date.now()>=S.th.endAt){ S.th.state='done'; S.games.treasure.status='done'; thArchive(); save(); thOver(); }
     else if(C.goldCoin&&!S.th.gold&&S.th.endAt-Date.now()<=C.goldAt*60000) thGoldSpawn();
   }
   thTop(); thDet(); }
@@ -1377,7 +1381,8 @@ function thPlay(){
   clearInterval(TH.tick); TH.tick=setInterval(thTick,1000); thTick();
 }
 function thSheet(o){ const p=$('#psheet'); if(!p) return; if(o) $('#thbox').innerHTML=thStatHTML()+thSimHTML(); p.classList.toggle('open',!!o); SFX.select(); }
-function thQuit(){ clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null; TH.botw=null; TH.rep=0; const el=$('#play'); if(el) el.remove(); document.body.style.overflow=''; ui.playing=null; MP.tiles.clear(); clearInterval(TH.tick); TH.tick=null; thBeepD=0; render(); openGame('treasure',true); }
+function thQuit(){ if(TH.viewing){ S.th=TH.keep; TH.keep=null; TH.viewing=0; }
+  clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null; TH.botw=null; TH.rep=0; const el=$('#play'); if(el) el.remove(); document.body.style.overflow=''; ui.playing=null; MP.tiles.clear(); clearInterval(TH.tick); TH.tick=null; thBeepD=0; render(); openGame('treasure',true); }
 function thTop(){ if(!$('#play')) return; thSkillBar(); thTicker(); }
 function thTopOld(){ const sub=$('#ptsub'), ch=$('#ptchip'); if(!sub) return; const ss=S.th.spots, my=me().team, mine=ss.filter(s=>s.found&&s.found.team===my), st=S.th.state; thSkillBar(); thTicker();
   sub.innerHTML=st==='live'?'<span class="clk'+(S.th.endAt-Date.now()<300000?' red':'')+'">⏱ '+thClock()+'</span> · 남은 보물 '+ss.filter(s=>!s.found).length:st==='done'?'게임 종료':st==='ready'?'시작 전 · 보물 '+ss.length+'개':'준비 중';
@@ -1447,6 +1452,20 @@ function thReplay(){
   requestAnimationFrame(fr);
 }
 function thRepClose(){ const o=$('#prep'); if(o) o.remove(); TH.rep=0; const p=$('#play'); if(p) p.classList.remove('rep'); thMapDraw(); }
+
+/* ---------- 회차 기록 ---------- */
+function thArchive(){ if(!S.th||S.th.saved||TH.viewing) return; const {by}=thStats(); const tids=Object.keys(by); if(!S.th.spots.some(s=>s.found)) return;
+  const ranks=tids.map(t=>({team:t,coin:by[t].c,n:by[t].n,dist:Math.round(thTeamDist(t))})).sort((a,b)=>b.coin-a.coin||b.n-a.n);
+  ensureGames(); const st=S.games.treasure, no=st.results.length+1, rid='r'+Date.now();
+  const snap=JSON.parse(JSON.stringify({cfg:S.th.cfg,spots:S.th.spots,trail:S.th.trail||{},news:(S.th.news||[]).slice(-30),endAt:S.th.endAt,gold:S.th.gold}));
+  st.results.push({id:rid,ts:Date.now(),by:'자동 집계 · '+no+'회차',ranks,logIds:[],auto:1,no,th:snap}); S.th.saved=rid; }
+function thHistHTML(){ ensureGames(); const R=S.games.treasure.results.filter(r=>r.th); if(!R.length) return '';
+  return '<section class="card flat"><h3>'+ic('trophy','sm')+' 지난 기록</h3><p class="sub" style="margin:-4px 0 8px">번 코인 기준 순위예요</p>'+R.slice().reverse().map(r=>'<div class="thh"><div class="thhh"><b>'+r.no+'회차</b><small>'+new Date(r.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</small></div>'
+   +'<div class="thhr">'+r.ranks.slice(0,3).map((x,k)=>'<span><span class="medal m'+(k+1)+'">'+(k+1)+'</span><i style="background:'+team(x.team).color+'"></i>'+esc(team(x.team).name)+' <b>'+coinIc+x.coin+'</b></span>').join('')+'</div>'
+   +'<div class="thhb"><button class="mini" onclick="thView(\''+r.id+'\')">🗺️ 깃발 지도</button><button class="mini" onclick="thView(\''+r.id+'\',1)">🏃 리플레이</button>'+(me().admin?'<button class="mini" onclick="thHistDel(\''+r.id+'\')">기록 삭제</button>':'')+'</div></div>').join('')+'</section>'; }
+function thView(rid,rep){ const r=S.games.treasure.results.find(x=>x.id===rid); if(!r||!r.th) return; TH.keep=S.th; TH.viewing=r.no;
+  S.th=Object.assign(JSON.parse(JSON.stringify(r.th)),{v:2,state:'done',saved:rid,skills:{},jam:{},boost:{},pulse:{}}); thPlay(); toast(r.no+'회차 기록을 보고 있어요'); if(rep) setTimeout(()=>thReplay(),400); }
+function thHistDel(rid){ const st=S.games.treasure; st.results=st.results.filter(x=>x.id!==rid); save(); SFX.undo(); toast('기록을 삭제했어요 (코인은 그대로예요)'); openGame('treasure',true); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
