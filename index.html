@@ -299,6 +299,22 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .bgnote.warn{background:#FFE1DC;color:#C0392B;font-weight:800;animation:sigs 1.6s infinite}
 .bgprog{flex:none;font-size:12px;font-weight:900;background:#1E1E1C;color:#FFD84D;border-radius:99px;padding:5px 10px}
 .bgc.vd{outline:3px solid #2E9E6A;outline-offset:-3px}.bgvd{position:absolute;top:3px;right:3px;z-index:2;font-size:9px;font-weight:900;background:#2E9E6A;color:#fff;border-radius:6px;padding:0 4px}
+.bgsw{position:fixed;inset:0;z-index:80;background:#1E1E1C;color:#fff;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 12px) 0 calc(env(safe-area-inset-bottom,0px) + 14px)}
+.swtop{display:flex;align-items:center;gap:10px;padding:0 14px}.swtop .pbk{background:#fff;color:#1E1E1C}
+.swpr{flex:1;display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center}.swpr b{font-size:15px}.swpr span{font-size:12px;font-weight:800;color:#FFD84D}.swpr i{grid-column:1/-1;height:6px;border-radius:9px;background:#3a3a37;overflow:hidden}.swpr u{display:block;height:100%;background:#FFD84D;transition:width .4s}
+.swm{padding:14px 18px 8px;position:relative}.swm small{font-size:12px;color:#bbb;font-weight:700}.swm h3{margin:2px 0 0;font-size:21px;line-height:1.25}.swdid{position:absolute;right:16px;top:16px;background:#2E9E6A;font-size:11px;font-weight:900;border-radius:8px;padding:2px 7px}
+.swcar{flex:1;min-height:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.swcar::-webkit-scrollbar{display:none}
+.sws{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;padding:4px 16px;min-height:0;box-sizing:border-box}
+.swimg{flex:1;min-height:0;border-radius:18px;background:#000 center/contain no-repeat;border:3px solid var(--tc);position:relative;transition:transform .2s}
+.sws.on .swimg{border-width:5px;box-shadow:0 0 0 3px #fff}
+.swh{position:absolute;left:50%;top:50%;font-size:96px;color:#FF4D6D;transform:translate(-50%,-50%) scale(0);opacity:0;text-shadow:0 4px 18px rgba(0,0,0,.4)}
+.sws.pop .swh{animation:swh .75s ease-out}@keyframes swh{0%{transform:translate(-50%,-50%) scale(0);opacity:1}40%{transform:translate(-50%,-50%) scale(1.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+.swcap{padding:8px 2px 0}.swtm{display:inline-flex;align-items:center;gap:6px;font-weight:900;font-size:14px}.swtm i{width:12px;height:12px;border-radius:50%;border:2px solid #fff}.swcap p{margin:4px 0 0;font-size:13px;color:#ddd;line-height:1.4;max-height:3.6em;overflow:auto}
+.swdots{display:flex;justify-content:center;gap:6px;padding:8px 0 2px}.swdots i{width:7px;height:7px;border-radius:50%;background:#555;transition:.2s}.swdots i.on{background:#FFD84D;width:18px;border-radius:9px}
+.swtip{text-align:center;font-size:11.5px;color:#999;margin:4px 0 8px}
+.swbar{display:flex;gap:8px;padding:0 14px}.swnav{flex:none;height:54px;min-width:54px;border-radius:14px;background:#3a3a37;color:#fff;font-weight:800;font-size:14px;display:grid;place-items:center;padding:0 12px}.swnav:disabled{opacity:.3}
+.swvote{flex:1;height:54px;border-radius:14px;background:#fff;color:#D23B5C;font-weight:900;font-size:15px;border:3px solid var(--tc,#D23B5C);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 8px}.swvote.on{background:#D23B5C;color:#fff;border-color:#D23B5C}
+.swend{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;text-align:center}.swbig{font-size:72px}.swend h3{font-size:21px;margin:8px 0}.swend p{color:#bbb;font-size:14px;line-height:1.5;margin:0 0 20px}.swend .btn.ghost{background:#3a3a37;color:#fff;border-color:#3a3a37}
 .bgzoom{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}.bgzoom img{max-width:100%;max-height:75vh;border-radius:12px}.bgzoom p{margin-top:10px;font-size:13.5px;line-height:1.5}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
@@ -1592,7 +1608,7 @@ function bgSummary(){ ensureBG(); const st=S.bingo.state, m=me(), my=m.team;
 
    +'<div class="bglv"><span>★ '+BG_LV[1].c+'코인</span><span>★★ '+BG_LV[2].c+'코인</span><span>★★★ '+BG_LV[3].c+'코인</span></div>'
    +'<p class="thst '+(st==='live'?'ready':st==='vote'?'live':'done')+'">'+(st==='live'?'사진 모으는 중 · 우리 조 '+mine+' / 16칸 채움':st==='vote'?'🗳️ 최종 투표 진행 중!':'결과가 확정됐어요')+'</p></section>'
-   +'<button class="btn primary full thjoin" onclick="bgPlay()">'+ic('grid','sm')+(st==='done'?'결과 빙고판 보기':'게임 참여하기')+'</button>';
+   +(st==='vote'?'<button class="btn primary full thjoin" onclick="bgPlay();bgSwipe()">🗳️ 빠른 투표하기'+(bgLeft()?' · '+bgLeft()+'칸 남음':' · 완료')+'</button><button class="btn ghost full" style="margin-top:8px" onclick="bgPlay()">'+ic('grid','sm')+'빙고판 보기</button>':'<button class="btn primary full thjoin" onclick="bgPlay()">'+ic('grid','sm')+(st==='done'?'결과 빙고판 보기':'게임 참여하기')+'</button>');
   if(st==='done') h+=bgResultHTML();
   return h; }
 function bgResultHTML(){ const tot={}; Object.keys(S.bingo.win).forEach(i=>{ const t=S.bingo.win[i]; tot[t]=(tot[t]||0)+bgCoin(+i); }); S.bingo.bonus.forEach(b=>{ tot[b.team]=(tot[b.team]||0)+b.coin; });
@@ -1615,6 +1631,7 @@ function bgQuit(){ const e=$('#bingo'); if(e) e.remove(); document.body.style.ov
 function bgDraw(){ const el=$('#bingo'); if(!el) return; const cellHTML=$('#bgcell')?$('#bgcell').innerHTML:'', scy=$('#bgcell .bgsc')?$('#bgcell .bgsc').scrollTop:0; const st=S.bingo.state, my=me().team;
   const winLines=st==='done'?S.bingo.bonus:[];
   let h='<div class="bgtop"><button class="pbk" onclick="bgQuit()" aria-label="나가기">'+ic('back')+'</button><div class="bgtt"><b>포토 빙고</b><small>'+(st==='live'?(S.bingo.dl?'⏰ '+bgDL(1)+' · ':'')+'칸을 눌러 사진을 올려요':st==='vote'?'🗳️ 최종 투표 중 · 칸을 눌러 투표해요':'결과 확정')+'</small></div>'+(st==='vote'?'<span class="bgprog">투표 '+BG_CELLS.filter((c,i)=>bgMyVote(i)).length+' / '+BG_CELLS.filter((c,i)=>bgFinals(i).some(p=>p.team!==my)).length+'</span>':'')+'</div>'
+   +(st==='vote'?'<button class="btn primary full" style="margin-bottom:10px" onclick="bgSwipe()">🗳️ 빠른 투표'+(bgLeft()?' · '+bgLeft()+'칸 남음':' · 모두 완료 (다시 보기)')+'</button>':'')
    +'<div class="bgboard"><div class="bggrid">'+BG_CELLS.map((c,i)=>{ const f=bgFinal(i,my), w=S.bingo.win[i], wp=w?bgFinal(i,w):null, nT=bgFinals(i).length;
      const pic=st==='done'&&wp?wp.img:(f?f.img:null), col=st==='done'&&w?team(w).color:(f?team(my).color:null);
      const vd=st==='vote'&&bgMyVote(i);
@@ -1687,6 +1704,42 @@ function bgDemo(all,mine){ ensureBG(); const my=me().team; TEAMS.forEach(t=>{ if
   S.bingo.photos.push({id:'bp'+Date.now().toString(36)+t.id+i+Math.random().toString(36).slice(2,5),cell:i,team:t.id,pid:p.id,img:bgFake(t,i),cm:['ㅋㅋㅋ 세 번 만에 성공','이게 진짜 최선이었어요','우리 조 최고!',''][Math.floor(Math.random()*4)],ts:Date.now()-Math.random()*3e6,tl:[p.id],vl:[]}); }); });
   TEAMS.forEach(t=>bgPartCheck(t.id)); try{ save(); }catch(e){ return toast('저장 공간이 부족해요'); } toast(mine?'우리 조 사진을 모든 칸에 채웠어요':all?'다른 조 사진을 모든 칸에 채웠어요':'다른 조 사진을 채웠어요'); if($('#bingo')) bgDraw(); else openGame('photo',true); }
 function bgDemoVote(){ BG_CELLS.forEach((c,i)=>{ const f=bgFinals(i); if(!f.length) return; S.people.forEach(u=>{ if(Math.random()<.5) return; const ok=f.filter(p=>p.team!==u.team); if(!ok.length) return; const p=ok[Math.floor(Math.random()*ok.length)]; if(!f.some(x=>x.vl.includes(u.id))) p.vl.push(u.id); }); }); save(); toast('가짜 투표를 채웠어요'); openGame('photo',true); }
+
+/* ---------- 빠른 투표 (스와이프) ---------- */
+let BGS={i:null,k:0,busy:0};
+function bgEl(){ const my=me().team; return BG_CELLS.map((c,i)=>i).filter(i=>bgFinals(i).some(p=>p.team!==my)); }
+function bgLeft(){ return bgEl().filter(i=>!bgMyVote(i)).length; }
+function bgHash(s){ let h=7; for(const ch of s) h=(h*31+ch.charCodeAt(0))|0; return h; }
+function bgSwOpts(i){ const m=me(); return bgFinals(i).filter(p=>p.team!==m.team).sort((a,b)=>bgHash(m.id+a.id)-bgHash(m.id+b.id)); }
+function bgSwipe(i){ if(!bgVote()) return; const E=bgEl(); if(!E.length) return toast('투표할 사진이 아직 없어요');
+  if(i==null){ i=E.find(x=>!bgMyVote(x)); if(i==null) i=E[0]; }
+  BGS.i=i; const o=bgSwOpts(i), v=bgMyVote(i); BGS.k=v?Math.max(0,o.findIndex(p=>p.id===v.id)):0; BGS.busy=0;
+  let el=$('#bgsw'); if(!el){ el=document.createElement('div'); el.id='bgsw'; el.className='bgsw'; document.body.appendChild(el); document.body.style.overflow='hidden'; }
+  bgSwDraw(); }
+function bgSwQuit(){ const e=$('#bgsw'); if(e) e.remove(); if(!$('#bingo')) document.body.style.overflow=''; bgDraw(); if(!$('#bingo')) openGame('photo',true); }
+function bgSwDraw(fin){ const el=$('#bgsw'); if(!el) return; const E=bgEl(), done=E.length-bgLeft();
+  const top='<div class="swtop"><button class="pbk" onclick="bgSwQuit()" aria-label="닫기">'+ic('x')+'</button><div class="swpr"><b>🗳️ 빠른 투표</b><span>'+done+' / '+E.length+'칸 완료</span><i><u style="width:'+(E.length?done/E.length*100:0)+'%"></u></i></div></div>';
+  if(fin){ const left=E.filter(x=>!bgMyVote(x));
+    el.innerHTML=top+'<div class="swend"><div class="swbig">'+(left.length?'🙌':'🎉')+'</div><h3>'+(left.length?'건너뛴 칸이 '+left.length+'개 남았어요':'모든 칸 투표 완료!')+'</h3><p>'+(left.length?'남은 칸도 마저 투표해 주세요.':'결과는 운영진이 투표를 마감하면 공개돼요.<br>마감 전까지는 언제든 다시 바꿀 수 있어요.')+'</p>'
+      +(left.length?'<button class="btn primary full" onclick="bgSwipe('+left[0]+')">남은 칸 투표하기</button>':'')+'<button class="btn ghost full" style="margin-top:8px" onclick="bgSwipe('+E[0]+')">처음부터 다시 보기</button><button class="btn ghost full" style="margin-top:8px" onclick="bgSwQuit()">빙고판으로</button></div>'; return; }
+  const i=BGS.i, c=BG_CELLS[i], o=bgSwOpts(i), v=bgMyVote(i), pos=E.indexOf(i);
+  el.innerHTML=top
+   +'<div class="swm"><small>'+(pos+1)+'번째 칸 · '+BG_LV[c.lv].s+' · '+coinIc+bgCoin(i)+'</small><h3>'+esc(c.t)+'</h3>'+(v?'<span class="swdid">✓ 투표함</span>':'')+'</div>'
+   +'<div class="swcar" id="swcar">'+o.map((p,k)=>{ const t=team(p.team), u=person(p.pid); return '<div class="sws'+(v&&v.id===p.id?' on':'')+'" style="--tc:'+t.color+'" ondblclick="bgSwVote('+k+')"><div class="swimg" style="background-image:url('+p.img+')"><span class="swh">♥</span></div><div class="swcap"><span class="swtm"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</span>'+(p.cm?'<p><b>'+esc(u?u.name:'')+'</b> '+esc(p.cm)+'</p>':'')+'</div></div>'; }).join('')+'</div>'
+   +'<div class="swdots">'+o.map((p,k)=>'<i class="'+(k===BGS.k?'on':'')+'"></i>').join('')+'</div>'
+   +'<p class="swtip">옆으로 넘겨 '+o.length+'장을 보고, 마음에 드는 사진에 투표하세요</p>'
+   +'<div class="swbar"><button class="swnav" onclick="bgSwGo(-1)" '+(pos<=0?'disabled':'')+' aria-label="이전 칸">'+ic('back')+'</button><button class="swvote" id="swvote" onclick="bgSwVote()"></button><button class="swnav swskip" onclick="bgSwGo(1)">'+(v?'다음':'건너뛰기')+'</button></div>';
+  const car=$('#swcar'); car.scrollLeft=BGS.k*car.clientWidth; bgSwBtn();
+  car.onscroll=()=>{ const k=Math.round(car.scrollLeft/car.clientWidth); if(k!==BGS.k){ BGS.k=k; el.querySelectorAll('.swdots i').forEach((d,j)=>d.classList.toggle('on',j===k)); bgSwBtn(); } }; }
+function bgSwBtn(){ const b=$('#swvote'); if(!b) return; const o=bgSwOpts(BGS.i), p=o[BGS.k], v=bgMyVote(BGS.i); if(!p) return; const t=team(p.team);
+  b.innerHTML=v&&v.id===p.id?'♥ '+esc(t.name)+'에 투표함':'♡ '+esc(t.name)+' 사진에 투표'; b.classList.toggle('on',!!(v&&v.id===p.id)); b.style.setProperty('--tc',t.color); }
+function bgSwGo(d){ const E=bgEl(), pos=E.indexOf(BGS.i);
+  if(d>0){ const nx=E.slice(pos+1).find(x=>!bgMyVote(x)); const n2=nx!=null?nx:E[pos+1]; if(n2==null) return bgSwDraw(1); return bgSwipe(n2); }
+  if(pos>0) bgSwipe(E[pos-1]); }
+function bgSwVote(k){ if(BGS.busy) return; if(k!=null) BGS.k=k; const o=bgSwOpts(BGS.i), p=o[BGS.k], m=me(); if(!p||!bgVote()) return; const old=bgMyVote(BGS.i);
+  if(old&&old.id===p.id) return; if(old) old.vl.splice(old.vl.indexOf(m.id),1); p.vl.push(m.id); save(); SFX.coin(); buzz([25]);
+  const s=document.querySelectorAll('#swcar .sws')[BGS.k]; if(s){ s.classList.add('on','pop'); } bgSwBtn(); BGS.busy=1;
+  setTimeout(()=>{ BGS.busy=0; if($('#bgsw')) bgSwGo(1); },750); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
