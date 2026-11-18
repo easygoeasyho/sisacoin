@@ -1022,15 +1022,17 @@ function gamesView(){
     const win=last&&last.ranks[0]?winnerName(g,last.ranks[0]):'';
     const wp=last&&last.ranks[0]&&g.unit==='person'?person(last.ranks[0].pid):null;
     return '<button class="gcard" onclick="openGame(\''+g.id+'\')">'+thumbHTML(g,i,st)+(st.status!=='soon'?'<span class="gst '+st.status+'">'+ST_LABEL[st.status]+'</span>':'')+'</div>'
-      +'<b>'+esc(g.name)+'</b><small class="gmeta">'+(g.unit==='person'?'개인전':'팀전')+' · '+(g.custom?'돌발 · '+prizeLabel(g):esc(g.when))+'</small>'
+      +'<b>'+esc(g.name)+'</b><small class="gmeta">'+(g.unit==='person'?'개인전':'팀전')+' · '+(g.custom?'돌발 · '+prizeLabel(g):esc(gWhen(g)))+'</small>'
       +(win?'<span class="gwin">'+(wp?avatar(wp,'xs'):ic('trophy','sm'))+esc(win)+'</span>':'')+'</button>'; }).join('')+'</div>';
   if(!list.length) h+='<p class="sub center">해당하는 게임이 없어요</p>';
   return h;
 }
+function gWhen(g){ const st=S.games&&S.games[g.id]; return (st&&st.when)||g.when||''; }
+function setWhen(id,v){ ensureGames(); v=(v||'').trim(); S.games[id].when=v||null; save(); SFX.select(); toast('일정을 바꿨어요'); render(); openGame(id,true); }
 function winnerName(g,r){ if(g.unit==='person'){ const p=person(r.pid); return p?team(p.team).name+' · '+p.name:'?'; } return team(r.team).name+(r.mvp&&person(r.mvp)?' · MVP '+person(r.mvp).name:''); }
 function openGame(id,quiet){
   ensureGames(); const g=gdef(id), st=S.games[id], i=allGames().indexOf(g), m=me();
-  let h='<div class="gtop"><div class="gtl">'+thumbHTML(g,i,st,'big')+'<span class="gunit '+g.unit+'">'+(g.unit==='person'?'개인전':'팀전')+'</span></div><h2>'+esc(g.name)+'</h2><small>'+esc(g.when)+'</small></div>'
+  let h='<div class="gtop"><div class="gtl">'+thumbHTML(g,i,st,'big')+'<span class="gunit '+g.unit+'">'+(g.unit==='person'?'개인전':'팀전')+'</span></div><h2>'+esc(g.name)+'</h2><small>'+esc(gWhen(g))+'</small></div>'
    +'<div class="gtr"><div class="gtc"><span class="gst2 '+st.status+'">'+ST_LABEL[st.status]+'</span><span>'+(g.mode==='auto'?'앱에서 자동 집계':'운영진이 결과 입력')+'</span></div><p>'+ic('bulb')+'<span>'+esc(g.desc)+'</span></p></div></div>'
    +(id==='treasure'?'':'<section class="card flat rewsec">'+(isCardGame(g)?cardPrize(g):'<div class="rew2">'+g.rewards.map((c,k)=>'<div><span class="rkl"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><small>등</small></span><b>'+coinIc+c+'</b></div>').join('')+'</div>')+'<p class="sub">'+(isCardGame(g)?CARD[g.prize].desc+'. '+(g.unit==='person'?'우승자의 조가 카드를 가져요.':'조장이 조 팝업에서 쓸 수 있어요.'):g.unit==='person'?'개인전 · 상금은 그 사람의 조로 들어가요':'조 대항전 · 상금은 조 코인으로 들어가요')+'</p></section>');
   if(id==='treasure'){ ensureTH(); h+=thSummary(); }
@@ -1040,6 +1042,7 @@ function openGame(id,quiet){
   if(m.admin){
     h+='<section class="card flat"><h3>'+ic('tool','sm')+' 운영진 메뉴</h3>'
      +field('썸네일','<div class="thumbpick">'+MASCOT_KEYS.map(k=>'<button class="'+(st.thumb&&st.thumb.type==='mascot'&&st.thumb.mascot===k?'on':'')+'" onclick="setThumb(\''+id+'\',\''+k+'\')">'+charHTML({mascot:k,expr:3})+'</button>').join('')+'</div><div class="thumbrow"><label class="btn ghost"><input type="file" accept="image/*" hidden onchange="uploadThumb(\''+id+'\',this)">'+ic('upload')+'사진 올리기</label><button class="btn ghost" onclick="setThumb(\''+id+'\',\'\')">기본으로</button></div>','마스코트를 고르거나 사진을 올리면 갤러리 썸네일이 바뀌어요.')
+     +field('일정','<input id="g_when" value="'+esc(gWhen(g))+'" placeholder="예) 2일차 · 고베" onchange="setWhen(\''+id+'\',this.value)">','언제·어디서 하는지 바뀌면 고쳐주세요. 게임 목록과 상세 화면에 바로 반영돼요')
      +field('상태','<div class="seg2">'+['soon','live','done'].map(s=>'<button class="'+(st.status===s?'on':'')+'" onclick="setGameStatus(\''+id+'\',\''+s+'\')">'+ST_LABEL[s]+'</button>').join('')+'</div>');
     if(id==='treasure'){ h+='</section>'; return modal(h,quiet); }
     if(g.mode==='auto') h+='<p class="note">자동 집계 게임이에요. 실제 버전에서는 게임이 끝나면 결과가 바로 기록에 올라가요. 지금은 아래 버튼으로 미리 체험해 볼 수 있어요.</p><button class="btn ghost full" style="margin:10px 0 4px" onclick="simulateResult(\''+id+'\')">'+ic('dice')+'자동 집계 시뮬레이션</button><p class="sub" style="margin:10px 0 6px">자동 집계가 안 됐을 때는 직접 입력할 수도 있어요.</p>';
