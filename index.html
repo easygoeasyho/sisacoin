@@ -246,6 +246,21 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .thh{padding:10px 0;border-bottom:1px solid #F1EEE7}.thh:last-child{border:0}.thhh{display:flex;justify-content:space-between;align-items:baseline}.thhh b{font-size:15px}.thhh small{font-size:12px;color:var(--sub)}
 .thhr{display:flex;flex-direction:column;gap:3px;margin:6px 0}.thhr>span{display:flex;align-items:center;gap:6px;font-size:13px}.thhr i{width:10px;height:10px;border-radius:3px;border:1.5px solid #1E1E1C}.thhr b{margin-left:auto;display:inline-flex;align-items:center;gap:2px}.thhr .medal{width:20px;height:20px;font-size:11px;border-radius:6px}
 .thhb{display:flex;gap:6px;flex-wrap:wrap}
+.thctl .tch{display:flex;justify-content:space-between;align-items:center}.thctl .tch h3{margin:0}
+.tcstep{display:flex;align-items:center;margin:12px 0 10px}.tcstep span{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#B4AFA4}.tcstep i{width:26px;height:26px;border-radius:50%;background:#EEE9DD;font-style:normal;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;color:#9A958A}
+.tcstep b{flex:1;height:2px;background:#E5E0D5;margin:0 4px 16px}.tcstep span.done i{background:#2E9E6A;color:#fff}.tcstep span.done{color:#2E7D4F}.tcstep span.on i{background:#1E1E1C;color:#FFD84D}.tcstep span.on{color:#1E1E1C}
+.tcsum{font-size:12.5px;background:#FAF8F3;border-radius:12px;padding:8px 10px;margin-bottom:10px;line-height:1.5}.tcp{margin-top:6px;font-size:12px}.tc2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.tclive{display:flex;justify-content:space-between;align-items:center;background:#FFE1DC;border-radius:12px;padding:10px 12px;margin-bottom:8px}.tclive b{font-size:20px;font-weight:900}.tclive span{font-size:13px;font-weight:700}
+.tcgot{margin-top:10px}.tcgot summary{font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer}
+.thset{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;animation:fi .2s}
+.tsb{width:100%;max-width:480px;max-height:88vh;background:#F7F5F0;border-radius:24px 24px 0 0;display:flex;flex-direction:column;animation:su .25s}@keyframes su{from{transform:translateY(40px);opacity:0}}
+.tsh{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 8px}.tsh b{font-size:17px}.tsh button{width:34px;height:34px;border-radius:50%;background:#EAE6DC;display:flex;align-items:center;justify-content:center}
+.ttab{display:flex;gap:6px;padding:0 16px 10px}.ttab button{flex:1;height:38px;border-radius:12px;background:#EAE6DC;font-weight:800;font-size:13.5px;color:#7A766C}.ttab button.on{background:#1E1E1C;color:#fff}
+.tsc{overflow:auto;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 18px)}.tsc h4{font-size:15px;margin:14px 0 10px}
+.tsteps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.tsteps button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border-radius:12px;background:#fff;border:2px solid #E5E0D5;font-size:12px;font-weight:800;color:#9A958A}.tsteps i{font-style:normal;font-size:18px}.tsteps button.on{border-color:#1E1E1C;color:#1E1E1C;background:#FFF8DC}.tsteps button.done{color:#2E7D4F}
+.tsc .tcf{display:flex;background:#fff;margin-bottom:8px;padding:10px 12px}.tsc .tcf span{white-space:normal;font-size:14px;display:flex;flex-direction:column}.tsc .tcf span small{font-size:11px;color:var(--sub);font-weight:500}.tsc .tcf input{width:76px;font-size:16px;background:#F5F2EA}
+.tconf{background:#fff;border-radius:14px;padding:6px 12px;margin-bottom:12px}.tconf>div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F1EEE7;font-size:13.5px}.tconf>div:last-child{border:0}.tconf span{color:var(--sub)}
+.tnav{display:flex;justify-content:space-between;gap:8px;margin-top:14px}.tnav .btn{flex:1}.tlock{font-size:12.5px;font-weight:700;color:#C0392B;background:#FFE1DC;border-radius:10px;padding:8px 10px;margin-top:10px}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
 .hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
@@ -1027,8 +1042,12 @@ function gamesView(){
   if(!list.length) h+='<p class="sub center">해당하는 게임이 없어요</p>';
   return h;
 }
+function gameInfoHTML(id){ const g=gdef(id), st=S.games[id]; return ''
+     +field('썸네일','<div class="thumbpick">'+MASCOT_KEYS.map(k=>'<button class="'+(st.thumb&&st.thumb.type==='mascot'&&st.thumb.mascot===k?'on':'')+'" onclick="setThumb(\''+id+'\',\''+k+'\')">'+charHTML({mascot:k,expr:3})+'</button>').join('')+'</div><div class="thumbrow"><label class="btn ghost"><input type="file" accept="image/*" hidden onchange="uploadThumb(\''+id+'\',this)">'+ic('upload')+'사진 올리기</label><button class="btn ghost" onclick="setThumb(\''+id+'\',\'\')">기본으로</button></div>','마스코트를 고르거나 사진을 올리면 갤러리 썸네일이 바뀌어요.')
+     +field('일정','<input id="g_when" value="'+esc(gWhen(g))+'" placeholder="예) 2일차 · 고베" onchange="setWhen(\''+id+'\',this.value)">','언제·어디서 하는지 바뀌면 고쳐주세요. 게임 목록과 상세 화면에 바로 반영돼요')
+     +field('상태','<div class="seg2">'+['soon','live','done'].map(s=>'<button class="'+(st.status===s?'on':'')+'" onclick="setGameStatus(\''+id+'\',\''+s+'\')">'+ST_LABEL[s]+'</button>').join('')+'</div>'); }
 function gWhen(g){ const st=S.games&&S.games[g.id]; return (st&&st.when)||g.when||''; }
-function setWhen(id,v){ ensureGames(); v=(v||'').trim(); S.games[id].when=v||null; save(); SFX.select(); toast('일정을 바꿨어요'); render(); openGame(id,true); }
+function setWhen(id,v){ ensureGames(); v=(v||'').trim(); S.games[id].when=v||null; save(); SFX.select(); toast('일정을 바꿨어요'); render(); if($('#thset')) thSetDraw(); else openGame(id,true); }
 function winnerName(g,r){ if(g.unit==='person'){ const p=person(r.pid); return p?team(p.team).name+' · '+p.name:'?'; } return team(r.team).name+(r.mvp&&person(r.mvp)?' · MVP '+person(r.mvp).name:''); }
 function openGame(id,quiet){
   ensureGames(); const g=gdef(id), st=S.games[id], i=allGames().indexOf(g), m=me();
@@ -1038,12 +1057,9 @@ function openGame(id,quiet){
   if(id==='treasure'){ ensureTH(); h+=thSummary(); }
   else h+='<section class="card flat"><h3>'+ic('trophy','sm')+' 우승 기록</h3>'+(st.results.length?st.results.slice().reverse().map(r=>'<div class="gres"><div class="gres-h"><small>'+ago(r.ts)+' · '+esc(r.by)+'</small>'+(m.admin?'<button class="mini" onclick="cancelResult(\''+id+'\',\''+r.id+'\')">결과 취소</button>':'')+'</div>'+r.ranks.map((x,k)=>{ const wp=g.unit==='person'?person(x.pid):(x.mvp?person(x.mvp):null), tt=g.unit==='person'?(wp?team(wp.team):null):team(x.team);
       return '<div class="rk-row"><span class="medal m'+(k+1)+'">'+(k+1)+'</span>'+(wp?avatar(wp,'s'):'<span class="tdotS" style="background:'+(tt?tt.color:'#ddd')+'"></span>')+'<span class="rk-n">'+(g.unit==='person'?'<b>'+esc(wp?wp.name:'?')+'</b> <small>'+esc(tt?tt.name:'')+'</small>':'<b>'+esc(tt.name)+'</b>'+(wp?' <small>MVP '+esc(wp.name)+'</small>':''))+'</span>'+(x.card?cardTag(x.card):'<b class="camt">'+coinIc+'+'+x.coin+'</b>')+'</div>'; }).join('')+'</div>').join(''):'<p class="sub">아직 결과가 없어요</p>')+'</section>';
-  if(m.admin&&id==='treasure') h+=thAdmin();
+  if(m.admin&&id==='treasure'){ h+=thCtrl(); return modal(h,quiet); }
   if(m.admin){
-    h+='<section class="card flat"><h3>'+ic('tool','sm')+' 운영진 메뉴</h3>'
-     +field('썸네일','<div class="thumbpick">'+MASCOT_KEYS.map(k=>'<button class="'+(st.thumb&&st.thumb.type==='mascot'&&st.thumb.mascot===k?'on':'')+'" onclick="setThumb(\''+id+'\',\''+k+'\')">'+charHTML({mascot:k,expr:3})+'</button>').join('')+'</div><div class="thumbrow"><label class="btn ghost"><input type="file" accept="image/*" hidden onchange="uploadThumb(\''+id+'\',this)">'+ic('upload')+'사진 올리기</label><button class="btn ghost" onclick="setThumb(\''+id+'\',\'\')">기본으로</button></div>','마스코트를 고르거나 사진을 올리면 갤러리 썸네일이 바뀌어요.')
-     +field('일정','<input id="g_when" value="'+esc(gWhen(g))+'" placeholder="예) 2일차 · 고베" onchange="setWhen(\''+id+'\',this.value)">','언제·어디서 하는지 바뀌면 고쳐주세요. 게임 목록과 상세 화면에 바로 반영돼요')
-     +field('상태','<div class="seg2">'+['soon','live','done'].map(s=>'<button class="'+(st.status===s?'on':'')+'" onclick="setGameStatus(\''+id+'\',\''+s+'\')">'+ST_LABEL[s]+'</button>').join('')+'</div>');
+    h+='<section class="card flat"><h3>'+ic('tool','sm')+' 운영진 메뉴</h3>'+gameInfoHTML(id);
     if(id==='treasure'){ h+='</section>'; return modal(h,quiet); }
     if(g.mode==='auto') h+='<p class="note">자동 집계 게임이에요. 실제 버전에서는 게임이 끝나면 결과가 바로 기록에 올라가요. 지금은 아래 버튼으로 미리 체험해 볼 수 있어요.</p><button class="btn ghost full" style="margin:10px 0 4px" onclick="simulateResult(\''+id+'\')">'+ic('dice')+'자동 집계 시뮬레이션</button><p class="sub" style="margin:10px 0 6px">자동 집계가 안 됐을 때는 직접 입력할 수도 있어요.</p>';
     h+='<div id="gform">'+g.rewards.map((c,k)=>'<div class="gin"><span class="medal m'+(k+1)+'">'+(k+1)+'</span>'
@@ -1054,7 +1070,7 @@ function openGame(id,quiet){
   }
   modal(h,quiet);
 }
-function setGameStatus(id,s){ S.games[id].status=s; save(); SFX.select(); openGame(id); render(); }
+function setGameStatus(id,s){ S.games[id].status=s; save(); SFX.select(); openGame(id,true); render(); if($('#thset')) thSetDraw(); }
 function recordResult(id,ranks,by){
   const g=gdef(id), b=balances(), total=ranks.reduce((a,r)=>a+r.coin,0);
   if(!ranks.length){ SFX.error(); toast('우승자를 한 명 이상 골라주세요'); return false; }
@@ -1103,7 +1119,7 @@ function thumbHTML(g,i,st,cls){
   const mk=t&&t.type==='mascot'?t.mascot:g.mascot, ex=t&&t.type==='mascot'?3:g.expr;
   return '<div class="gart '+(cls||'')+'" style="background:'+bg+'55">'+stickerBG(i%4,bg)+'<span class="stk">'+charHTML({mascot:mk,expr:ex})+'</span>';
 }
-function setThumb(id,k){ S.games[id].thumb=k?{type:'mascot',mascot:k}:null; save(); SFX.select(); openGame(id,true); render(); }
+function setThumb(id,k){ S.games[id].thumb=k?{type:'mascot',mascot:k}:null; save(); SFX.select(); openGame(id,true); render(); if($('#thset')) thSetDraw(); }
 function uploadThumb(id,inp){
   const f=inp.files&&inp.files[0]; if(!f) return;
   const rd=new FileReader(); rd.onload=()=>{ const im=new Image(); im.onload=()=>{ const W=480,H=384, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
@@ -1152,11 +1168,9 @@ async function thRoads(c,R){
 function thPickOnSegs(segs,c,R){ const tot=segs.reduce((x,s)=>x+s.len,0); let r=Math.random()*tot;
   for(const s of segs){ if((r-=s.len)<=0){ const t=Math.random(); return {lat:s.a.lat+(s.b.lat-s.a.lat)*t,lng:s.a.lng+(s.b.lng-s.a.lng)*t}; } } return thRandIn(c,R); }
 async function thHide(){
-  const C=S.th.cfg, rd=id=>Number(($('#'+id)||{}).value);
-  const R=rd('tc_r'),N=rd('tc_n'),coin=rd('tc_c'),fr=rd('tc_f'),tm=rd('tc_t'),gc=rd('tc_g'),ga=rd('tc_ga');
-  if(!(R>=50&&N>=1&&coin>0&&fr>=10&&tm>=5)){ SFX.error(); return toast('설정값을 확인해 주세요'); }
-  Object.assign(C,{radius:R,count:N,coin,findR:fr,time:tm,goldCoin:gc>0?gc:0,goldAt:ga>0?ga:0});
-  const ct=($('#tc_ctr')||{}).value||'';
+  thCfgLive(); const C=S.th.cfg, R=C.radius,N=C.count;
+  if(!(C.radius>=50&&C.count>=1&&C.coin>0&&C.findR>=10&&C.time>=5)){ SFX.error(); return toast('설정값을 확인해 주세요 (반경 50m 이상, 제한 시간 5분 이상)'); }
+  const ct=C.ctrText||'';
   if(ct.trim()){ const m=ct.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/); if(!m){ SFX.error(); return toast('좌표는 "34.07035, 134.54650" 형태로 넣어주세요'); } C.center={lat:+m[1],lng:+m[2]}; }
   else if(TH.pos) C.center={...TH.pos};
   if(!C.center){ return navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{ TH.pos={lat:p.coords.latitude,lng:p.coords.longitude}; thHide(); },()=>{ SFX.error(); toast('중심 좌표를 넣거나 위치 권한을 허용해 주세요'); },{enableHighAccuracy:true,timeout:15000}):toast('중심 좌표를 넣어주세요'); }
@@ -1169,7 +1183,7 @@ async function thHide(){
     return {id:'t'+Date.now().toString(36)+i,lat:p.lat,lng:p.lng,kind:k,coin:k==='coin'?C.coin:k==='jack'?Math.round(C.coin*2.5):0,card:k==='card'?(Math.random()<.5?'steal':'shield'):null,found:null}; });
   S.th.saved=null; S.th.news=[]; S.th.skills={}; S.th.jam={}; S.th.boost={}; S.th.pulse={}; S.th.trail={};
   S.th.state='ready'; S.th.gold=null; S.th.endAt=0; S.games.treasure.status='soon'; save(); SFX.coin();
-  toast('보물 '+out.length+'개를 '+src+'에 숨겼어요. 지도에서 확인하고 게임을 시작하세요'); openGame('treasure',true);
+  toast('보물 '+out.length+'개를 '+src+'에 숨겼어요. 지도에서 확인하고 게임을 시작하세요'); thSetClose(); openGame('treasure',true);
 }
 function thStartGame(){ if(!S.th.spots.length) return toast('먼저 보물을 숨겨주세요'); S.th.state='live'; S.th.endAt=Date.now()+S.th.cfg.time*60000; S.th.gold=null; S.games.treasure.status='live'; save(); SFX.fanfare(); toast('보물찾기 시작! '+S.th.cfg.time+'분'); render(); openGame('treasure',true); }
 function thEndGame(){ S.th.state='done'; S.games.treasure.status='done'; thArchive(); save(); SFX.undo(); render(); openGame('treasure',true); }
@@ -1202,16 +1216,35 @@ function thSummary(){ const C=S.th.cfg, st=S.th.state, m=me();
   h+=thHistHTML();
   const rk=thRanks(); if(!TH.viewing&&rk.length) h+='<section class="card flat"><h3>🏃 조별 이동 거리</h3>'+rk.map((x,k)=>'<div class="rk-row"><span class="medal m'+Math.min(k+1,4)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+x.t.color+'"></span><span class="rk-n"><b>'+esc(x.t.name)+'</b></span><b class="camt">'+thFmt(x.d)+'</b></div>').join('')+'<button class="btn ghost full" style="margin-top:10px" onclick="thReplay()">🗺️ 탐험 리플레이 보기</button></section>';
   return h; }
-function thAdmin(){ const C=S.th.cfg, st=S.th.state, f=(id,l,v,u)=>'<label class="tcf"><span>'+l+'</span><input id="'+id+'" type="number" inputmode="numeric" value="'+v+'" onchange="thCfgLive()"><em>'+u+'</em></label>';
-  let h='<section class="card flat"><h3>'+ic('tool','sm')+' 보물 숨기기 (운영진)</h3>';
-  if(st==='setup'||st==='ready') h+='<div class="tcgrid">'+f('tc_r','숨길 반경',C.radius,'m')+f('tc_n','보물 개수',C.count,'개')+f('tc_c','보물 1개당',C.coin,'코인')+f('tc_f','발견 반경',C.findR,'m')+f('tc_t','제한 시간',C.time,'분')+f('tc_g','황금 보물',C.goldCoin,'코인')+f('tc_ga','황금 출현',C.goldAt,'분 전')+'</div>'
-     +field('중심 위치','<input id="tc_ctr" placeholder="비우면 지금 내 위치 · 예) 34.07035, 134.54650" value="'+(C.center&&st==='ready'?C.center.lat.toFixed(5)+', '+C.center.lng.toFixed(5):'')+'">','구글 지도에서 장소를 길게 눌러 나온 좌표를 붙여넣어도 돼요')
-     +'<button class="btn '+(st==='ready'?'ghost':'primary')+' full" onclick="thHide()">'+ic('dice','sm')+(st==='ready'?'다시 숨기기':'보물 숨기기')+'</button><p class="sub" style="margin:6px 0 10px">걸을 수 있는 길(보도·골목·공원길) 위에만 숨겨요. 보물끼리는 최소 50m 떨어져요.</p>'
-     +(st==='ready'?'<button class="btn primary full" onclick="thStartGame()">'+ic('flag','sm')+'게임 시작 ('+C.time+'분)</button><p class="sub" style="margin-top:6px">"숨긴 보물 확인하기"에서 이상한 위치의 보물은 눌러서 뺄 수 있어요.</p>':'');
-  if(st==='live') h+='<button class="btn ghost full" onclick="thEndGame()">게임 지금 끝내기</button>';
-  if(st==='done') h+='<button class="btn ghost full" onclick="thReset()">새 게임 준비하기</button>';
-  const got=S.th.spots.filter(s=>s.found); if(got.length) h+='<div style="margin-top:12px">'+got.map(s=>'<div class="thadm"><span class="thno" style="background:'+team(s.found.team).color+'">'+(s.gold?'★':'')+'</span><div><b>'+esc(team(s.found.team).name)+' · '+coinIc+s.coin+'</b><small>'+esc((person(s.found.pid)||{}).name||'')+' · '+ago(s.found.ts)+'</small></div><button class="mini" onclick="thUnfind(\''+s.id+'\')">발견 취소</button></div>').join('')+'</div>';
+function thCtrl(){ const C=S.th.cfg, st=S.th.state, n=S.th.spots.length;
+  const steps=[['setup','설정'],['ready','숨김'],['live','진행'],['done','종료']], si=steps.findIndex(x=>x[0]===st);
+  let h='<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 진행 관리</h3><button class="mini" onclick="thSet()">⚙️ 설정</button></div>'
+   +'<div class="tcstep">'+steps.map((x,k)=>'<span class="'+(k<si?'done':k===si?'on':'')+'"><i>'+(k<si?'✓':k+1)+'</i>'+x[1]+'</span>').join('<b></b>')+'</div>'
+   +'<p class="tcsum">📍 '+(C.center?'반경 '+C.radius+'m':'중심 미정 · 반경 '+C.radius+'m')+' · 💎 '+C.count+'개 × '+C.coin+'코인 · ⏱ '+C.time+'분'+(C.goldCoin?' · ⭐ '+C.goldCoin+'코인(종료 '+C.goldAt+'분 전)':'')+'</p>';
+  if(st==='setup') h+='<button class="btn primary full" onclick="thSet()">'+ic('dice','sm')+'보물 숨기러 가기</button><p class="sub tcp">설정을 확인하고 마지막 단계에서 보물을 숨겨요</p>';
+  if(st==='ready') h+='<button class="btn primary full" onclick="thStartGame()">'+ic('flag','sm')+'게임 시작 ('+C.time+'분)</button><div class="tc2"><button class="btn ghost" onclick="thPlay()">보물 위치 확인</button><button class="btn ghost" onclick="thSet(3)">다시 숨기기</button></div>';
+  if(st==='live') h+='<div class="tclive"><b>⏱ '+thClock()+'</b><span>남은 보물 '+S.th.spots.filter(s=>!s.found).length+' / '+n+'</span></div><button class="btn ghost full" onclick="thEndGame()">게임 지금 끝내기</button>';
+  if(st==='done') h+='<button class="btn primary full" onclick="thReset()">새 게임 준비하기</button><p class="sub tcp">이번 결과는 "지난 기록"에 저장돼 있어요</p>';
+  const got=S.th.spots.filter(s=>s.found); if(got.length&&st!=='setup') h+='<details class="tcgot"><summary>발견 내역 '+got.length+'건 · 잘못된 발견 취소</summary>'+got.map(s=>'<div class="thadm"><span class="thno" style="background:'+team(s.found.team).color+'">'+(s.gold?'★':'')+'</span><div><b>'+esc(team(s.found.team).name)+' · '+coinIc+(s.found.got||0)+'</b><small>'+esc((person(s.found.pid)||{}).name||'')+' · '+ago(s.found.ts)+'</small></div><button class="mini" onclick="thUnfind(\''+s.id+'\')">발견 취소</button></div>').join('')+'</details>';
   return h+'</section>'; }
+let thStep=0, thTab='th';
+function thSet(step){ thStep=step||0; thTab='th'; thSetDraw(); }
+function thSetClose(){ const e=$('#thset'); if(e) e.remove(); }
+function thSetDraw(){ const C=S.th.cfg, st=S.th.state, lock=st==='live';
+  const f=(id,l,v,u,hint)=>'<label class="tcf"><span>'+l+(hint?'<small>'+hint+'</small>':'')+'</span><input id="'+id+'" type="number" inputmode="numeric" value="'+v+'" onchange="thCfgLive()" '+(lock?'disabled':'')+'><em>'+u+'</em></label>';
+  const S4=[['구역','📍'],['보물','💎'],['시간','⏱'],['확인','✅']];
+  let body='';
+  if(thTab==='info') body=gameInfoHTML('treasure');
+  else { body='<div class="tsteps">'+S4.map((x,k)=>'<button class="'+(k===thStep?'on':k<thStep?'done':'')+'" onclick="thCfgLive();thStep='+k+';thSetDraw()"><i>'+x[1]+'</i>'+x[0]+'</button>').join('')+'</div>';
+    if(lock) body+='<p class="tlock">게임 진행 중에는 설정을 바꿀 수 없어요</p>';
+    if(thStep===0) body+='<h4>보물을 숨길 구역</h4>'+field('중심 위치','<input id="tc_ctr" placeholder="비우면 지금 내 위치 · 예) 34.07035, 134.54650" value="'+esc(C.ctrText||(C.center?C.center.lat.toFixed(5)+', '+C.center.lng.toFixed(5):''))+'" onchange="thCfgLive()" '+(lock?'disabled':'')+'>','구글 지도에서 장소를 길게 눌러 나온 좌표를 붙여넣어도 돼요')+f('tc_r','숨길 반경',C.radius,'m','이 원 안의 길 위에 숨겨요');
+    if(thStep===1) body+='<h4>보물 개수와 코인</h4>'+f('tc_n','보물 개수',C.count,'개','조 수 × 2~3개 추천')+f('tc_c','보물 1개당',C.coin,'코인','대박 보물은 2.5배')+f('tc_f','발견 반경',C.findR,'m','GPS 오차 고려 30m 추천');
+    if(thStep===2) body+='<h4>시간과 황금 보물</h4>'+f('tc_t','제한 시간',C.time,'분')+f('tc_g','황금 보물',C.goldCoin,'코인','0이면 황금 보물 없음')+f('tc_ga','황금 출현',C.goldAt,'분 전','종료 몇 분 전에 나타날지');
+    if(thStep===3) body+='<h4>확인하고 숨기기</h4><div class="tconf">'+[['📍 구역',(C.ctrText||C.center?'지정한 좌표':'지금 내 위치')+' · 반경 '+C.radius+'m'],['💎 보물',C.count+'개 · 1개당 '+C.coin+'코인'],['🎯 발견 반경',C.findR+'m'],['⏱ 제한 시간',C.time+'분'],['⭐ 황금 보물',C.goldCoin?C.goldCoin+'코인 · 종료 '+C.goldAt+'분 전':'없음']].map(x=>'<div><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')+'</div>'
+      +(lock?'':'<button class="btn primary full" onclick="thHide()">'+ic('dice','sm')+(st==='ready'?'다시 숨기기':'보물 숨기기')+'</button><p class="sub tcp">걸을 수 있는 길(보도·골목·공원길) 위에만 숨겨요. 보물끼리는 최소 50m 떨어져요.</p>');
+    body+='<div class="tnav">'+(thStep>0?'<button class="btn ghost" onclick="thCfgLive();thStep--;thSetDraw()">이전</button>':'<span></span>')+(thStep<3?'<button class="btn primary" onclick="thCfgLive();thStep++;thSetDraw()">다음</button>':'')+'</div>'; }
+  let el=$('#thset'); if(!el){ el=document.createElement('div'); el.id='thset'; el.className='thset'; document.body.appendChild(el); }
+  el.innerHTML='<div class="tsb"><div class="tsh"><b>⚙️ 보물찾기 설정</b><button onclick="thCfgLive();thSetClose();openGame(\'treasure\',true)" aria-label="닫기">'+ic('x')+'</button></div><div class="ttab"><button class="'+(thTab==='th'?'on':'')+'" onclick="thCfgLive();thTab=\'th\';thSetDraw()">보물 설정</button><button class="'+(thTab==='info'?'on':'')+'" onclick="thCfgLive();thTab=\'info\';thSetDraw()">게임 정보</button></div><div class="tsc">'+body+'</div></div>'; }
 function thClock(){ const r=Math.max(0,S.th.endAt-Date.now()), m=Math.floor(r/60000), s=Math.floor(r/1000)%60; return m+':'+String(s).padStart(2,'0'); }
 
 /* ---------- 탐지기 ---------- */
@@ -1473,8 +1506,8 @@ function thView(rid,rep){ const r=S.games.treasure.results.find(x=>x.id===rid); 
   S.th=Object.assign(JSON.parse(JSON.stringify(r.th)),{v:2,state:'done',saved:rid,skills:{},jam:{},boost:{},pulse:{}}); thPlay(); toast(r.no+'회차 기록을 보고 있어요'); if(rep) setTimeout(()=>thReplay(),400); }
 function thHistDel(rid){ const st=S.games.treasure; st.results=st.results.filter(x=>x.id!==rid); save(); SFX.undo(); toast('기록을 삭제했어요 (코인은 그대로예요)'); openGame('treasure',true); }
 
-function thCfgLive(){ if(!S.th||!(S.th.state==='setup'||S.th.state==='ready')) return; const C=S.th.cfg, rd=id=>Number(($('#'+id)||{}).value), map={tc_r:'radius',tc_n:'count',tc_c:'coin',tc_f:'findR',tc_t:'time',tc_g:'goldCoin',tc_ga:'goldAt'};
-  Object.keys(map).forEach(id=>{ const v=rd(id); if(v>=0&&!isNaN(v)) C[map[id]]=v; }); if(S.th.state==='ready') S.th.spots.forEach(s=>{ if(s.kind==='coin') s.coin=C.coin; else if(s.kind==='jack') s.coin=Math.round(C.coin*2.5); }); save();
+function thCfgLive(){ if(!S.th) return; const C=S.th.cfg, rd=id=>Number(($('#'+id)||{}).value), map={tc_r:'radius',tc_n:'count',tc_c:'coin',tc_f:'findR',tc_t:'time',tc_g:'goldCoin',tc_ga:'goldAt'};
+  Object.keys(map).forEach(id=>{ if(!$('#'+id)) return; const v=rd(id); if(v>=0&&!isNaN(v)) C[map[id]]=v; }); const ce=$('#tc_ctr'); if(ce) C.ctrText=ce.value; if(S.th.state==='ready') S.th.spots.forEach(s=>{ if(s.kind==='coin') s.coin=C.coin; else if(s.kind==='jack') s.coin=Math.round(C.coin*2.5); }); save();
   const b=$('#thsumbox'); if(b) b.innerHTML=thSumBody(); }
 
 /* ================= 설정 ================= */
