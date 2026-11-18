@@ -288,7 +288,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .bgp{background:#fff;border-radius:14px;overflow:hidden;border:2.5px solid var(--tc)}.bgp.win{border-width:4px;box-shadow:0 0 0 3px #FFD84D}
 .bgimg{position:relative;aspect-ratio:4/3;background-size:cover;background-position:center;background-color:#ddd;cursor:zoom-in}.bgps.list .bgimg{aspect-ratio:4/3}
 .bgcrown{position:absolute;left:6px;top:6px;background:#FFD84D;border:2px solid #1E1E1C;border-radius:8px;font-size:11px;font-weight:900;padding:1px 6px}
-.bgpi{padding:7px 9px 9px}.bgph{display:flex;align-items:center;gap:5px;font-size:12.5px}.bgph i{width:9px;height:9px;border-radius:3px;border:1.5px solid #1E1E1C}.bgph em{font-style:normal;font-size:10px;font-weight:800;background:var(--tc);color:#fff;border-radius:5px;padding:0 4px}.bgph small{margin-left:auto;font-size:10.5px;color:var(--sub)}
+.bgpi{padding:7px 9px 9px}.bgph{display:flex;align-items:center;gap:5px;font-size:12.5px;min-width:0}.bgph b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bgph em,.bgph i{flex:none;white-space:nowrap}.bgpm{font-size:10.5px;color:var(--sub);margin:1px 0 0 14px}.bgph i{width:9px;height:9px;border-radius:3px;border:1.5px solid #1E1E1C}.bgph em{font-style:normal;font-size:10px;font-weight:800;background:var(--tc);color:#fff;border-radius:5px;padding:0 4px}.bgph small{margin-left:auto;font-size:10.5px;color:var(--sub)}
 .bgcm{font-size:12px;line-height:1.45;margin-top:4px;color:#4A4740;word-break:break-word}.bgps.grid .bgcm{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .bgvote{margin-top:6px;width:100%;height:34px;border-radius:10px;background:#FFE1E6;color:#D23B5C;font-weight:900;font-size:12.5px;border:2px solid #D23B5C}.bgvote.on{background:#D23B5C;color:#fff}.bgvc{display:inline-block;margin-top:4px;font-weight:900;color:#D23B5C;font-size:13px}
 .bgcands{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.bgcd{background:#fff;border-radius:12px;overflow:hidden;border:2px solid #E5E0D5}.bgcd.top{border-color:#1E1E1C}.bgcd .bgimg{aspect-ratio:1/1}.bgcd .bgcrown{font-size:9.5px;left:4px;top:4px}
@@ -1622,9 +1622,9 @@ function bgDraw(){ const el=$('#bingo'); if(!el) return; const cellHTML=$('#bgce
 
 /* ---------- 미션 상세 ---------- */
 function bgOpen(i,keep){ BG.cell=i; if(!keep) BG.draft=null; const box=$('#bgcell'); if(!box) return; const oldSc=$('#bgcell .bgsc'), sy=oldSc?oldSc.scrollTop:0; const c=BG_CELLS[i], st=S.bingo.state, m=me(), my=m.team;
-  const fin=bgFinals(i), mineC=bgCands(i,my), voted=bgMyVote(i);
+  const fin=bgFinals(i).sort((a,b)=>(b.team===my)-(a.team===my)), mineC=bgCands(i,my), voted=bgMyVote(i);
   const card=(p,big)=>{ const t=team(p.team), u=person(p.pid), n=bgCands(i,p.team).length, isMy=p.team===my, w=st==='done'&&S.bingo.win[i]===p.team;
-    return '<div class="bgp'+(w?' win':'')+'" style="--tc:'+t.color+'"><div class="bgimg" style="background-image:url('+p.img+')" onclick="bgZoom(\''+p.id+'\')">'+(w?'<span class="bgcrown">👑 우승</span>':'')+'</div><div class="bgpi"><div class="bgph"><i style="background:'+t.color+'"></i><b>'+esc(t.name)+'</b>'+(isMy?'<em>우리</em>':'')+'<small>후보 '+n+'장</small></div>'
+    return '<div class="bgp'+(w?' win':'')+'" style="--tc:'+t.color+'"><div class="bgimg" style="background-image:url('+p.img+')" onclick="bgZoom(\''+p.id+'\')">'+(w?'<span class="bgcrown">👑 우승</span>':'')+'</div><div class="bgpi"><div class="bgph"><i style="background:'+t.color+'"></i><b>'+esc(t.name)+'</b>'+(isMy?'<em>우리 조</em>':'')+'</div><div class="bgpm">후보 '+n+'장</div>'
      +(p.cm?'<p class="bgcm"><b>'+esc(u?u.name:'')+'</b> '+esc(p.cm)+'</p>':'<p class="bgcm"><b>'+esc(u?u.name:'')+'</b></p>')
      +(st==='vote'&&!isMy?'<button class="bgvote'+(voted&&voted.id===p.id?' on':'')+'" onclick="bgVoteFor(\''+p.id+'\')">'+(voted&&voted.id===p.id?'♥ 좋아요 취소':'♡ 이 사진에 좋아요')+'</button>':'')
      +(st==='done'?'<span class="bgvc">♥ '+p.vl.length+'</span>':'')+'</div></div>'; };
