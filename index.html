@@ -212,6 +212,26 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .lk-c{display:block;font-size:24px;font-weight:900;color:#FFD84D;animation:thp .5s infinite}.lk-bar{height:16px;border-radius:9px;background:rgba(255,255,255,.2);border:2px solid #fff;overflow:hidden;margin:14px 0 6px}.lk-bar i{display:block;height:100%;width:0;background:#FFD84D;transition:width .08s}.lk-tm{font-size:13px;font-weight:700}.thlock.ok .lk-box{transform:scale(1.2);transition:.3s}
 .fogpick{display:flex;flex-direction:column;gap:6px;margin-top:12px}.fogpick button{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:12px;background:#F5F2EA;font-weight:800;font-size:14px;color:#1E1E1C;opacity:1;animation:none;margin:0}.fogpick i{width:12px;height:12px;border-radius:4px;border:1.5px solid #1E1E1C}.zpop .cx{background:#E9E4D8!important;color:#1E1E1C!important;margin-top:10px!important}
 .bst{display:inline-block;background:#FFD84D;color:#1E1E1C;border-radius:6px;padding:0 6px;font-weight:900}
+.pdock{position:absolute;left:0;right:0;bottom:0;z-index:6;background:#FFFDF7;border-top:3px solid #1E1E1C;border-radius:24px 24px 0 0;padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 12px);box-shadow:0 -6px 18px rgba(0,0,0,.12)}
+.pdock .mpattr{position:absolute;left:10px;top:-22px;bottom:auto}
+.pdrow{display:flex;gap:8px;align-items:stretch}
+.pdock .pdet{position:static;flex:1;min-width:0;border:2.5px solid #1E1E1C;box-shadow:none;border-radius:16px;min-height:72px}
+.pdock .phint i{top:-6px;right:-4px}.pdock .phint{position:relative;flex:none;width:72px;height:auto;min-height:72px;border-radius:16px;box-shadow:none}
+.pinv{margin-top:10px;position:relative;background:#2B2A33;border-radius:16px;padding:16px 8px 8px}.pinvt{position:absolute;left:12px;top:-9px;background:#FFD84D;border:2px solid #1E1E1C;border-radius:99px;padding:0 8px;font-size:11px;font-weight:900;line-height:16px}
+.pdock .pskill{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.pdock *{box-sizing:border-box}
+.pskill .slot{position:relative;width:auto;height:auto;min-width:0;flex-direction:row;justify-content:flex-start;gap:6px;padding:7px 6px;border-radius:12px;background:#3C3B47;border:2px solid #5A5866;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);color:#fff;text-align:left}
+.pskill .ske{flex:none;width:32px;height:32px;border-radius:9px;background:#FFFDF7;border:2px solid #1E1E1C;display:flex;align-items:center;justify-content:center;font-size:18px}
+.pskill .skt{min-width:0;background:none;padding:0;border:0;font-size:inherit;display:flex;flex-direction:column;line-height:1.15}.pskill .skt b{font-size:12.5px;font-weight:900}.pskill .skt small{font-size:9.5px;color:#C9C6D6;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pskill .slot i{position:absolute;right:-5px;top:-7px;min-width:18px;height:18px;border-radius:9px;background:#E5483F;border:2px solid #fff;font-style:normal;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.pskill .slot.used,.pskill .slot:disabled{opacity:.4;transform:none;box-shadow:none}.pskill .slot.used i{background:#888}.pskill .slot.on{background:#7A5A00;border-color:#FFD84D;opacity:1;animation:thp 1s infinite}.pskill .slot:not(:disabled):active{transform:translateY(2px)}
+.play .psheet{z-index:9}
+.play.rep .pdock,.play.rep .ptick,.play.rep .pfab,.play.rep .mpm{display:none}
+.prep{position:absolute;inset:0;z-index:7;pointer-events:none}.prep canvas{position:absolute;inset:0;width:100%;height:100%}
+.rpbox{position:absolute;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);background:#FFFDF7;border:3px solid #1E1E1C;border-radius:20px;padding:12px 14px;pointer-events:auto;box-shadow:0 4px 0 #1E1E1C}
+.rph{display:flex;justify-content:space-between;align-items:center}.rph b{font-size:16px}.rph button{width:32px;height:32px;border-radius:50%;background:#F1EEE7;display:flex;align-items:center;justify-content:center}
+.rpbar{height:6px;border-radius:3px;background:#EEE9DD;margin:8px 0;overflow:hidden}.rpbar i{display:block;height:100%;width:0;background:#E5483F}
+.rplist{display:flex;flex-direction:column;gap:4px;max-height:150px;overflow:auto}.rplist>div{display:flex;align-items:center;gap:6px;font-size:13px}.rplist i{width:12px;height:12px;border-radius:4px;border:1.5px solid #1E1E1C}.rplist b{flex:1}.rkm{width:22px;text-align:center;font-weight:900}.rpd{font-weight:900;font-variant-numeric:tabular-nums}
+.rpwin{margin:8px 0;font-size:13px;opacity:0;transition:.4s}.prep.fin .rpwin{opacity:1}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
 .hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
@@ -1159,6 +1179,7 @@ function thSummary(){ const C=S.th.cfg, st=S.th.state, m=me();
    +'<p class="sub">반경 '+C.radius+'m 안 어딘가에 보물이 숨겨져 있어요. 힌트는 없어요! 보물 '+C.detR+'m 안에 들어오면 탐지기가 울리고, '+C.findR+'m 안에 들어가면 먼저 온 조가 가져가요.'+(C.goldCoin?' 종료 '+C.goldAt+'분 전엔 '+coinIc+C.goldCoin+' 황금 보물이 나타나요!':'')+'</p><p class="thst '+st+'">'+lbl+'</p></section>';
   h+='<button class="btn primary full thjoin" onclick="thPlay()" '+(st==='setup'&&!m.admin?'disabled':'')+'>'+ic('map','sm')+(st==='done'?'결과 지도 보기':st==='setup'?(m.admin?'지도 미리보기':'보물을 숨기는 중이에요'):m.admin&&st==='ready'?'숨긴 보물 확인하기':'게임 참여하기')+'</button>';
   if(S.th.spots.length) h+='<section class="card flat"><h3>'+ic('trophy','sm')+' 보물 현황</h3>'+thStatHTML()+'</section>';
+  const rk=thRanks(); if(rk.length) h+='<section class="card flat"><h3>🏃 조별 이동 거리</h3>'+rk.map((x,k)=>'<div class="rk-row"><span class="medal m'+Math.min(k+1,4)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+x.t.color+'"></span><span class="rk-n"><b>'+esc(x.t.name)+'</b></span><b class="camt">'+thFmt(x.d)+'</b></div>').join('')+'<button class="btn ghost full" style="margin-top:10px" onclick="thReplay()">🗺️ 탐험 리플레이 보기</button></section>';
   return h; }
 function thAdmin(){ const C=S.th.cfg, st=S.th.state, f=(id,l,v,u)=>'<label class="tcf"><span>'+l+'</span><input id="'+id+'" type="number" inputmode="numeric" value="'+v+'"><em>'+u+'</em></label>';
   let h='<section class="card flat"><h3>'+ic('tool','sm')+' 보물 숨기기 (운영진)</h3>';
@@ -1230,9 +1251,9 @@ function thClaim(id){
   thChestFX(s,my,()=>{ TH.busy=false; TH.justFound=s.id; MP.c={lat:s.lat,lng:s.lng}; thPaint(); setTimeout(()=>{ TH.justFound=null; },1200); });
 }
 /* 스킬 */
-const SKILL={pulse:{n:'펄스',e:'📡',d:'10초 동안 모든 보물 위치가 보여요'},fog:{n:'안개',e:'🌫️',d:'다른 조 하나의 탐지기를 1분간 먹통으로'},boost:{n:'부스터',e:'🚀',d:'다음에 찾는 보물 코인 2배'}};
+const SKILL={pulse:{n:'펄스',e:'📡',s:'보물 위치 공개',d:'10초 동안 모든 보물 위치가 보여요'},fog:{n:'안개',e:'🌫️',s:'상대 탐지기 마비',d:'다른 조 하나의 탐지기를 1분간 먹통으로'},boost:{n:'부스터',e:'🚀',s:'다음 보물 2배',d:'다음에 찾는 보물 코인 2배'}};
 function thSkillBar(){ const b=$('#pskill'); if(!b) return; const my=me().team, u=(S.th.skills||{})[my]||{}, live=thLive();
-  b.innerHTML=Object.keys(SKILL).map(k=>'<button class="'+(u[k]?'used':'')+(k==='boost'&&(S.th.boost||{})[my]?' on':'')+'" '+(u[k]||!live?'disabled':'')+' onclick="thSkill(\''+k+'\')"><span>'+SKILL[k].e+'</span><small>'+SKILL[k].n+'</small></button>').join(''); }
+  b.innerHTML=Object.keys(SKILL).map(k=>{ const on=k==='boost'&&(S.th.boost||{})[my]; return '<button class="slot'+(u[k]&&!on?' used':'')+(on?' on':'')+'" '+(u[k]||!live?'disabled':'')+' onclick="thSkill(\''+k+'\')"><span class="ske">'+SKILL[k].e+'</span><span class="skt"><b>'+SKILL[k].n+'</b><small>'+(on?'장착 중!':u[k]?'사용 완료':SKILL[k].s)+'</small></span><i>'+(u[k]?0:1)+'</i></button>'; }).join(''); }
 function thSkill(k){ const my=me().team; S.th.skills=S.th.skills||{}; const u=S.th.skills[my]=S.th.skills[my]||{}; if(u[k]||!thLive()) return;
   if(k==='fog'){ const ts=TEAMS.filter(t=>t.id!==my); const el=document.createElement('div'); el.className='zpop'; el.innerHTML='<div><b>🌫️</b><h2>어느 조에 안개를?</h2><p>그 조의 탐지기가 1분간 먹통이 돼요</p><div class="fogpick">'+ts.map(t=>'<button onclick="thFog(\''+t.id+'\',this)"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</button>').join('')+'</div><button class="cx" onclick="this.closest(\'.zpop\').remove()">취소</button></div>'; document.body.appendChild(el); return; }
   u[k]=1;
@@ -1245,7 +1266,10 @@ function thFog(tid,btn){ const my=me().team, u=S.th.skills[my]=S.th.skills[my]||
 function thTicker(fresh){ const el=$('#ptick'); if(!el) return; const N=(S.th.news||[]).slice(-6).reverse(); if(!N.length){ el.innerHTML='<span>📣 보물찾기 진행 중! 먼저 찾는 조가 임자예요</span>'; return; }
   if(fresh||!el.dataset.k||Date.now()-(+el.dataset.t||0)>5000){ const i=fresh?0:((+el.dataset.k||0)+1)%N.length; el.dataset.k=i; el.dataset.t=Date.now(); el.innerHTML='<span class="'+(fresh?'new':'')+'">'+esc(N[i].txt)+' <small>'+ago(N[i].ts)+'</small></span>'; } }
 /* 체험용 다른 조 봇 */
-function thBots(on){ clearInterval(TH.bot); TH.bot=null; if(!on){ toast('다른 조 봇을 껐어요'); thSheet(0); return; } toast('다른 조 봇이 움직이기 시작했어요'); thSheet(0);
+function thBots(on){ clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null; TH.botw=null; if(!on){ toast('다른 조 봇을 껐어요'); thSheet(0); return; } toast('다른 조 봇이 움직이기 시작했어요'); thSheet(0);
+  TH.bw=TH.bw||{}; TH.botw=setInterval(()=>{ if(!thLive()) return; const C=S.th.cfg, ctr=C.center||MP.c, my=me().team; TEAMS.filter(t=>t.id!==my).forEach((t,k)=>{ const sp=0.5+(k%4)*0.35;
+    for(let m=0;m<2;m++){ const pp=S.people.filter(p=>p.team===t.id)[m]; if(!pp) continue; const key=t.id+m; let b=TH.bw[key]||{p:thRandIn(ctr,C.radius*.3),a:Math.random()*6.28};
+      b.a+=(Math.random()-.5)*1.2; let np=thOffset(b.p,22*sp,b.a); if(thDist(ctr,np)>C.radius){ b.a+=Math.PI; np=thOffset(b.p,22*sp,b.a); } b.p=np; TH.bw[key]=b; thTrailAdd(t.id,pp.id,np); } }); },2500);
   TH.bot=setInterval(()=>{ if(!thLive()||!$('#play')) return; const my=me().team, ts=TEAMS.filter(t=>t.id!==my), t=ts[Math.floor(Math.random()*ts.length)];
     if(Math.random()<.15&&!((S.th.skills||{})[t.id]||{}).fog){ S.th.skills=S.th.skills||{}; (S.th.skills[t.id]=S.th.skills[t.id]||{}).fog=1; S.th.jam=S.th.jam||{}; S.th.jam[my]=Date.now()+60000; thNews('🌫️ '+t.name+'이(가) '+team(my).name+'에 안개를 뿌렸어요!'); toast('🌫️ '+t.name+'이(가) 우리 탐지기에 안개를 뿌렸어요!'); buzz([200]); save(); thPaint(); return; }
     const left=S.th.spots.filter(s=>!s.found&&s.id!==TH.sel); if(!left.length) return; const s=left[Math.floor(Math.random()*left.length)], pp=S.people.find(p=>p.team===t.id);
@@ -1281,7 +1305,7 @@ function thGoldSpawn(){ const C=S.th.cfg, ctr=C.center||MP.c; let p=null;
   S.th.gold={id:g.id,hint:thOffset(p,Math.random()*90,Math.random()*Math.PI*2)}; save();
   SFX.fanfare(); buzz([200,100,200,100,400]);
   const el=document.createElement('div'); el.className='zpop gpop'; el.innerHTML='<div><b>⭐</b><h2>황금 보물 출현!</h2><p>지도에 표시된 노란 원 안 어딘가에<br>'+coinIc+C.goldCoin+' 황금 보물이 나타났어요.<br>먼저 찾는 조가 가져가요!</p><button onclick="this.closest(\'.zpop\').remove()">달려가기!</button></div>'; document.body.appendChild(el); thPaint(); }
-function thOver(){ const el=document.createElement('div'); el.className='zpop gpop'; el.innerHTML='<div><b>⏱</b><h2>게임 종료!</h2>'+thStatHTML()+'<button onclick="this.closest(\'.zpop\').remove()">결과 보기</button></div>'; document.body.appendChild(el); SFX.fanfare(); thPaint(); }
+function thOver(){ const el=document.createElement('div'); el.className='zpop gpop'; el.innerHTML='<div><b>⏱</b><h2>게임 종료!</h2>'+thStatHTML()+'<button onclick="thReplay()">🗺️ 탐험 리플레이 보기</button><button class="cx" onclick="this.closest(\'.zpop\').remove()">닫기</button></div>'; document.body.appendChild(el); SFX.fanfare(); thPaint(); }
 
 /* ---------- 게임 화면 ---------- */
 const MP={z:15.6,c:{lat:34.0722,lng:134.5505},W:0,H:0,tiles:new Map(),ptr:new Map(),pinch:null};
@@ -1313,11 +1337,11 @@ function thMPP(){ return 156543.03392*Math.cos(MP.c.lat*Math.PI/180)/Math.pow(2,
 function thPlay(){
   ensureTH(); closeModal(); ui.playing='treasure';
   const el=document.createElement('div'); el.className='play'; el.id='play';
-  el.innerHTML='<div class="mpv" id="mpv"><div class="mpfb" id="mpfb"></div><div class="mpt" id="mpt"></div><canvas class="mpfog" id="mpfog"></canvas><div class="mpm" id="mpm"></div></div><div class="psig"></div><div class="ptick" id="ptick"></div><div class="pskill" id="pskill"></div>'
+  el.innerHTML='<div class="mpv" id="mpv"><div class="mpfb" id="mpfb"></div><div class="mpt" id="mpt"></div><canvas class="mpfog" id="mpfog"></canvas><div class="mpm" id="mpm"></div></div><div class="psig"></div><div class="ptick" id="ptick"></div>'
    +'<div class="ptop"><button class="pbk" onclick="thQuit()" aria-label="나가기">'+ic('back')+'</button><div class="ptt"><b>보물찾기</b><small id="ptsub"></small></div><span class="pchip" id="ptchip"></span></div>'
    +'<div class="pfab"><button onclick="thZoom(1)" aria-label="확대">+</button><button onclick="thZoom(-1)" aria-label="축소">−</button><button onclick="thMeGo()" aria-label="내 위치">'+ic('navi')+'</button></div>'
-   +'<small class="mpattr">© OpenStreetMap</small>'
-   +'<div class="pdet" id="pdet"></div><button class="phint" onclick="thSheet(1)">'+ic('chart')+'<span>현황</span><i id="phn"></i></button>'
+   +'<div class="pdock"><small class="mpattr">© OpenStreetMap</small><div class="pdrow"><div class="pdet" id="pdet"></div><button class="phint" onclick="thSheet(1)">'+ic('chart')+'<span>현황</span><i id="phn"></i></button></div>'
+   +'<div class="pinv"><span class="pinvt">아이템</span><div class="pskill" id="pskill"></div></div></div>'
    +'<div class="psheet" id="psheet"><div class="psh"><h3>'+ic('trophy','sm')+' 보물 현황</h3><button class="pclose" onclick="thSheet(0)" aria-label="닫기">'+ic('x')+'</button></div><div id="thbox"></div></div>';
   document.body.appendChild(el); document.body.style.overflow='hidden';
   TH.sel=null; TH.cnt=0; TH.busy=false;
@@ -1326,7 +1350,7 @@ function thPlay(){
   clearInterval(TH.tick); TH.tick=setInterval(thTick,1000); thTick();
 }
 function thSheet(o){ const p=$('#psheet'); if(!p) return; if(o) $('#thbox').innerHTML=thStatHTML()+thSimHTML(); p.classList.toggle('open',!!o); SFX.select(); }
-function thQuit(){ clearInterval(TH.bot); TH.bot=null; const el=$('#play'); if(el) el.remove(); document.body.style.overflow=''; ui.playing=null; MP.tiles.clear(); clearInterval(TH.tick); TH.tick=null; thBeepD=0; render(); openGame('treasure',true); }
+function thQuit(){ clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null; TH.botw=null; TH.rep=0; const el=$('#play'); if(el) el.remove(); document.body.style.overflow=''; ui.playing=null; MP.tiles.clear(); clearInterval(TH.tick); TH.tick=null; thBeepD=0; render(); openGame('treasure',true); }
 function thTop(){ const sub=$('#ptsub'), ch=$('#ptchip'); if(!sub) return; const ss=S.th.spots, my=me().team, mine=ss.filter(s=>s.found&&s.found.team===my), st=S.th.state; thSkillBar(); thTicker();
   sub.innerHTML=st==='live'?'<span class="clk'+(S.th.endAt-Date.now()<300000?' red':'')+'">⏱ '+thClock()+'</span> · 남은 보물 '+ss.filter(s=>!s.found).length:st==='done'?'게임 종료':st==='ready'?'시작 전 · 보물 '+ss.length+'개':'준비 중';
   ch.innerHTML='<i style="background:'+team(my).color+'"></i>우리 조 '+mine.length+'개 · '+coinIc+mine.reduce((a,s)=>a+(s.found.got||0),0); const hn=$('#phn'); if(hn) hn.textContent=ss.filter(s=>!s.found).length; }
@@ -1360,14 +1384,40 @@ function thMapDraw(){
 }
 function thFogDraw(){ const cv=$('#mpfog'); if(!cv) return; const dpr=Math.min(2,devicePixelRatio||1); if(cv.width!==MP.W*dpr){ cv.width=MP.W*dpr; cv.height=MP.H*dpr; } const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
   g.globalCompositeOperation='source-over'; g.clearRect(0,0,MP.W,MP.H); g.fillStyle='rgba(58,52,72,.42)'; g.fillRect(0,0,MP.W,MP.H); g.globalCompositeOperation='destination-out';
-  const r=60/thMPP(), tr=((S.th.trail||{})[me().team]||[]).concat(TH.pos?[TH.pos]:[]);
+  const r=60/thMPP(), tr=thTeamPts(me().team).concat(TH.pos?[TH.pos]:[]); if(TH.rep){ g.clearRect(0,0,MP.W,MP.H); return; }
   tr.forEach(p=>{ const q=mpScr(p); const gr=g.createRadialGradient(q[0],q[1],r*.55,q[0],q[1],r); gr.addColorStop(0,'rgba(0,0,0,1)'); gr.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=gr; g.beginPath(); g.arc(q[0],q[1],r,0,7); g.fill(); }); }
-function thTrail(){ if(!TH.pos||!thLive()) return; const my=me().team; S.th.trail=S.th.trail||{}; const tr=S.th.trail[my]=S.th.trail[my]||[]; const l=tr[tr.length-1]; if(!l||thDist(l,TH.pos)>15){ tr.push({lat:TH.pos.lat,lng:TH.pos.lng}); if(tr.length>800) tr.shift(); save(); } }
+function thTrailAdd(tid,pid,p,ts){ S.th.trail=S.th.trail||{}; let T=S.th.trail[tid]; if(!T||Array.isArray(T)) T=S.th.trail[tid]={}; const tr=T[pid]=T[pid]||[]; const l=tr[tr.length-1]; if(!l||thDist(l,p)>12){ tr.push({lat:+p.lat.toFixed(6),lng:+p.lng.toFixed(6),t:ts||Date.now()}); if(tr.length>1500) tr.shift(); return true; } return false; }
+function thTrail(){ if(!TH.pos||!thLive()) return; if(thTrailAdd(me().team,me().id,TH.pos)) save(); }
+function thTeamPts(tid){ const T=(S.th.trail||{})[tid]; if(!T||Array.isArray(T)) return []; return Object.values(T).flat(); }
+function thTeamDist(tid){ const T=(S.th.trail||{})[tid]; if(!T||Array.isArray(T)) return 0; let d=0; Object.values(T).forEach(tr=>{ for(let i=1;i<tr.length;i++) d+=thDist(tr[i-1],tr[i]); }); return d; }
 /* ---------- 체험(테스트) ---------- */
-function thSimHTML(){ return '<div class="thsim"><small>'+ic('dice','sm')+' 체험용 · 실제로 걷지 않고 움직여 볼 수 있어요</small><div><button class="mini" onclick="thSimStep(60)">가까운 보물 쪽으로 60m</button><button class="mini" onclick="thSimStep(15)">15m 더 가기</button>'+(TH.sim?'<button class="mini" onclick="thStart()">실제 GPS로 돌아가기</button>':'')+'<button class="mini" onclick="thBots('+(TH.bot?0:1)+')">'+(TH.bot?'다른 조 봇 끄기':'다른 조 봇 켜기 (20초마다 경쟁)')+'</button></div></div>'; }
+function thSimHTML(){ return '<div class="thsim"><small>'+ic('dice','sm')+' 체험용 · 실제로 걷지 않고 움직여 볼 수 있어요</small><div><button class="mini" onclick="thSimStep(60)">가까운 보물 쪽으로 60m</button><button class="mini" onclick="thSimStep(15)">15m 더 가기</button>'+(TH.sim?'<button class="mini" onclick="thStart()">실제 GPS로 돌아가기</button>':'')+'<button class="mini" onclick="thReplay()">리플레이 미리보기</button><button class="mini" onclick="thBots('+(TH.bot?0:1)+')">'+(TH.bot?'다른 조 봇 끄기':'다른 조 봇 켜기 (20초마다 경쟁)')+'</button></div></div>'; }
 function thSimStep(m){ const base=TH.pos||S.th.cfg.center; if(!base) return toast('먼저 위치를 켜주세요'); let tgt=TH.sel?thSpot(TH.sel):null;
   if(!tgt){ let b=null; S.th.spots.forEach(s=>{ if(s.found) return; const d=thDist(base,s); if(!b||d<b.d) b={s,d}; }); tgt=b&&b.s; } if(!tgt) return;
   const d=thDist(base,tgt), f=Math.min(1,m/d); TH.sim=true; TH.err=''; TH.acc=5; TH.pos={lat:base.lat+(tgt.lat-base.lat)*f,lng:base.lng+(tgt.lng-base.lng)*f}; thSheet(0); MP.c={...TH.pos}; thPaint(); }
+
+/* ---------- 탐험 리플레이 ---------- */
+function thRanks(){ return TEAMS.map(t=>({t,d:thTeamDist(t.id),n:thTeamPts(t.id).length})).filter(x=>x.n>1).sort((a,b)=>b.d-a.d); }
+function thReplay(){
+  if(!$('#play')) thPlay(); const rk=thRanks(); if(!rk.length) return toast('아직 기록된 이동 경로가 없어요');
+  document.querySelectorAll('.zpop').forEach(e=>e.remove()); thSheet(0);
+  const C=S.th.cfg, ctr=C.center||MP.c; MP.c={...ctr}; MP.z=Math.max(14,Math.min(17,Math.log2(156543*Math.cos(ctr.lat*Math.PI/180)*Math.min(innerWidth,innerHeight)*.42/Math.max(150,C.radius))));
+  TH.rep=1; $('#play').classList.add('rep'); thMapDraw();
+  const pl=$('#play'); let ov=$('#prep'); if(ov) ov.remove(); ov=document.createElement('div'); ov.id='prep'; ov.className='prep';
+  ov.innerHTML='<canvas id="repcv"></canvas><div class="rpbox"><div class="rph"><b>🗺️ 탐험 리플레이</b><button onclick="thRepClose()" aria-label="닫기">'+ic('x')+'</button></div><div class="rpbar"><i id="rpbar"></i></div><div class="rplist">'+rk.map((x,k)=>'<div><span class="rkm">'+(k===0?'🥇':k===1?'🥈':k===2?'🥉':(k+1))+'</span><i style="background:'+x.t.color+'"></i><b>'+esc(x.t.name)+'</b><span class="rpd" data-d="'+x.d+'">0m</span></div>').join('')+'</div>'
+   +'<p class="rpwin">'+(rk[0]?'🏃 가장 많이 돌아다닌 조: <b style="color:'+rk[0].t.color+'">'+esc(rk[0].t.name)+'</b> ('+thFmt(rk[0].d)+')':'')+'</p><button class="btn ghost full" onclick="thReplay()">다시 보기</button></div>';
+  pl.appendChild(ov); const cv=ov.querySelector('#repcv'), dpr=Math.min(2,devicePixelRatio||1); cv.width=MP.W*dpr; cv.height=MP.H*dpr; const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+  const all=[]; rk.forEach(x=>{ Object.values(S.th.trail[x.t.id]).forEach(tr=>{ if(tr.length>1) all.push({c:x.t.color,tr}); }); });
+  const t0=Math.min(...all.map(a=>a.tr[0].t||0)), t1=Math.max(...all.map(a=>a.tr[a.tr.length-1].t||1)), span=Math.max(1,t1-t0), D=12000, st=performance.now(), w=Math.max(4,18/thMPP());
+  const els=[...ov.querySelectorAll('.rpd')]; SFX.open();
+  const fr=now=>{ if(!$('#prep')) return; const f=Math.min(1,(now-st)/D), tc=t0+span*f; g.clearRect(0,0,MP.W,MP.H); g.lineCap='round'; g.lineJoin='round';
+    all.forEach(a=>{ const pts=a.tr.filter(p=>(p.t||0)<=tc); if(pts.length<2) return; g.strokeStyle=a.c; g.globalAlpha=.55; g.lineWidth=w; g.beginPath(); pts.forEach((p,i)=>{ const q=mpScr(p); i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]); }); g.stroke();
+      g.globalAlpha=1; const h=mpScr(pts[pts.length-1]); g.fillStyle=a.c; g.strokeStyle='#1E1E1C'; g.lineWidth=2.5; g.beginPath(); g.arc(h[0],h[1],6,0,7); g.fill(); g.stroke(); });
+    $('#rpbar').style.width=(f*100)+'%'; els.forEach(e=>e.textContent=thFmt(+e.dataset.d*f));
+    if(f<1) requestAnimationFrame(fr); else { SFX.fanfare(); ov.classList.add('fin'); } };
+  requestAnimationFrame(fr);
+}
+function thRepClose(){ const o=$('#prep'); if(o) o.remove(); TH.rep=0; const p=$('#play'); if(p) p.classList.remove('rep'); thMapDraw(); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
