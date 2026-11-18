@@ -339,6 +339,11 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .btn2{flex:1;min-width:0;display:flex;flex-direction:column}.btn2 b{font-size:14px}.btn2 small{font-size:11px;font-weight:800}.btv{text-align:right;display:flex;flex-direction:column}.btv b{font-size:14px}.btv small{font-size:10.5px;color:var(--sub)}
 .btun{display:flex;flex-wrap:wrap;gap:6px}.btun button{min-width:44px;height:36px;border-radius:10px;background:#fff;border:1.5px solid #E2DED3;font-weight:800;padding:0 10px}.btun button.on{background:#1E1E1C;color:#fff;border-color:#1E1E1C}
 .btmode{margin-top:4px}.btpay{margin-top:12px}.btpay small{font-size:12px;color:var(--sub);font-weight:800}.btpay div{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.btpay span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;background:#F1EEE6;border-radius:99px;padding:5px 10px}.btpay span i{width:9px;height:9px;border-radius:50%}.btpay .up b{color:#1F7A4D}.btpay .dn b{color:#C0392B}
+.ndot{position:absolute;top:6px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:#E5483F;border:2px solid #fff}.nav button{position:relative}
+.gnew{position:absolute;top:8px;right:8px;z-index:3;background:#E5483F;color:#fff;font-size:10.5px;font-weight:900;border-radius:99px;padding:2px 7px;box-shadow:0 0 0 2px #fff}.gcard{position:relative}
+.betbn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#1E1E1C;color:#fff;border-radius:18px;padding:12px 14px;margin-bottom:12px}.betbn.urg{background:#C0392B;animation:sigs 1.6s infinite}
+.bbi{font-size:24px}.bbt{flex:1;min-width:0;display:flex;flex-direction:column}.bbt small{font-size:11.5px;color:#FFD84D;font-weight:800}.betbn.urg .bbt small{color:#fff}.bbt b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bbg{flex:none;background:#FFD84D;color:#1E1E1C;font-weight:900;font-size:13px;border-radius:99px;padding:6px 12px}
+.btrg{text-align:center;font-size:12px;color:var(--sub);font-weight:700;margin:-4px 0 10px}.btrng{display:flex;align-items:center;gap:8px}.btrng input{flex:1;min-width:0;height:48px;border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:0 12px;font-size:16px;font-weight:700;text-align:center}.btrng span{font-weight:900}
 .bthow summary{font-weight:900;font-size:15px;display:flex;align-items:center;gap:6px;cursor:pointer;list-style:none}.bthow summary::-webkit-details-marker{display:none}.bthow summary::after{content:'▾';margin-left:auto;color:var(--sub)}.bthow[open] summary::after{content:'▴'}
 .bthow p{font-size:13px;line-height:1.7;color:var(--sub);margin:6px 0 0}
 .bgzoom{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}.bgzoom img{max-width:100%;max-height:75vh;border-radius:12px}.bgzoom p{margin-top:10px;font-size:13.5px;line-height:1.5}
@@ -1119,7 +1124,7 @@ function gamesView(){
   h+='<div class="ggrid">'+list.map((g,i)=>{ const st=S.games[g.id], last=st.results[st.results.length-1];
     const win=last&&last.ranks[0]?winnerName(g,last.ranks[0]):'';
     const wp=last&&last.ranks[0]&&g.unit==='person'?person(last.ranks[0].pid):null;
-    return '<button class="gcard" onclick="openGame(\''+g.id+'\')">'+thumbHTML(g,i,st)+(gStatus(g.id)!=='soon'?'<span class="gst '+gStatus(g.id)+'">'+ST_LABEL[gStatus(g.id)]+'</span>':'')+'</div>'
+    return '<button class="gcard" onclick="openGame(\''+g.id+'\')">'+thumbHTML(g,i,st)+(g.id==='bet'&&betTodo().length?'<span class="gnew">NEW '+betTodo().length+'</span>':'')+(gStatus(g.id)!=='soon'?'<span class="gst '+gStatus(g.id)+'">'+ST_LABEL[gStatus(g.id)]+'</span>':'')+'</div>'
       +'<b>'+esc(g.name)+'</b><small class="gmeta">'+(g.custom?'돌발 · '+prizeLabel(g):esc(gWhen(g)))+'</small>'
       +(win?'<span class="gwin">'+(wp?avatar(wp,'xs'):ic('trophy','sm'))+esc(win)+'</span>':'')+'</button>'; }).join('')+'</div>';
   if(!list.length) h+='<p class="sub center">해당하는 게임이 없어요</p>';
@@ -1795,7 +1800,7 @@ function betStat(t){ return t.state==='done'?'done':betOpen(t)?'open':'closed'; 
 const BET_ST={open:'🟢 베팅 중',closed:'⏸ 마감',done:'✅ 결과 공개'};
 function betLeft(t){ if(!t.dl) return ''; const r=t.dl-Date.now(); if(r<=0) return '마감 시각 지남'; const h=Math.floor(r/3600000), m=Math.floor(r/60000)%60; return (h?h+'시간 ':'')+m+'분 남음'; }
 function betNum(v){ return (Math.round(v*100)/100).toLocaleString('ko-KR'); }
-function betModeTag(t){ return t.mode==='pot'?'💰 판돈형 · 1인 '+t.stake+'코인':'🎁 상금형 · 1등 '+t.prize[0]+(t.prize[1]?' / 2등 '+t.prize[1]:''); }
+function betModeTag(t){ return t.mode==='pot'?'💰 판돈형 · '+(t.pt==='team'?'조당 ':'1인 ')+t.stake+'코인':'🎁 상금형 · 1등 '+t.prize[0]+(t.prize[1]?' / 2등 '+t.prize[1]:''); }
 function betGs(t){ return Object.entries(t.g||{}).map(([pid,x])=>({pid,v:x.v,ts:x.ts,p:person(pid)})).filter(x=>x.p); }
 
 /* ---------- 목록 ---------- */
@@ -1803,7 +1808,7 @@ function betSummary(){ ensureBet(); const m=me(), T=S.bet.topics, op=T.filter(t=
   return '<section class="card flat rewsec"><div class="thsum"><div><b>'+op+'개</b><small>베팅 중</small></div><div><b>'+mineN+'개</b><small>내가 참여</small></div><div><b>'+dn+'개</b><small>끝난 주제</small></div></div>'
    +(todo?'<p class="bgnote" style="margin-top:8px">🔔 아직 답을 안 낸 주제가 '+todo+'개 있어요</p>':'')+'</section>'
    +'<button class="btn primary full thjoin" onclick="betPlay()">🎯 '+(op?'베팅 참여하기':'베팅 주제 보기')+'</button>'
-   +'<details class="card flat bthow" style="margin-top:12px"><summary>'+ic('bulb','sm')+' 규칙 보기</summary><p>· 한 사람당 답 1개, 마감 전까지 몇 번이든 고칠 수 있어요.<br>· 정답에 가장 가까운 사람의 조가 이겨요. 같은 차이면 나눠 가져요.<br>· 다른 사람 답은 결과 공개 때 한꺼번에 보여요.<br>· 💰 판돈형은 지면 우리 조 코인에서 판돈이 빠져 이긴 조로 가요.</p></details>'; }
+   +'<details class="card flat bthow" style="margin-top:12px"><summary>'+ic('bulb','sm')+' 규칙 보기</summary><p>· 한 사람당 답 1개, 마감 전까지 몇 번이든 고칠 수 있어요.<br>· 정답에 가장 가까운 사람의 조가 이겨요. 같은 차이면 나눠 가져요.<br>· 다른 사람 답은 결과 공개 때 한꺼번에 보여요.<br>· 💰 판돈형은 지면 우리 조 코인에서 판돈이 빠져 이긴 조로 가요. (1인당 또는 조당)</p></details>'; }
 function betPlay(id){ ensureBet(); BET.view=id||null; closeModal(); let el=$('#betx'); if(!el){ el=document.createElement('div'); el.id='betx'; el.className='bgx'; document.body.appendChild(el); document.body.style.overflow='hidden'; } betDraw(); SFX.open(); }
 function betQuit(){ const e=$('#betx'); if(e) e.remove(); document.body.style.overflow=''; BET.view=null; render(); openGame('bet',true); }
 function betRefresh(){ if($('#betx')) betDraw(); else openGame('bet',true); }
@@ -1829,9 +1834,10 @@ function betDetail(t){ const m=me(), s=betStat(t), my=t.g&&t.g[m.id], G=betGs(t)
    +'<div class="bth" style="margin-top:12px"><span class="bts '+s+'">'+BET_ST[s]+'</span>'+(s==='open'&&t.dl?'<small>⏰ '+betLeft(t)+'</small>':'')+'</div>'
    +'<h2 class="btq2">'+esc(t.q)+'</h2><div class="btm"><span>'+betModeTag(t)+'</span><span>'+G.length+'명 참여</span></div>';
   if(s==='open'){
-    h+='<div class="btin"><input id="bet_v" type="text" inputmode="decimal" placeholder="숫자로 입력" value="'+(my?my.v:'')+'" onkeydown="if(event.key===\'Enter\')betGuess(\''+t.id+'\')"><em>'+esc(t.unit)+'</em></div>'
-     +'<button class="btn primary full" onclick="betGuess(\''+t.id+'\')">'+(my?'답 고치기':'이 답으로 베팅')+'</button>'
-     +(t.mode==='pot'?'<p class="sub tcp">💰 지면 우리 조 코인에서 '+t.stake+'코인이 빠져 이긴 조로 가요.</p>':'<p class="sub tcp">🎁 코인을 잃지 않아요. 맞히면 상금을 받아요.</p>')
+    h+='<div class="btin"><input id="bet_v" type="text" inputmode="decimal" placeholder="숫자로 입력" value="'+(BET.warn&&BET.warn.id===t.id?BET.warn.v:my?my.v:'')+'" oninput="if(BET.warn){BET.warn=null;}" onkeydown="if(event.key===\'Enter\')betGuess(\''+t.id+'\')"><em>'+esc(t.unit)+'</em></div>'+(t.lo!=null||t.hi!=null?'<p class="btrg">예상 범위 '+(t.lo!=null?betNum(t.lo):'')+' ~ '+(t.hi!=null?betNum(t.hi):'')+t.unit+'</p>':'')
+     +(BET.warn&&BET.warn.id===t.id?'<p class="bgnote warn" style="margin-bottom:8px;animation:none">⚠️ <b>'+betNum(BET.warn.v)+t.unit+'</b>는 예상 범위를 벗어났어요. 맞으면 한 번 더 눌러주세요.</p>':'')
+     +'<button class="btn primary full" onclick="betGuess(\''+t.id+'\')">'+(BET.warn&&BET.warn.id===t.id?'네, 이 답이 맞아요':my?'답 고치기':'이 답으로 베팅')+'</button>'
+     +(t.mode==='pot'?'<p class="sub tcp">💰 지면 우리 조 코인에서 '+(t.pt==='team'?'조당 '+t.stake+'코인(조원 여럿이 내도 한 번만)':t.stake+'코인')+'이 빠져 이긴 조로 가요.</p>':'<p class="sub tcp">🎁 코인을 잃지 않아요. 맞히면 상금을 받아요.</p>')
      +(my?'<p class="bgnote" style="margin-top:8px">내 답 <b>'+betNum(my.v)+t.unit+'</b> · '+ago(my.ts)+'</p>':'');
     h+=betTeamBars(t); }
   else if(s==='closed') h+='<p class="bgnote" style="margin-top:12px">마감됐어요. 운영진이 정답을 공개하면 결과가 떠요.'+(my?'<br>내 답 <b>'+betNum(my.v)+t.unit+'</b>':'')+'</p>'+betTeamBars(t);
@@ -1858,7 +1864,8 @@ function betResult(t){ const G=betGs(t).map(x=>({...x,d:Math.abs(x.v-t.ans)})).s
   return h; }
 function betGuess(id){ const t=betT(id), m=me(); if(!t||!betOpen(t)) return toast('베팅이 마감됐어요');
   const raw=($('#bet_v').value||'').replace(/[,\s]/g,''), v=Number(raw); if(raw===''||!isFinite(v)){ SFX.error(); return toast('숫자로 입력해주세요'); }
-  if(t.mode==='pot'&&!(t.g&&t.g[m.id])){ const n=Object.keys(t.g||{}).filter(pid=>person(pid)&&person(pid).team===m.team).length+1; if(balances()[m.team]<n*t.stake){ SFX.error(); return toast('우리 조 코인이 부족해서 걸 수 없어요'); } }
+  if((t.lo!=null&&v<t.lo||t.hi!=null&&v>t.hi)&&!(BET.warn&&BET.warn.id===id&&BET.warn.v===v)){ BET.warn={id,v}; SFX.error(); buzz([40,30,40]); BET.keepY=1; return betRefresh(); } BET.warn=null;
+  if(t.mode==='pot'&&!(t.g&&t.g[m.id])){ const n=t.pt==='team'?1:Object.keys(t.g||{}).filter(pid=>person(pid)&&person(pid).team===m.team).length+1; if(balances()[m.team]<n*t.stake){ SFX.error(); return toast('우리 조 코인이 부족해서 걸 수 없어요'); } }
   t.g=t.g||{}; const re=!!t.g[m.id]; t.g[m.id]={v,ts:Date.now()}; save(); SFX.coin(); buzz([25]); toast(re?'답을 '+betNum(v)+t.unit+'(으)로 고쳤어요':betNum(v)+t.unit+'에 베팅했어요!'); BET.keepY=1; betRefresh(); }
 
 /* ---------- 운영진 ---------- */
@@ -1875,20 +1882,21 @@ function betAdmin(t){ const s=betStat(t), G=betGs(t);
   else h+='<button class="btn ghost full" style="margin-top:8px" onclick="betUndo(\''+t.id+'\')">↩️ 정산 취소 · 정답 다시 입력</button><p class="sub tcp">코인이 되돌아가고 마감 상태로 돌아가요. 정답을 고쳐 다시 정산하거나, 다시 열 수 있어요.</p>';
   h+='<details class="tcgot"><summary>체험용 도구 · 삭제</summary><div class="thhb" style="margin-top:8px">'+(s==='open'?'<button class="mini" onclick="betDemo(\''+t.id+'\')">가짜 답 채우기</button>':'')+'<button class="mini" onclick="betDel(\''+t.id+'\')">이 주제 삭제</button></div></details>';
   return h+'</section>'; }
-function betNewBody(){ const d=BET.d=BET.d||{q:'',unit:'초',cu:'',mode:'prize',p1:100,p2:50,stake:10,dl:''}, et=d.edit&&betT(d.edit), lockC=et&&et.state==='done', dis=lockC?' disabled':'';
+function betNewBody(){ const d=BET.d=BET.d||{q:'',unit:'초',cu:'',mode:'prize',p1:100,p2:50,stake:50,pt:'team',dl:'',lo:'',hi:''}, et=d.edit&&betT(d.edit), lockC=et&&et.state==='done', dis=lockC?' disabled':'';
   const u=BET_UNITS.map(x=>'<button class="'+(d.unit===x&&!d.cu?'on':'')+'" onclick="betD();BET.d.unit=\''+x+'\';BET.d.cu=\'\';sheetRedraw()">'+x+'</button>').join('');
   return (et?'<p class="bgnote" style="margin-top:12px">✏️ <b>주제 수정 중</b> · '+esc(et.q)+(lockC?'<br>정산이 끝난 주제라 코인 방식은 정산 취소 후에 바꿀 수 있어요.':'')+'</p>':'')+'<h4>무엇을 맞힐까요?</h4>'+field('질문','<input id="bn_q" maxlength="60" placeholder="예) 오늘 밤 대표님 건배사는 몇 초?" value="'+esc(d.q)+'" oninput="betD()">')
    +field('단위','<div class="btun">'+u+'</div><input id="bn_cu" maxlength="6" placeholder="직접 입력 (예: 그릇, km)" value="'+esc(d.cu)+'" oninput="betD()" style="margin-top:8px">','답 옆에 붙어서 보여요')
    +'<h4>코인은 어떻게?</h4><div class="seg2 btmode"><button'+dis+' class="'+(d.mode==='prize'?'on':'')+'" onclick="betD();BET.d.mode=\'prize\';sheetRedraw()">🎁 상금형</button><button'+dis+' class="'+(d.mode==='pot'?'on':'')+'" onclick="betD();BET.d.mode=\'pot\';sheetRedraw()">💰 판돈형</button></div>'
    +(d.mode==='prize'?'<p class="sub tcp" style="margin:6px 0 10px">남은 코인에서 상금을 줘요. 참여자는 잃는 게 없어요.</p><label class="tcf"><span>1등 상금</span><input id="bn_p1" type="number" inputmode="numeric" value="'+d.p1+'" oninput="betD()"'+dis+'><em>코인</em></label><label class="tcf"><span>2등 상금<small>0이면 1등만</small></span><input id="bn_p2" type="number" inputmode="numeric" value="'+d.p2+'" oninput="betD()"'+dis+'><em>코인</em></label>'
-     :'<p class="sub tcp" style="margin:6px 0 10px">참여한 사람마다 판돈이 걸려요. 진 사람의 판돈이 그 사람 조 코인에서 빠져 이긴 조로 가요.</p><label class="tcf"><span>1인당 판돈</span><input id="bn_st" type="number" inputmode="numeric" value="'+d.stake+'" oninput="betD()"'+dis+'><em>코인</em></label>')
+     :'<div class="seg2" style="margin:8px 0 6px"><button'+dis+' class="'+(d.pt!=='team'?'on':'')+'" onclick="betD();BET.d.pt=\'person\';sheetRedraw()">1인당</button><button'+dis+' class="'+(d.pt==='team'?'on':'')+'" onclick="betD();BET.d.pt=\'team\';sheetRedraw()">조당 (추천)</button></div><p class="sub tcp" style="margin:0 0 10px">'+(d.pt==='team'?'답을 낸 조마다 판돈이 한 번만 걸려요. 조원 수와 상관없이 공평해요.':'참여한 사람마다 판돈이 걸려요. 많이 참여한 조일수록 잃을 수 있는 코인도 커요.')+'</p><label class="tcf"><span>'+(d.pt==='team'?'조당':'1인당')+' 판돈</span><input id="bn_st" type="number" inputmode="numeric" value="'+d.stake+'" oninput="betD()"'+dis+'><em>코인</em></label>')
+   +'<h4>예상 범위 <small style="font-weight:600;color:var(--sub);font-size:12px">선택</small></h4><div class="btrng"><input id="bn_lo" type="number" inputmode="decimal" placeholder="최소" value="'+(d.lo??'')+'" oninput="betD()"><span>~</span><input id="bn_hi" type="number" inputmode="decimal" placeholder="최대" value="'+(d.hi??'')+'" oninput="betD()"></div><p class="sub tcp" style="margin:4px 0 0">범위를 벗어난 답에는 "정말요?" 확인을 한 번 더 받아요. 오타 방지용이에요.</p>'
    +'<h4>언제까지?</h4>'+field('베팅 마감','<input id="bn_dl" type="datetime-local" value="'+esc(d.dl)+'" onchange="betD()">','비우면 운영진이 직접 마감해요')
    +(et?'<button class="btn primary full" style="margin-top:6px" onclick="betSaveEdit()">수정 저장</button><button class="btn ghost full" style="margin-top:8px" onclick="BET.d=null;sheetRedraw()">수정 그만두고 새 주제 쓰기</button>':'<button class="btn primary full" style="margin-top:6px" onclick="betAdd()">주제 올리기</button>'); }
 function betD(){ const d=BET.d, v=id=>{ const e=$('#'+id); return e?e.value:null; }; if(!d) return;
-  if(v('bn_q')!==null) d.q=v('bn_q'); if(v('bn_cu')!==null) d.cu=v('bn_cu').trim(); if(v('bn_p1')!==null) d.p1=+v('bn_p1')||0; if(v('bn_p2')!==null) d.p2=+v('bn_p2')||0; if(v('bn_st')!==null) d.stake=+v('bn_st')||0; if(v('bn_dl')!==null) d.dl=v('bn_dl'); }
+  if(v('bn_q')!==null) d.q=v('bn_q'); if(v('bn_cu')!==null) d.cu=v('bn_cu').trim(); if(v('bn_p1')!==null) d.p1=+v('bn_p1')||0; if(v('bn_p2')!==null) d.p2=+v('bn_p2')||0; if(v('bn_st')!==null) d.stake=+v('bn_st')||0; if(v('bn_dl')!==null) d.dl=v('bn_dl'); if(v('bn_lo')!==null) d.lo=v('bn_lo'); if(v('bn_hi')!==null) d.hi=v('bn_hi'); }
 function betAdd(){ betD(); const d=BET.d, q=(d.q||'').trim(); if(!q){ SFX.error(); return toast('질문을 입력해주세요'); }
   if(d.mode==='prize'&&d.p1<=0||d.mode==='pot'&&d.stake<=0){ SFX.error(); return toast('코인을 1 이상으로 정해주세요'); }
-  const t={id:'bt'+Date.now().toString(36),q,unit:d.cu||d.unit,mode:d.mode,prize:[d.p1,d.p2],stake:d.stake,dl:d.dl?new Date(d.dl).getTime():null,state:'open',g:{},ts:Date.now(),by:me().name};
+  const t={id:'bt'+Date.now().toString(36),q,unit:d.cu||d.unit,mode:d.mode,prize:[d.p1,d.p2],stake:d.stake,pt:d.pt||'person',lo:d.lo===''||d.lo==null?null:+d.lo,hi:d.hi===''||d.hi==null?null:+d.hi,dl:d.dl?new Date(d.dl).getTime():null,state:'open',g:{},ts:Date.now(),by:me().name};
   ensureBet().topics.push(t); ensureGames(); S.games.bet.status='live'; save(); SFX.fanfare(); buzz([30,40,60]); toast('🎯 새 베팅 주제를 올렸어요');
   BET.d=null; const e=$('#thset'); if(e) e.remove(); render(); betPlay(t.id); }
 function betCloseT(id){ const t=betT(id); t.state='closed'; save(); SFX.select(); toast('베팅을 마감했어요'); betRefresh(); }
@@ -1899,7 +1907,7 @@ function betSettle(id){ const t=betT(id), a=Number(($('#bet_ans').value||'').rep
   if(t.mode==='prize'){ const need=t.prize[0]+(sec.length?t.prize[1]:0); if(win.length&&balances().bank<need){ SFX.error(); return toast('남은 코인이 부족해요'); }
     const sp=(arr,amt,lb)=>{ const each=Math.floor(amt/arr.length); arr.forEach(x=>log('bank',x.p.team,each,lb+' ('+x.p.name+')',x.pid)); };
     if(win.length) sp(win,t.prize[0],'1등'); if(sec.length) sp(sec,t.prize[1],'2등'); }
-  else if(win.length){ const bal=balances(), owe={}; rest.forEach(x=>owe[x.p.team]=(owe[x.p.team]||0)+t.stake);
+  else if(win.length){ const bal=balances(), owe={}; const wt=new Set(win.map(x=>x.p.team)); rest.forEach(x=>{ if(t.pt==='team'){ if(!wt.has(x.p.team)) owe[x.p.team]=t.stake; } else owe[x.p.team]=(owe[x.p.team]||0)+t.stake; });
     Object.entries(owe).forEach(([tid,amt])=>{ amt=Math.min(amt,Math.max(0,bal[tid])); const each=Math.floor(amt/win.length); win.forEach(w=>{ if(w.p.team!==tid) log(tid,w.p.team,each,'판돈 ('+w.p.name+' 적중)',w.pid); }); }); }
   t.ans=a; t.state='done'; t.res={win:win.map(x=>x.pid),second:sec.map(x=>x.pid),lids,pay:Object.entries(pay).map(([team,amt])=>({team,amt})).sort((x,y)=>y.amt-x.amt)};
   save(); SFX.fanfare(); buzz([60,40,60,40,200]); toast(win.length?'🎯 정답 '+betNum(a)+t.unit+' · 🏆 '+win.map(x=>x.p.name).join(', '):'정답을 공개했어요'); render(); betRefresh(); }
@@ -1909,14 +1917,20 @@ function betDemo(id){ const t=betT(id); t.g=t.g||{}; const base=t.unit==='보'?9
   S.people.forEach(p=>{ if(p.id!==me().id&&Math.random()<.7) t.g[p.id]={v:Math.round(base*(.4+Math.random()*1.2)),ts:Date.now()-Math.random()*3600000}; }); save(); toast('가짜 답을 채웠어요'); betRefresh(); }
 
 const betLocal=ts=>ts?new Date(ts-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16):'';
-function betEdit(id){ const t=betT(id), cu=BET_UNITS.includes(t.unit)?'':t.unit; BET.d={edit:id,q:t.q,unit:cu?'초':t.unit,cu,mode:t.mode,p1:t.prize[0],p2:t.prize[1]||0,stake:t.stake,dl:betLocal(t.dl)}; gSet('bet','new'); }
+function betEdit(id){ const t=betT(id), cu=BET_UNITS.includes(t.unit)?'':t.unit; BET.d={edit:id,q:t.q,unit:cu?'초':t.unit,cu,mode:t.mode,p1:t.prize[0],p2:t.prize[1]||0,stake:t.stake,pt:t.pt||'person',lo:t.lo??'',hi:t.hi??'',dl:betLocal(t.dl)}; gSet('bet','new'); }
 function betSaveEdit(){ betD(); const d=BET.d, t=betT(d.edit); if(!t) return; const q=(d.q||'').trim(); if(!q){ SFX.error(); return toast('질문을 입력해주세요'); }
   t.q=q; t.unit=d.cu||d.unit;
-  if(t.state!=='done'){ if(d.mode==='prize'&&d.p1<=0||d.mode==='pot'&&d.stake<=0){ SFX.error(); return toast('코인을 1 이상으로 정해주세요'); } t.mode=d.mode; t.prize=[d.p1,d.p2]; t.stake=d.stake; }
+  if(t.state!=='done'){ if(d.mode==='prize'&&d.p1<=0||d.mode==='pot'&&d.stake<=0){ SFX.error(); return toast('코인을 1 이상으로 정해주세요'); } t.mode=d.mode; t.prize=[d.p1,d.p2]; t.stake=d.stake; t.pt=d.pt||'person'; }
+  t.lo=d.lo===''||d.lo==null?null:+d.lo; t.hi=d.hi===''||d.hi==null?null:+d.hi;
   const was=betStat(t), nd=d.dl?new Date(d.dl).getTime():null; t.dl=nd;
   let msg='주제를 수정했어요'; if(t.state==='open'&&was==='closed'&&betOpen(t)) msg='마감 시각을 바꿔서 베팅이 다시 열렸어요'; else if(t.state==='open'&&nd&&nd<=Date.now()) msg='마감 시각이 이미 지나서 베팅이 닫혀 있어요';
   save(); SFX.select(); toast(msg); BET.d=null; const e=$('#thset'); if(e) e.remove(); render(); if($('#betx')){ BET.view=t.id; betDraw(); } else betPlay(t.id); }
 function betReopen(id){ const t=betT(id); t.state='open'; if(t.dl&&t.dl<=Date.now()) t.dl=null; save(); SFX.select(); toast('베팅을 다시 열었어요. 필요하면 ✏️ 주제 수정에서 새 마감 시각을 정하세요'); betRefresh(); }
+
+/* ---------- 알림 ---------- */
+function betTodo(){ const m=me(); if(!m||!S.bet) return []; return S.bet.topics.filter(t=>betOpen(t)&&!(t.g&&t.g[m.id])).sort((a,b)=>(a.dl||9e15)-(b.dl||9e15)); }
+function betBanner(){ const L=betTodo(); if(!L.length) return ''; const t=L[0], urg=t.dl&&t.dl-Date.now()<1800000;
+  return '<button class="betbn'+(urg?' urg':'')+'" onclick="betPlay(\''+t.id+'\')"><span class="bbi">🎯</span><span class="bbt"><small>'+(urg?'⏰ 마감 임박 · '+betLeft(t):'예측 베팅 · 아직 답을 안 냈어요')+(L.length>1?' 외 '+(L.length-1)+'개':'')+'</small><b>'+esc(t.q)+'</b></span><span class="bbg">참여</span></button>'; }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
@@ -2126,7 +2140,7 @@ function topView(){
 function navView(){
   const tabs=[['home','trophy','현황'],['games','dice','게임'],['people','users','사람들'],['mine','user','내 정보']];
   if(me().admin) tabs.push(['admin','tool','운영진']);
-  return '<nav class="nav">'+tabs.map(t=>'<button class="'+(ui.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+ic(t[1])+'<span>'+t[2]+'</span></button>').join('')+'</nav>';
+  return '<nav class="nav">'+tabs.map(t=>'<button class="'+(ui.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+ic(t[1])+(t[0]==='games'&&betTodo().length?'<i class="ndot"></i>':'')+'<span>'+t[2]+'</span></button>').join('')+'</nav>';
 }
 function go(t){ ui.tab=t; ui.msgSeed=Math.floor(Math.random()*1000); ui.backTeam=null; ui.mcolor=''; ui.feedN=5; draft=null; render(); window.scrollTo(0,0); }
 
@@ -2268,7 +2282,7 @@ function homeView(){
   const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100), left=Math.max(0,Math.round(b.bank/TOTAL*100));
   const ranked=TEAMS.map(t=>({...t,c:b[t.id]})).sort((x,y)=>y.c-x.c);
   const max=Math.max(...ranked.map(t=>t.c),1), my=me().team;
-  let h=stampBanner();
+  let h=betBanner()+stampBanner();
   /* 조 순위 무대: 조장 캐릭터가 순위대로 도열, 크기는 등비(0.87배씩) */
   const N=ranked.length, R=.87, W1=N>7?15:17;
   const SM=ui.stageMode||'day';
