@@ -166,13 +166,15 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .psheet{position:absolute;left:0;right:0;bottom:0;max-height:46vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:6px 14px calc(env(safe-area-inset-bottom,0px) + 14px);box-shadow:0 -4px 20px rgba(0,0,0,.12);z-index:6;transition:max-height .3s;touch-action:pan-y}
 .psheet.min{max-height:58px;overflow:hidden}.pgrab{display:block;width:100%;height:20px;position:relative}.pgrab:after{content:'';position:absolute;left:50%;top:7px;width:40px;height:5px;margin-left:-20px;border-radius:9px;background:#DDD8CC}.psheet h3{margin:0 0 6px;display:flex;align-items:center;gap:4px;font-size:15px}
 .play .thempty{top:32%}.play .thmk{z-index:2}
-.thfl{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;transform:translate(-18%,-78%)}
-.thfl .flg{width:44px;height:auto;filter:url(#stk2);overflow:visible}.thfl .wv{transform-origin:9px 16px;animation:wave 1.6s ease-in-out infinite}
+.thfl{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;transform:translate(-11%,-96%);pointer-events:auto;cursor:pointer}.thfl.on{z-index:4}
+.thfl .flg{width:66px;height:auto;filter:url(#stk2);overflow:visible}.thfl .wv{transform-origin:9px 16px;animation:wave 1.6s ease-in-out infinite}
 @keyframes wave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-6deg) scaleX(.94)}}
 .flc{margin-top:-2px;display:inline-flex;align-items:center;gap:2px;background:#fff;border:2px solid var(--tc);border-radius:99px;padding:1px 7px 1px 3px;font-size:12px;font-weight:900;color:#1E1E1C;white-space:nowrap;box-shadow:0 1px 0 #1E1E1C}.flc img,.flc svg{width:14px;height:14px}
 .fln{margin-top:2px;font-size:10px;font-weight:800;color:#1E1E1C;background:rgba(255,255,255,.85);border-radius:6px;padding:0 4px;white-space:nowrap}
 .thfl.mine .flc{background:var(--tc);color:#fff;border-color:#1E1E1C}
-.thfl.drop{animation:fldrop .8s cubic-bezier(.3,1.6,.5,1) .15s both}@keyframes fldrop{0%{transform:translate(-18%,-260%) scale(.3);opacity:0}60%{opacity:1}100%{transform:translate(-18%,-78%)}}
+.thfl.drop{animation:fldrop .8s cubic-bezier(.3,1.6,.5,1) .15s both}@keyframes fldrop{0%{transform:translate(-11%,-260%) scale(.3);opacity:0}60%{opacity:1}100%{transform:translate(-11%,-96%)}}
+.flbub{position:absolute;bottom:calc(100% + 8px);left:12%;transform:translateX(-50%);background:#fff;border:2.5px solid #1E1E1C;border-radius:14px;padding:6px 12px;text-align:center;white-space:nowrap;animation:pp .25s cubic-bezier(.3,1.6,.5,1)}.flbub:after{content:'';position:absolute;left:50%;bottom:-8px;margin-left:-7px;width:12px;height:12px;background:#fff;border-right:2.5px solid #1E1E1C;border-bottom:2.5px solid #1E1E1C;transform:rotate(45deg)}
+.flbub b{display:flex;align-items:center;justify-content:center;gap:3px;font-size:17px;font-weight:900}.flbub b img,.flbub b svg{width:18px;height:18px}.flbub small{display:block;font-size:11px;color:var(--sub);line-height:1.35}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
 .hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
@@ -1202,11 +1204,13 @@ function thMapDraw(){
   /* 마커 */
   const my=me().team;
   let h=S.th.spots.map(s=>{ if(!s.found) return ''; const q=mpScr(s), t=team(s.found.team), nw=TH.justFound===s.id;
-    return '<div class="thfl'+(nw?' drop':'')+(s.found.team===my?' mine':'')+'" style="left:'+q[0]+'px;top:'+q[1]+'px;--tc:'+t.color+'">'
-     +'<svg class="flg" viewBox="0 0 46 64" overflow="visible"><ellipse cx="8" cy="61" rx="11" ry="3.5" fill="#000" opacity=".15"/><path d="M-1 61 C1 55 15 55 17 61Z" fill="#B88A55" stroke="#1E1E1C" stroke-width="2.2"/>'
-     +'<path d="M8 59V5" stroke="#1E1E1C" stroke-width="3.2" stroke-linecap="round"/><g class="wv"><path d="M9 6 C18 2 26 11 40 6 V27 C26 32 18 23 9 27Z" fill="'+t.color+'" stroke="#1E1E1C" stroke-width="2.4" stroke-linejoin="round"/>'
-     +'<path d="M14 11 C19 9 23 13 30 11" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/></g><circle cx="8" cy="4.5" r="3.6" fill="#FFD84D" stroke="#1E1E1C" stroke-width="2"/></svg>'
-     +'<span class="flc">'+coinIc+'+'+s.coin+'</span><small class="fln">'+esc(t.name.replace(' 팀',''))+'</small></div>'; }).join('');
+    const nm=esc(t.name.replace(/ ?팀$/,'')), fs=nm.length<=3?11:nm.length<=5?9.5:nm.length<=7?8:6.8, op=TH.bub===s.id, p=person(s.found.pid);
+    return '<div class="thfl'+(nw?' drop':'')+(s.found.team===my?' mine':'')+(op?' on':'')+'" style="left:'+q[0]+'px;top:'+q[1]+'px;--tc:'+t.color+'" onclick="thBub(\''+s.id+'\',event)">'
+     +(op?'<div class="flbub"><b>'+coinIc+'+'+s.coin+'</b><small>'+esc(s.name)+'</small><small>'+(p?esc(p.name)+' · ':'')+ago(s.found.ts)+'</small></div>':'')
+     +'<svg class="flg" viewBox="0 0 70 72" overflow="visible"><ellipse cx="8" cy="69" rx="11" ry="3.5" fill="#000" opacity=".15"/><path d="M-1 69 C1 63 15 63 17 69Z" fill="#B88A55" stroke="#1E1E1C" stroke-width="2.2"/>'
+     +'<path d="M8 67V5" stroke="#1E1E1C" stroke-width="3.2" stroke-linecap="round"/><g class="wv"><path d="M9 7 C26 2 44 12 66 6 V31 C44 37 26 27 9 32Z" fill="'+t.color+'" stroke="#1E1E1C" stroke-width="2.4" stroke-linejoin="round"/>'
+     +'<text x="37.5" y="'+(20.5+fs*.36)+'" text-anchor="middle" font-size="'+fs+'" font-weight="900" fill="#fff" stroke="#1E1E1C" stroke-width="2" paint-order="stroke" letter-spacing="-.3">'+nm+'</text></g><circle cx="8" cy="4.5" r="3.6" fill="#FFD84D" stroke="#1E1E1C" stroke-width="2"/></svg></div>';
+  }).join('');
   if(TH.pos){ const q=mpScr(TH.pos); h+='<i class="thme" style="left:'+q[0]+'px;top:'+q[1]+'px"></i>'; }
   if(!S.th.spots.some(s=>s.found)) h+='<p class="thempty">아직 찾은 보물이 없어요<br><small>힌트를 보고 첫 보물을 찾아보세요!</small></p>';
   $('#mpm').innerHTML=h;
@@ -1216,10 +1220,11 @@ function thArt(){ return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">
    +'<path d="M-4 104 L6 72 L14 80 L22 66 L36 104Z" fill="#C7DDB0"/>'
    +[12,26,40,54,68,82,94].map(x=>'<path d="M'+x+' 0 V100" stroke="#fff" stroke-width="1.1"/>').join('')+[14,30,46,80,92].map(y=>'<path d="M0 '+y+' H100" stroke="#fff" stroke-width="1.1"/>').join('')
    +'<path d="M0 38 C30 34 60 42 100 36" stroke="#F7E08E" stroke-width="2.2" fill="none"/></svg>'; }
+function thBub(id,e){ if(e) e.stopPropagation(); TH.bub=TH.bub===id?null:id; SFX.select(); thMapDraw(); }
 function thBind(){
   const v=$('#mpv');
   const pan=(dx,dy)=>{ const c=mpW(MP.c,MP.z); MP.c=mpLL(c[0]-dx,c[1]-dy,MP.z); };
-  v.addEventListener('pointerdown',e=>{ v.setPointerCapture(e.pointerId); MP.ptr.set(e.pointerId,[e.clientX,e.clientY]); if(MP.ptr.size===2){ const p=[...MP.ptr.values()]; MP.pinch={d:Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]),z:MP.z}; } });
+  v.addEventListener('pointerdown',e=>{ if(e.target.closest('.thfl')) return; if(TH.bub){ TH.bub=null; thMapDraw(); } v.setPointerCapture(e.pointerId); MP.ptr.set(e.pointerId,[e.clientX,e.clientY]); if(MP.ptr.size===2){ const p=[...MP.ptr.values()]; MP.pinch={d:Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]),z:MP.z}; } });
   v.addEventListener('pointermove',e=>{ const o=MP.ptr.get(e.pointerId); if(!o) return;
     if(MP.ptr.size===1){ pan(e.clientX-o[0],e.clientY-o[1]); }
     MP.ptr.set(e.pointerId,[e.clientX,e.clientY]);
