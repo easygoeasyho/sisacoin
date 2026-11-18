@@ -166,6 +166,13 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .psheet{position:absolute;left:0;right:0;bottom:0;max-height:46vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:6px 14px calc(env(safe-area-inset-bottom,0px) + 14px);box-shadow:0 -4px 20px rgba(0,0,0,.12);z-index:6;transition:max-height .3s;touch-action:pan-y}
 .psheet.min{max-height:58px;overflow:hidden}.pgrab{display:block;width:100%;height:20px;position:relative}.pgrab:after{content:'';position:absolute;left:50%;top:7px;width:40px;height:5px;margin-left:-20px;border-radius:9px;background:#DDD8CC}.psheet h3{margin:0 0 6px;display:flex;align-items:center;gap:4px;font-size:15px}
 .play .thempty{top:32%}.play .thmk{z-index:2}
+.thfl{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;transform:translate(-18%,-78%)}
+.thfl .flg{width:44px;height:auto;filter:url(#stk2);overflow:visible}.thfl .wv{transform-origin:9px 16px;animation:wave 1.6s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-6deg) scaleX(.94)}}
+.flc{margin-top:-2px;display:inline-flex;align-items:center;gap:2px;background:#fff;border:2px solid var(--tc);border-radius:99px;padding:1px 7px 1px 3px;font-size:12px;font-weight:900;color:#1E1E1C;white-space:nowrap;box-shadow:0 1px 0 #1E1E1C}.flc img,.flc svg{width:14px;height:14px}
+.fln{margin-top:2px;font-size:10px;font-weight:800;color:#1E1E1C;background:rgba(255,255,255,.85);border-radius:6px;padding:0 4px;white-space:nowrap}
+.thfl.mine .flc{background:var(--tc);color:#fff;border-color:#1E1E1C}
+.thfl.drop{animation:fldrop .8s cubic-bezier(.3,1.6,.5,1) .15s both}@keyframes fldrop{0%{transform:translate(-18%,-260%) scale(.3);opacity:0}60%{opacity:1}100%{transform:translate(-18%,-78%)}}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
 .hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
@@ -1046,13 +1053,21 @@ function thStart(){
   if(!navigator.geolocation){ TH.err='이 기기는 위치를 쓸 수 없어요'; return thPaint(); }
   if(TH.watch!==null) navigator.geolocation.clearWatch(TH.watch);
   TH.sim=false; TH.err='위치를 찾는 중이에요…'; thPaint();
-  TH.watch=navigator.geolocation.watchPosition(p=>{ if(TH.sim) return; TH.pos={lat:p.coords.latitude,lng:p.coords.longitude}; TH.acc=p.coords.accuracy; TH.err=''; thPaint(); },
+  TH.watch=navigator.geolocation.watchPosition(p=>{ if(TH.sim) return; const first=!TH.pos; TH.pos={lat:p.coords.latitude,lng:p.coords.longitude}; TH.acc=p.coords.accuracy; TH.err=''; if(first) thFirstFix(); thPaint(); },
     e=>{ TH.err=e.code===1?'위치 권한이 꺼져 있어요. 설정에서 허용해 주세요':'위치를 가져오지 못했어요'; thPaint(); },{enableHighAccuracy:true,maximumAge:3000,timeout:15000});
 }
 let thCompassOn=false;
 function thCompass(){ if(thCompassOn) return; thCompassOn=true;
   const h=e=>{ let v=null; if(typeof e.webkitCompassHeading==='number') v=e.webkitCompassHeading; else if(e.absolute&&typeof e.alpha==='number') v=(360-e.alpha)%360; if(v!==null){ TH.head=v; thArrows(); } };
   window.addEventListener('deviceorientationabsolute',h,true); window.addEventListener('deviceorientation',h,true); }
+function thNear(){ const ss=S.th.spots.filter(s=>!s.found); return ss.length&&TH.pos?Math.min(...ss.map(s=>thDist(TH.pos,s))):0; }
+function thFirstFix(){ const d=thNear(); if(d>3000){ MP.c={...TH.pos}; MP.z=16.5; toast('보물 구역에서 '+thFmt(d)+' 떨어져 있어요. 아래 \'내 주변에 테스트 보물\'로 시험해 보세요'); } else { MP.c={...TH.pos}; } }
+function thHere(){ if(!TH.pos||TH.sim){ SFX.error(); return toast('먼저 실제 내 위치를 켜주세요'); }
+  const nm=['편의점 앞','골목 끝','작은 공원','버스 정류장','큰 건물 입구'];
+  S.th.spots=nm.map((n,i)=>{ const a=i*72+Math.random()*30, d=120+i*55, r=a*Math.PI/180;
+    return {id:'tx'+Date.now()+i,name:'테스트 보물 '+(i+1),hint:'내 위치에서 '+['북','동북','동남','남서','북서'][i]+'쪽으로 약 '+Math.round(d/10)*10+'m · '+n+' 근처일지도?',coin:20,r:30,found:null,
+      lat:TH.pos.lat+d*Math.cos(r)/111320,lng:TH.pos.lng+d*Math.sin(r)/(111320*Math.cos(TH.pos.lat*Math.PI/180))}; });
+  S.games.treasure.status='live'; save(); SFX.coin(); toast('내 주변 120~340m에 테스트 보물 5개를 숨겼어요'); MP.c={...TH.pos}; MP.z=16; const el=$('#thbox'); if(el) el.innerHTML=thList(); thMapDraw(); thTop(); }
 function thSimGo(id){ const s=S.th.spots.find(x=>x.id===id); TH.sim=true; TH.err=''; TH.acc=5; TH.pos={lat:s.lat+0.00012,lng:s.lng-0.0001}; SFX.select(); thPaint(); }
 function thSimFar(){ TH.sim=true; TH.err=''; TH.acc=5; TH.pos={lat:34.0725,lng:134.5490}; SFX.select(); thPaint(); }
 function thTag(d,r){ return d<=r?['open','보물이 바로 여기!']:d<80?['hot','아주 가까워요']:d<250?['warm','가까워지고 있어요']:['cold','아직 멀어요']; }
@@ -1070,7 +1085,7 @@ function thList(){
       right='<div class="thnav"><i class="tharr" data-b="'+b.toFixed(1)+'" style="transform:rotate('+(TH.head===null?b:b-TH.head)+'deg)">'+ic('navi')+'</i><b>'+thFmt(d)+'</b></div>';
       mid='<span class="thtag '+tg[0]+'">'+tg[1]+'</span>'+(tg[0]==='open'&&live?'<button class="btn primary thopen" onclick="thClaim(\''+s.id+'\')">'+ic('gift','sm')+'보물 열기 · '+coinIc+s.coin+'</button>':''); }
     return '<div class="thc"><div class="thno">'+(i+1)+'</div><div class="thb"><small class="thq">'+ic('bulb','sm')+'힌트</small><p>'+esc(s.hint)+'</p>'+mid+'</div>'+right+'</div>'; }).join('')+'</div>';
-  h+='<div class="thsim"><small>'+ic('dice','sm')+' 체험용 · 실제 장소에 안 가도 눌러볼 수 있어요</small><div>'+S.th.spots.map((s,i)=>s.found?'':'<button class="mini" onclick="thSimGo(\''+s.id+'\')">'+(i+1)+'번 근처로</button>').join('')+'<button class="mini" onclick="thSimFar()">멀리 떨어지기</button></div></div>';
+  h+='<div class="thsim"><small>'+ic('dice','sm')+' 체험용 · 실제 장소에 안 가도 눌러볼 수 있어요</small><div>'+(TH.pos&&!TH.sim?'<button class="mini" style="background:#1E1E1C;color:#fff" onclick="thHere()">내 주변에 테스트 보물 만들기</button>':'')+S.th.spots.map((s,i)=>s.found?'':'<button class="mini" onclick="thSimGo(\''+s.id+'\')">'+(i+1)+'번 근처로</button>').join('')+'<button class="mini" onclick="thSimFar()">멀리 떨어지기</button></div></div>';
   return h;
 }
 function thPaint(){ const el=$('#thbox'); if(el) el.innerHTML=thList(); thMapDraw(); thTop(); }
@@ -1186,7 +1201,11 @@ function thMapDraw(){
   /* 마커 */
   const my=me().team;
   let h=S.th.spots.map(s=>{ if(!s.found) return ''; const q=mpScr(s), t=team(s.found.team), nw=TH.justFound===s.id;
-    return '<div class="thmk'+(nw?' drop':'')+(s.found.team===my?' mine':'')+'" style="left:'+q[0]+'px;top:'+q[1]+'px;--tc:'+t.color+'"><span class="thmk-p"><span class="stk">'+charHTML({mascot:(leaderOf(t.id)||{}).mascot||'booky',expr:3})+'</span></span><small>'+esc(t.name.replace(' 팀',''))+'</small></div>'; }).join('');
+    return '<div class="thfl'+(nw?' drop':'')+(s.found.team===my?' mine':'')+'" style="left:'+q[0]+'px;top:'+q[1]+'px;--tc:'+t.color+'">'
+     +'<svg class="flg" viewBox="0 0 46 64" overflow="visible"><ellipse cx="8" cy="61" rx="11" ry="3.5" fill="#000" opacity=".15"/><path d="M-1 61 C1 55 15 55 17 61Z" fill="#B88A55" stroke="#1E1E1C" stroke-width="2.2"/>'
+     +'<path d="M8 59V5" stroke="#1E1E1C" stroke-width="3.2" stroke-linecap="round"/><g class="wv"><path d="M9 6 C18 2 26 11 40 6 V27 C26 32 18 23 9 27Z" fill="'+t.color+'" stroke="#1E1E1C" stroke-width="2.4" stroke-linejoin="round"/>'
+     +'<path d="M14 11 C19 9 23 13 30 11" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".55"/></g><circle cx="8" cy="4.5" r="3.6" fill="#FFD84D" stroke="#1E1E1C" stroke-width="2"/></svg>'
+     +'<span class="flc">'+coinIc+'+'+s.coin+'</span><small class="fln">'+esc(t.name.replace(' 팀',''))+'</small></div>'; }).join('');
   if(TH.pos){ const q=mpScr(TH.pos); h+='<i class="thme" style="left:'+q[0]+'px;top:'+q[1]+'px"></i>'; }
   if(!S.th.spots.some(s=>s.found)) h+='<p class="thempty">아직 찾은 보물이 없어요<br><small>힌트를 보고 첫 보물을 찾아보세요!</small></p>';
   $('#mpm').innerHTML=h;
