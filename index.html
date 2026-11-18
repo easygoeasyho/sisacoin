@@ -1144,7 +1144,7 @@ function openGame(id,quiet){
       return '<div class="rk-row"><span class="medal m'+(k+1)+'">'+(k+1)+'</span>'+(wp?avatar(wp,'s'):'<span class="tdotS" style="background:'+(tt?tt.color:'#ddd')+'"></span>')+'<span class="rk-n">'+(g.unit==='person'?'<b>'+esc(wp?wp.name:'?')+'</b> <small>'+esc(tt?tt.name:'')+'</small>':'<b>'+esc(tt.name)+'</b>'+(wp?' <small>'+esc(wp.name)+'</small>':''))+'</span>'+(x.card?cardTag(x.card):'<b class="camt">'+coinIc+'+'+x.coin+'</b>')+'</div>'; }).join('')+'</div>').join(''):'<p class="sub">아직 결과가 없어요</p>')+'</section>';
   if(m.admin&&id==='treasure'){ h+=thCtrl(); return modal(h,quiet); }
   if(id==='photo'){ if(m.admin) h+=bgCtrl(); return modal(h,quiet); }
-  if(id==='bet'){ if(m.admin&&!BET.view) h+=betCtrl(); return modal(h,quiet); }
+  if(id==='bet'){ if(m.admin) h+=betCtrl(); return modal(h,quiet); }
   if(m.admin){
     h+='<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 진행 관리</h3><button class="mini" onclick="gSet(\''+id+'\')">⚙️ 설정</button></div><p class="sub" style="margin:8px 0 10px">썸네일·일정·상태는 ⚙️ 설정에서 바꿔요.</p>';
     if(id==='treasure'){ h+='</section>'; return modal(h,quiet); }
@@ -1799,24 +1799,33 @@ function betModeTag(t){ return t.mode==='pot'?'💰 판돈형 · 1인 '+t.stake+
 function betGs(t){ return Object.entries(t.g||{}).map(([pid,x])=>({pid,v:x.v,ts:x.ts,p:person(pid)})).filter(x=>x.p); }
 
 /* ---------- 목록 ---------- */
-function betSummary(){ ensureBet(); const m=me(), T=S.bet.topics;
-  if(BET.view&&betT(BET.view)) return betDetail(betT(BET.view));
+function betSummary(){ ensureBet(); const m=me(), T=S.bet.topics, op=T.filter(t=>betStat(t)==='open').length, mineN=T.filter(t=>t.g&&t.g[m.id]).length, dn=T.filter(t=>betStat(t)==='done').length, todo=T.filter(t=>betStat(t)==='open'&&!(t.g&&t.g[m.id])).length;
+  return '<section class="card flat rewsec"><div class="thsum"><div><b>'+op+'개</b><small>베팅 중</small></div><div><b>'+mineN+'개</b><small>내가 참여</small></div><div><b>'+dn+'개</b><small>끝난 주제</small></div></div>'
+   +(todo?'<p class="bgnote" style="margin-top:8px">🔔 아직 답을 안 낸 주제가 '+todo+'개 있어요</p>':'')+'</section>'
+   +'<button class="btn primary full thjoin" onclick="betPlay()">🎯 '+(op?'베팅 참여하기':'베팅 주제 보기')+'</button>'
+   +'<details class="card flat bthow" style="margin-top:12px"><summary>'+ic('bulb','sm')+' 규칙 보기</summary><p>· 한 사람당 답 1개, 마감 전까지 몇 번이든 고칠 수 있어요.<br>· 정답에 가장 가까운 사람의 조가 이겨요. 같은 차이면 나눠 가져요.<br>· 다른 사람 답은 결과 공개 때 한꺼번에 보여요.<br>· 💰 판돈형은 지면 우리 조 코인에서 판돈이 빠져 이긴 조로 가요.</p></details>'; }
+function betPlay(id){ ensureBet(); BET.view=id||null; closeModal(); let el=$('#betx'); if(!el){ el=document.createElement('div'); el.id='betx'; el.className='bgx'; document.body.appendChild(el); document.body.style.overflow='hidden'; } betDraw(); SFX.open(); }
+function betQuit(){ const e=$('#betx'); if(e) e.remove(); document.body.style.overflow=''; BET.view=null; render(); openGame('bet',true); }
+function betRefresh(){ if($('#betx')) betDraw(); else openGame('bet',true); }
+function betBack(){ if(BET.view){ BET.view=null; betDraw(); } else betQuit(); }
+function betDraw(){ const el=$('#betx'); if(!el) return; const t=BET.view&&betT(BET.view); if(BET.view&&!t) BET.view=null; const sy=el.scrollTop;
+  el.innerHTML='<div class="bgtop"><button class="pbk" onclick="betBack()" aria-label="뒤로">'+ic('back')+'</button><div class="bgtt"><b>예측 베팅</b><small>'+(t?'주제 상세':'주제를 눌러 답을 내요')+'</small></div></div>'+(t?betDetail(t):betList());
+  el.scrollTop=BET.keepY?sy:0; BET.keepY=0; }
+function betList(){ const m=me(), T=S.bet.topics;
   const open=T.filter(t=>betStat(t)!=='done').sort((a,b)=>b.ts-a.ts), done=T.filter(t=>betStat(t)==='done').sort((a,b)=>b.ts-a.ts);
   const card=t=>{ const s=betStat(t), my=t.g&&t.g[m.id], n=Object.keys(t.g||{}).length;
-    return '<button class="btc '+s+'" onclick="BET.view=\''+t.id+'\';openGame(\'bet\',true)"><div class="bth"><span class="bts '+s+'">'+BET_ST[s]+'</span>'+(s==='open'&&t.dl?'<small>⏰ '+betLeft(t)+'</small>':'')+'</div>'
+    return '<button class="btc '+s+'" onclick="BET.view=\''+t.id+'\';betDraw()"><div class="bth"><span class="bts '+s+'">'+BET_ST[s]+'</span>'+(s==='open'&&t.dl?'<small>⏰ '+betLeft(t)+'</small>':'')+'</div>'
      +'<b class="btq">'+esc(t.q)+'</b><div class="btm"><span>'+betModeTag(t)+'</span><span>'+n+'명 참여</span></div>'
      +(s==='done'?'<div class="bta">정답 <b>'+betNum(t.ans)+t.unit+'</b>'+(t.res&&t.res.win.length?' · 🏆 '+t.res.win.map(pid=>esc(person(pid).name)).join(', '):'')+'</div>'
        :'<div class="bta'+(my?' mine':'')+'">'+(my?'내 답 <b>'+betNum(my.v)+t.unit+'</b>':s==='open'?'아직 답을 안 냈어요 · 눌러서 참여':'답을 내지 않았어요')+'</div>')+'</button>'; };
-  const mineN=T.filter(t=>t.g&&t.g[m.id]).length;
-  let h='<section class="card flat rewsec"><div class="thsum"><div><b>'+open.filter(t=>betStat(t)==='open').length+'개</b><small>베팅 중</small></div><div><b>'+mineN+'개</b><small>내가 참여</small></div><div><b>'+done.length+'개</b><small>끝난 주제</small></div></div></section>'
-   +'<section class="card flat"><h3>🎯 베팅 주제 '+(open.length?'<span class="bgnum">'+open.length+'</span>':'')+'</h3>'
+  let h='<section class="card flat"><h3>🎯 베팅 주제 '+(open.length?'<span class="bgnum">'+open.length+'</span>':'')+'</h3>'
    +(open.length?open.map(card).join(''):'<p class="sub">지금 열린 주제가 없어요. 운영진이 새 주제를 올리면 여기에 떠요.</p>')+'</section>';
   if(done.length) h+='<section class="card flat"><h3>📜 지난 베팅</h3>'+done.map(card).join('')+'</section>';
-  return h+'<details class="card flat bthow"><summary>'+ic('bulb','sm')+' 규칙 보기</summary><p>· 한 사람당 답 1개, 마감 전까지 몇 번이든 고칠 수 있어요.<br>· 정답에 가장 가까운 사람의 조가 이겨요. 같은 차이면 나눠 가져요.<br>· 다른 사람 답은 결과 공개 때 한꺼번에 보여요.<br>· 💰 판돈형은 지면 우리 조 코인에서 판돈이 빠져 이긴 조로 가요.</p></details>'; }
+  return h; }
 
 /* ---------- 주제 상세 ---------- */
 function betDetail(t){ const m=me(), s=betStat(t), my=t.g&&t.g[m.id], G=betGs(t);
-  let h='<section class="card flat btd"><button class="mini" onclick="BET.view=null;openGame(\'bet\',true)">'+ic('back','sm')+' 목록</button>'
+  let h='<section class="card flat btd">'
    +'<div class="bth" style="margin-top:12px"><span class="bts '+s+'">'+BET_ST[s]+'</span>'+(s==='open'&&t.dl?'<small>⏰ '+betLeft(t)+'</small>':'')+'</div>'
    +'<h2 class="btq2">'+esc(t.q)+'</h2><div class="btm"><span>'+betModeTag(t)+'</span><span>'+G.length+'명 참여</span></div>';
   if(s==='open'){
@@ -1850,19 +1859,19 @@ function betResult(t){ const G=betGs(t).map(x=>({...x,d:Math.abs(x.v-t.ans)})).s
 function betGuess(id){ const t=betT(id), m=me(); if(!t||!betOpen(t)) return toast('베팅이 마감됐어요');
   const raw=($('#bet_v').value||'').replace(/[,\s]/g,''), v=Number(raw); if(raw===''||!isFinite(v)){ SFX.error(); return toast('숫자로 입력해주세요'); }
   if(t.mode==='pot'&&!(t.g&&t.g[m.id])){ const n=Object.keys(t.g||{}).filter(pid=>person(pid)&&person(pid).team===m.team).length+1; if(balances()[m.team]<n*t.stake){ SFX.error(); return toast('우리 조 코인이 부족해서 걸 수 없어요'); } }
-  t.g=t.g||{}; const re=!!t.g[m.id]; t.g[m.id]={v,ts:Date.now()}; save(); SFX.coin(); buzz([25]); toast(re?'답을 '+betNum(v)+t.unit+'(으)로 고쳤어요':betNum(v)+t.unit+'에 베팅했어요!'); openGame('bet',true); }
+  t.g=t.g||{}; const re=!!t.g[m.id]; t.g[m.id]={v,ts:Date.now()}; save(); SFX.coin(); buzz([25]); toast(re?'답을 '+betNum(v)+t.unit+'(으)로 고쳤어요':betNum(v)+t.unit+'에 베팅했어요!'); BET.keepY=1; betRefresh(); }
 
 /* ---------- 운영진 ---------- */
 function betCtrl(){ ensureBet(); const T=S.bet.topics, o=T.filter(t=>betStat(t)==='open').length, c=T.filter(t=>betStat(t)==='closed').length;
   return '<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 진행 관리</h3><button class="mini" onclick="gSet(\'bet\')">⚙️ 설정</button></div>'
    +'<p class="tcsum">🎯 베팅 중 '+o+' · 정답 대기 '+c+' · 끝난 주제 '+(T.length-o-c)+'</p>'
-   +'<button class="btn primary full" onclick="gSet(\'bet\',\'new\')">＋ 새 베팅 주제 올리기</button><p class="sub tcp">주제를 누르면 마감·정답 입력·정산을 할 수 있어요.</p></section>'; }
+   +'<button class="btn primary full" onclick="gSet(\'bet\',\'new\')">＋ 새 베팅 주제 올리기</button><p class="sub tcp">베팅 화면에서 주제를 누르면 마감·정답 입력·정산을 할 수 있어요.</p></section>'; }
 function betAdmin(t){ const s=betStat(t), G=betGs(t);
   let h='<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 이 주제 관리</h3></div>';
   if(s==='open') h+='<button class="btn ghost full" style="margin-top:10px" onclick="betCloseT(\''+t.id+'\')">⏸ 지금 베팅 마감</button>';
   if(s!=='done') h+=field('정답','<div class="btin" style="margin:0"><input id="bet_ans" type="text" inputmode="decimal" placeholder="정답 숫자"><em>'+esc(t.unit)+'</em></div>',G.length+'명 참여 · 정답을 넣으면 마감되고 바로 정산돼요')+'<button class="btn primary full" onclick="betSettle(\''+t.id+'\')">✅ 정답 공개 · 정산</button>';
   else h+='<button class="btn ghost full" style="margin-top:10px" onclick="betUndo(\''+t.id+'\')">정산 취소 (코인 되돌리기)</button>';
-  h+='<details class="tcgot"><summary>체험용 도구 · 삭제</summary><div class="thhb" style="margin-top:8px">'+(s==='open'?'<button class="mini" onclick="betDemo(\''+t.id+'\')">가짜 답 채우기</button>':'')+(s==='closed'&&t.state==='closed'?'<button class="mini" onclick="betT(\''+t.id+'\').state=\'open\';betT(\''+t.id+'\').dl=null;save();openGame(\'bet\',true)">마감 취소</button>':'')+'<button class="mini" onclick="betDel(\''+t.id+'\')">이 주제 삭제</button></div></details>';
+  h+='<details class="tcgot"><summary>체험용 도구 · 삭제</summary><div class="thhb" style="margin-top:8px">'+(s==='open'?'<button class="mini" onclick="betDemo(\''+t.id+'\')">가짜 답 채우기</button>':'')+(s==='closed'&&t.state==='closed'?'<button class="mini" onclick="betT(\''+t.id+'\').state=\'open\';betT(\''+t.id+'\').dl=null;save();betRefresh()">마감 취소</button>':'')+'<button class="mini" onclick="betDel(\''+t.id+'\')">이 주제 삭제</button></div></details>';
   return h+'</section>'; }
 function betNewBody(){ const d=BET.d=BET.d||{q:'',unit:'초',cu:'',mode:'prize',p1:100,p2:50,stake:10,dl:''};
   const u=BET_UNITS.map(x=>'<button class="'+(d.unit===x&&!d.cu?'on':'')+'" onclick="betD();BET.d.unit=\''+x+'\';BET.d.cu=\'\';sheetRedraw()">'+x+'</button>').join('');
@@ -1879,8 +1888,8 @@ function betAdd(){ betD(); const d=BET.d, q=(d.q||'').trim(); if(!q){ SFX.error(
   if(d.mode==='prize'&&d.p1<=0||d.mode==='pot'&&d.stake<=0){ SFX.error(); return toast('코인을 1 이상으로 정해주세요'); }
   const t={id:'bt'+Date.now().toString(36),q,unit:d.cu||d.unit,mode:d.mode,prize:[d.p1,d.p2],stake:d.stake,dl:d.dl?new Date(d.dl).getTime():null,state:'open',g:{},ts:Date.now(),by:me().name};
   ensureBet().topics.push(t); ensureGames(); S.games.bet.status='live'; save(); SFX.fanfare(); buzz([30,40,60]); toast('🎯 새 베팅 주제를 올렸어요');
-  BET.d=null; BET.view=t.id; const e=$('#thset'); if(e) e.remove(); openGame('bet',true); render(); }
-function betCloseT(id){ const t=betT(id); t.state='closed'; save(); SFX.select(); toast('베팅을 마감했어요'); openGame('bet',true); }
+  BET.d=null; const e=$('#thset'); if(e) e.remove(); render(); betPlay(t.id); }
+function betCloseT(id){ const t=betT(id); t.state='closed'; save(); SFX.select(); toast('베팅을 마감했어요'); betRefresh(); }
 function betSettle(id){ const t=betT(id), a=Number(($('#bet_ans').value||'').replace(/[,\s]/g,'')); if(($('#bet_ans').value||'').trim()===''||!isFinite(a)){ SFX.error(); return toast('정답을 숫자로 입력해주세요'); }
   const G=betGs(t).map(x=>({...x,d:Math.abs(x.v-a)})).sort((x,y)=>x.d-y.d), by=me().name, lids=[], pay={};
   const win=G.length?G.filter(x=>x.d===G[0].d):[], rest=G.filter(x=>!win.includes(x)), sec=t.mode==='prize'&&t.prize[1]&&rest.length?rest.filter(x=>x.d===rest[0].d):[];
@@ -1891,11 +1900,11 @@ function betSettle(id){ const t=betT(id), a=Number(($('#bet_ans').value||'').rep
   else if(win.length){ const bal=balances(), owe={}; rest.forEach(x=>owe[x.p.team]=(owe[x.p.team]||0)+t.stake);
     Object.entries(owe).forEach(([tid,amt])=>{ amt=Math.min(amt,Math.max(0,bal[tid])); const each=Math.floor(amt/win.length); win.forEach(w=>{ if(w.p.team!==tid) log(tid,w.p.team,each,'판돈 ('+w.p.name+' 적중)',w.pid); }); }); }
   t.ans=a; t.state='done'; t.res={win:win.map(x=>x.pid),second:sec.map(x=>x.pid),lids,pay:Object.entries(pay).map(([team,amt])=>({team,amt})).sort((x,y)=>y.amt-x.amt)};
-  save(); SFX.fanfare(); buzz([60,40,60,40,200]); toast(win.length?'🎯 정답 '+betNum(a)+t.unit+' · 🏆 '+win.map(x=>x.p.name).join(', '):'정답을 공개했어요'); render(); openGame('bet',true); }
-function betUndo(id){ const t=betT(id); (t.res&&t.res.lids||[]).forEach(l=>{ const x=S.logs.find(y=>y.id===l); if(x) x.undone=true; }); t.state='closed'; t.res=null; t.ans=null; save(); SFX.undo(); toast('정산을 취소하고 코인을 되돌렸어요'); render(); openGame('bet',true); }
-function betDel(id){ const t=betT(id); if(t.state==='done') return toast('정산 취소 후에 삭제할 수 있어요'); if(!confirm('이 주제를 삭제할까요?')) return; S.bet.topics=S.bet.topics.filter(x=>x.id!==id); BET.view=null; save(); toast('주제를 삭제했어요'); openGame('bet',true); }
+  save(); SFX.fanfare(); buzz([60,40,60,40,200]); toast(win.length?'🎯 정답 '+betNum(a)+t.unit+' · 🏆 '+win.map(x=>x.p.name).join(', '):'정답을 공개했어요'); render(); betRefresh(); }
+function betUndo(id){ const t=betT(id); (t.res&&t.res.lids||[]).forEach(l=>{ const x=S.logs.find(y=>y.id===l); if(x) x.undone=true; }); t.state='closed'; t.res=null; t.ans=null; save(); SFX.undo(); toast('정산을 취소하고 코인을 되돌렸어요'); render(); betRefresh(); }
+function betDel(id){ const t=betT(id); if(t.state==='done') return toast('정산 취소 후에 삭제할 수 있어요'); if(!confirm('이 주제를 삭제할까요?')) return; S.bet.topics=S.bet.topics.filter(x=>x.id!==id); BET.view=null; save(); toast('주제를 삭제했어요'); betRefresh(); }
 function betDemo(id){ const t=betT(id); t.g=t.g||{}; const base=t.unit==='보'?9000:t.unit==='초'?60:30;
-  S.people.forEach(p=>{ if(p.id!==me().id&&Math.random()<.7) t.g[p.id]={v:Math.round(base*(.4+Math.random()*1.2)),ts:Date.now()-Math.random()*3600000}; }); save(); toast('가짜 답을 채웠어요'); openGame('bet',true); }
+  S.people.forEach(p=>{ if(p.id!==me().id&&Math.random()<.7) t.g[p.id]={v:Math.round(base*(.4+Math.random()*1.2)),ts:Date.now()-Math.random()*3600000}; }); save(); toast('가짜 답을 채웠어요'); betRefresh(); }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
