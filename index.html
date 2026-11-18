@@ -1084,8 +1084,8 @@ const GAME_DEFS=[
  {id:'wanted',name:'현상수배',mascot:'coni',expr:5,mode:'manual',unit:'team',rewards:[50,30],when:'워크샵 내내',desc:'수배 전단에 뜬 직원을 찾아 같이 셀카를 찍어 인증하세요. 운영진이 확인 후 코인을 줘요.'},
  {id:'quiz',name:'일본어 퀴즈 배틀',mascot:'siru',expr:3,mode:'auto',unit:'team',rewards:[100,60,30],when:'버스 이동 중',desc:'진행자 화면에 문제가 뜨면 폰으로 동시에 답해요. 빨리 맞힐수록 점수가 높아요.'},
  {id:'bet',name:'예측 베팅',mascot:'kuducki',expr:5,mode:'manual',unit:'team',rewards:[60,30],when:'수시로',desc:'"건배사는 몇 초?" 같은 질문에 코인을 걸고, 맞힌 조가 판돈을 가져가요.'},
- {id:'steps',name:'만보기 레이스',mascot:'bumi',expr:3,mode:'manual',unit:'person',rewards:[80,50,30],when:'매일 밤 마감',desc:'하루 동안 가장 많이 걸은 사람이 이겨요. 건강 앱 걸음 수 화면을 캡처해서 인증해요. 상금은 그 사람의 조로 들어가요.'},
- {id:'manito',name:'마니또 추리전',mascot:'booky',expr:6,mode:'auto',unit:'person',rewards:[50,30,20],when:'마지막 날',desc:'내 마니또가 누구인지 맞혀보세요. 맞힌 사람과 끝까지 안 들킨 마니또가 코인을 받아요.'}
+ {id:'steps',name:'만보기 레이스',mascot:'bumi',expr:3,mode:'manual',unit:'team',rewards:[80,50,30],when:'매일 밤 마감',desc:'하루 동안 가장 많이 걸은 사람이 이겨요. 건강 앱 걸음 수 화면을 캡처해서 인증해요. 상금은 그 사람의 조로 들어가요.'},
+ {id:'manito',name:'마니또 추리전',mascot:'booky',expr:6,mode:'auto',unit:'team',rewards:[50,30,20],when:'마지막 날',desc:'내 마니또가 누구인지 맞혀보세요. 맞힌 사람과 끝까지 안 들킨 마니또가 코인을 받아요.'}
 ];
 const allGames=()=>GAME_DEFS.concat(S.custom||[]);
 const gdef=id=>allGames().find(x=>x.id===id);
@@ -1095,13 +1095,13 @@ function ensureGames(){ if(!S.games){ S.games={}; } allGames().forEach(g=>{ if(!
 let gameFilter='all', gameUnit='all';
 function gamesView(){
   ensureGames();
-  const list=allGames().filter(g=>(gameUnit==='all'||g.unit===gameUnit)&&(gameFilter==='all'||S.games[g.id].status===gameFilter||(gameFilter==='auto'&&g.mode==='auto')));
-  let h=stampBanner()+'<div class="seg2 wide unitseg">'+[['all','전체'],['team','팀전'],['person','개인전']].map(u=>'<button class="'+(gameUnit===u[0]?'on':'')+'" onclick="gameUnit=\''+u[0]+'\';render()">'+u[1]+' <small>'+allGames().filter(x=>u[0]==='all'||x.unit===u[0]).length+'</small></button>').join('')+'</div><div class="filter">'+[['live','진행 중'],['soon','예정'],['done','종료']].map(f=>'<button class="fchip '+(gameFilter===f[0]?'on':'')+'" onclick="gameFilter=gameFilter===\''+f[0]+'\'?\'all\':\''+f[0]+'\';SFX.select();render()">'+f[1]+'</button>').join('')+'</div>';
+  const list=allGames().filter(g=>(gameFilter==='all'||S.games[g.id].status===gameFilter||(gameFilter==='auto'&&g.mode==='auto')));
+  let h=stampBanner()+'<div class="filter">'+[['live','진행 중'],['soon','예정'],['done','종료']].map(f=>'<button class="fchip '+(gameFilter===f[0]?'on':'')+'" onclick="gameFilter=gameFilter===\''+f[0]+'\'?\'all\':\''+f[0]+'\';SFX.select();render()">'+f[1]+'</button>').join('')+'</div>';
   h+='<div class="ggrid">'+list.map((g,i)=>{ const st=S.games[g.id], last=st.results[st.results.length-1];
     const win=last&&last.ranks[0]?winnerName(g,last.ranks[0]):'';
     const wp=last&&last.ranks[0]&&g.unit==='person'?person(last.ranks[0].pid):null;
     return '<button class="gcard" onclick="openGame(\''+g.id+'\')">'+thumbHTML(g,i,st)+(st.status!=='soon'?'<span class="gst '+st.status+'">'+ST_LABEL[st.status]+'</span>':'')+'</div>'
-      +'<b>'+esc(g.name)+'</b><small class="gmeta">'+(g.unit==='person'?'개인전':'팀전')+' · '+(g.custom?'돌발 · '+prizeLabel(g):esc(gWhen(g)))+'</small>'
+      +'<b>'+esc(g.name)+'</b><small class="gmeta">'+(g.custom?'돌발 · '+prizeLabel(g):esc(gWhen(g)))+'</small>'
       +(win?'<span class="gwin">'+(wp?avatar(wp,'xs'):ic('trophy','sm'))+esc(win)+'</span>':'')+'</button>'; }).join('')+'</div>';
   if(!list.length) h+='<p class="sub center">해당하는 게임이 없어요</p>';
   return h;
@@ -1112,16 +1112,16 @@ function gameInfoHTML(id){ const g=gdef(id), st=S.games[id]; return ''
      +field('상태','<div class="seg2">'+['soon','live','done'].map(s=>'<button class="'+(st.status===s?'on':'')+'" onclick="setGameStatus(\''+id+'\',\''+s+'\')">'+ST_LABEL[s]+'</button>').join('')+'</div>'); }
 function gWhen(g){ const st=S.games&&S.games[g.id]; return (st&&st.when)||g.when||''; }
 function setWhen(id,v){ ensureGames(); v=(v||'').trim(); S.games[id].when=v||null; save(); SFX.select(); toast('일정을 바꿨어요'); render(); if($('#thset')) thSetDraw(); else openGame(id,true); }
-function winnerName(g,r){ if(g.unit==='person'){ const p=person(r.pid); return p?team(p.team).name+' · '+p.name:'?'; } return team(r.team).name+(r.mvp&&person(r.mvp)?' · MVP '+person(r.mvp).name:''); }
+function winnerName(g,r){ if(g.unit==='person'){ const p=person(r.pid); return p?team(p.team).name+' · '+p.name:'?'; } return team(r.team).name+(r.mvp&&person(r.mvp)?' · '+person(r.mvp).name:''); }
 function openGame(id,quiet){
   ensureGames(); const g=gdef(id), st=S.games[id], i=allGames().indexOf(g), m=me();
-  let h='<div class="gtop"><div class="gtl">'+thumbHTML(g,i,st,'big')+'<span class="gunit '+g.unit+'">'+(g.unit==='person'?'개인전':'팀전')+'</span></div><h2>'+esc(g.name)+'</h2><small>'+esc(gWhen(g))+'</small></div>'
+  let h='<div class="gtop"><div class="gtl">'+thumbHTML(g,i,st,'big')+'</div><h2>'+esc(g.name)+'</h2><small>'+esc(gWhen(g))+'</small></div>'
    +'<div class="gtr"><div class="gtc"><span class="gst2 '+st.status+'">'+ST_LABEL[st.status]+'</span><span>'+(g.mode==='auto'?'앱에서 자동 집계':'운영진이 결과 입력')+'</span></div><p>'+ic('bulb')+'<span>'+esc(g.desc)+'</span></p></div></div>'
    +(id==='treasure'||id==='photo'?'':'<section class="card flat rewsec">'+(isCardGame(g)?cardPrize(g):'<div class="rew2">'+g.rewards.map((c,k)=>'<div><span class="rkl"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><small>등</small></span><b>'+coinIc+c+'</b></div>').join('')+'</div>')+'</section>');
   if(id==='treasure'){ ensureTH(); h+=thSummary(); }
   else if(id==='photo'){ h+=bgSummary(); }
   else h+='<section class="card flat"><h3>'+ic('trophy','sm')+' 우승 기록</h3>'+(st.results.length?st.results.slice().reverse().map(r=>'<div class="gres"><div class="gres-h"><small>'+ago(r.ts)+' · '+esc(r.by)+'</small>'+(m.admin?'<button class="mini" onclick="cancelResult(\''+id+'\',\''+r.id+'\')">결과 취소</button>':'')+'</div>'+r.ranks.map((x,k)=>{ const wp=g.unit==='person'?person(x.pid):(x.mvp?person(x.mvp):null), tt=g.unit==='person'?(wp?team(wp.team):null):team(x.team);
-      return '<div class="rk-row"><span class="medal m'+(k+1)+'">'+(k+1)+'</span>'+(wp?avatar(wp,'s'):'<span class="tdotS" style="background:'+(tt?tt.color:'#ddd')+'"></span>')+'<span class="rk-n">'+(g.unit==='person'?'<b>'+esc(wp?wp.name:'?')+'</b> <small>'+esc(tt?tt.name:'')+'</small>':'<b>'+esc(tt.name)+'</b>'+(wp?' <small>MVP '+esc(wp.name)+'</small>':''))+'</span>'+(x.card?cardTag(x.card):'<b class="camt">'+coinIc+'+'+x.coin+'</b>')+'</div>'; }).join('')+'</div>').join(''):'<p class="sub">아직 결과가 없어요</p>')+'</section>';
+      return '<div class="rk-row"><span class="medal m'+(k+1)+'">'+(k+1)+'</span>'+(wp?avatar(wp,'s'):'<span class="tdotS" style="background:'+(tt?tt.color:'#ddd')+'"></span>')+'<span class="rk-n">'+(g.unit==='person'?'<b>'+esc(wp?wp.name:'?')+'</b> <small>'+esc(tt?tt.name:'')+'</small>':'<b>'+esc(tt.name)+'</b>'+(wp?' <small>'+esc(wp.name)+'</small>':''))+'</span>'+(x.card?cardTag(x.card):'<b class="camt">'+coinIc+'+'+x.coin+'</b>')+'</div>'; }).join('')+'</div>').join(''):'<p class="sub">아직 결과가 없어요</p>')+'</section>';
   if(m.admin&&id==='treasure'){ h+=thCtrl(); return modal(h,quiet); }
   if(id==='photo'){ if(m.admin) h+=bgCtrl()+'<section class="card flat"><h3>'+ic('tool','sm')+' 게임 정보</h3>'+gameInfoHTML(id)+'</section>'; return modal(h,quiet); }
   if(m.admin){
@@ -1130,7 +1130,7 @@ function openGame(id,quiet){
     if(g.mode==='auto') h+='<p class="note">자동 집계 게임이에요. 실제 버전에서는 게임이 끝나면 결과가 바로 기록에 올라가요. 지금은 아래 버튼으로 미리 체험해 볼 수 있어요.</p><button class="btn ghost full" style="margin:10px 0 4px" onclick="simulateResult(\''+id+'\')">'+ic('dice')+'자동 집계 시뮬레이션</button><p class="sub" style="margin:10px 0 6px">자동 집계가 안 됐을 때는 직접 입력할 수도 있어요.</p>';
     h+='<div id="gform">'+g.rewards.map((c,k)=>'<div class="gin"><span class="medal m'+(k+1)+'">'+(k+1)+'</span>'
       +(g.unit==='person'?'<select id="g_w'+k+'"><option value="">선택 안 함</option>'+S.people.slice().sort((a,b)=>a.name.localeCompare(b.name,'ko')).map(p=>'<option value="'+p.id+'">'+esc(p.name)+' · '+esc(team(p.team).name)+'</option>').join('')+'</select>'
-        :'<select id="g_w'+k+'"><option value="">선택 안 함</option>'+TEAMS.map(t=>'<option value="'+t.id+'">'+esc(t.name)+'</option>').join('')+'</select><select id="g_m'+k+'" class="mvp"><option value="">MVP(선택)</option>'+S.people.slice().sort((a,b)=>a.team.localeCompare(b.team)||a.name.localeCompare(b.name,'ko')).map(p=>'<option value="'+p.id+'">'+esc(p.name)+' · '+esc(team(p.team).name)+'</option>').join('')+'</select>')
+        :'<select id="g_w'+k+'"><option value="">선택 안 함</option>'+TEAMS.map(t=>'<option value="'+t.id+'">'+esc(t.name)+'</option>').join('')+'</select><select id="g_m'+k+'" class="mvp"><option value="">딴 사람(선택)</option>'+S.people.slice().sort((a,b)=>a.team.localeCompare(b.team)||a.name.localeCompare(b.name,'ko')).map(p=>'<option value="'+p.id+'">'+esc(p.name)+' · '+esc(team(p.team).name)+'</option>').join('')+'</select>')
       +(isCardGame(g)?cardTag(g.prize):'<input id="g_c'+k+'" type="number" inputmode="numeric" value="'+c+'">')+'</div>').join('')
      +'<button class="btn primary full" onclick="submitResult(\''+id+'\')">결과 반영하기</button><p class="sub" style="margin-top:6px">'+(isCardGame(g)?'반영하면 해당 조에 카드가 지급되고 최근 소식에 올라가요.':'반영하면 남은 코인에서 지급되고, 코인 기록과 최근 소식에도 올라가요.')+'</p></div>'+(g.custom?'<button class="btn ghost full" style="margin-top:10px" onclick="deleteGame(\''+id+'\',this)">'+ic('trash')+'이 게임 지우기</button>':'')+'</section>';
   }
@@ -1154,10 +1154,10 @@ function recordResult(id,ranks,by){
 }
 function submitResult(id){
   const g=gdef(id), ranks=[], used=new Set();
-  for(let k=0;k<g.rewards.length;k++){ const w=$('#g_w'+k).value, c=isCardGame(g)?1:Math.floor(Number($('#g_c'+k).value)); if(!w) continue;
+  for(let k=0;k<g.rewards.length;k++){ const mv0=g.unit!=='person'&&$('#g_m'+k)?$('#g_m'+k).value:'', w=$('#g_w'+k).value||(mv0?person(mv0).team:''), c=isCardGame(g)?1:Math.floor(Number($('#g_c'+k).value)); if(!w) continue;
     if(used.has(w)){ SFX.error(); return toast('같은 '+(g.unit==='person'?'사람':'조')+'을(를) 두 번 고를 수 없어요'); } used.add(w);
     if(!(c>0)){ SFX.error(); return toast((k+1)+'등 코인 수를 입력해주세요'); }
-    let mv=g.unit!=='person'&&$('#g_m'+k)?$('#g_m'+k).value:''; if(mv&&person(mv).team!==w){ SFX.error(); return toast((k+1)+'등 MVP는 그 조의 조원이어야 해요'); }
+    let mv=g.unit!=='person'&&$('#g_m'+k)?$('#g_m'+k).value:''; if(mv&&person(mv).team!==w){ SFX.error(); return toast((k+1)+'등 딴 사람은 그 조의 조원이어야 해요'); }
     ranks.push(g.unit==='person'?{pid:w,coin:c}:{team:w,coin:c,mvp:mv||undefined}); if(isCardGame(g)){ const r=ranks[ranks.length-1]; delete r.coin; r.card=g.prize; } }
   if(recordResult(id,ranks,me().name)){ closeModal(); render(); setTimeout(()=>openGame(id),50); }
 }
@@ -2465,8 +2465,7 @@ function guerrillaView(){ ensureCards(); const G=ui.gg=ui.gg||{name:'',desc:'',u
   let h='<section class="card"><h3>'+ic('bolt','sm')+' 돌발 게임 만들기</h3><p class="sub">만들면 게임 탭에 바로 생겨요. 끝나면 그 게임에 들어가서 우승자를 입력하세요.</p>'
    +field('게임 이름','<input id="gg_name" maxlength="20" placeholder="버스 가위바위보" value="'+esc(G.name)+'">')
    +field('설명 (선택)','<input id="gg_desc" maxlength="60" placeholder="진행자와 가위바위보! 끝까지 남는 사람이 승리" value="'+esc(G.desc)+'">')
-   +field('방식',seg('unit',[['team','팀전'],['person','개인전']]))
-   +field('상품',seg('prize',[['coin','코인'],['steal','뺏기 카드'],['shield','방어 카드']]),G.prize==='coin'?'':CARD[G.prize].desc+'. 개인전이면 우승자의 조가 카드를 가져요.');
+   +field('상품',seg('prize',[['coin','코인'],['steal','뺏기 카드'],['shield','방어 카드']]),G.prize==='coin'?'':CARD[G.prize].desc+'.');
   if(G.prize==='coin') h+=field('등수별 코인','<div class="gg3">'+[0,1,2].map(k=>'<label><small>'+(k+1)+'등</small><input id="gg_c'+k+'" type="number" inputmode="numeric" placeholder="없음" value="'+esc(G['c'+k])+'"></label>').join('')+'</div>','비워 둔 등수는 상품이 없어요.');
   else h+=field('몇 등까지 줄까요',seg('n',[[1,'1등만'],[2,'2등까지'],[3,'3등까지']]),'등수마다 카드 1장씩 받아요.');
   h+='<button class="btn primary full" onclick="createGuerrilla()">게임 만들기</button></section>';
@@ -2478,7 +2477,7 @@ function createGuerrilla(){ ensureCards(); ggKeep(); const G=ui.gg, name=G.name.
   let rewards; if(G.prize==='coin'){ rewards=[]; for(const k of [0,1,2]){ const c=Math.floor(Number(G['c'+k])); if(c>0) rewards.push(c); else break; } if(!rewards.length){ SFX.error(); return toast('1등 코인 수를 입력해주세요'); } }
   else rewards=Array(G.n).fill(1);
   const id='g'+Date.now().toString(36);
-  S.custom.push({id,name,custom:true,mascot:MASCOT_KEYS[Math.floor(Math.random()*MASCOT_KEYS.length)],expr:3,mode:'manual',unit:G.unit,prize:G.prize,rewards,when:'돌발 게임',desc:G.desc.trim()||'운영진이 깜짝 여는 돌발 게임이에요!'});
+  S.custom.push({id,name,custom:true,mascot:MASCOT_KEYS[Math.floor(Math.random()*MASCOT_KEYS.length)],expr:3,mode:'manual',unit:'team',prize:G.prize,rewards,when:'돌발 게임',desc:G.desc.trim()||'운영진이 깜짝 여는 돌발 게임이에요!'});
   ensureGames(); ui.gg=null; save(); SFX.fanfare(); buzz([30,40,60]); go('games'); openGame(id); toast('<b>'+esc(name)+'</b> 게임을 만들었어요'); }
 function deleteGame(id,btn){ const st=S.games[id]; if(st.results.length){ SFX.error(); return toast('결과를 먼저 취소해야 지울 수 있어요'); }
   if(btn.dataset.sure!=='1'){ btn.dataset.sure='1'; btn.textContent='한 번 더 누르면 지워져요'; SFX.error(); return; }
