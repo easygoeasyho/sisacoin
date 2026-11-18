@@ -212,18 +212,29 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .lk-c{display:block;font-size:24px;font-weight:900;color:#FFD84D;animation:thp .5s infinite}.lk-bar{height:16px;border-radius:9px;background:rgba(255,255,255,.2);border:2px solid #fff;overflow:hidden;margin:14px 0 6px}.lk-bar i{display:block;height:100%;width:0;background:#FFD84D;transition:width .08s}.lk-tm{font-size:13px;font-weight:700}.thlock.ok .lk-box{transform:scale(1.2);transition:.3s}
 .fogpick{display:flex;flex-direction:column;gap:6px;margin-top:12px}.fogpick button{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:12px;background:#F5F2EA;font-weight:800;font-size:14px;color:#1E1E1C;opacity:1;animation:none;margin:0}.fogpick i{width:12px;height:12px;border-radius:4px;border:1.5px solid #1E1E1C}.zpop .cx{background:#E9E4D8!important;color:#1E1E1C!important;margin-top:10px!important}
 .bst{display:inline-block;background:#FFD84D;color:#1E1E1C;border-radius:6px;padding:0 6px;font-weight:900}
-.pdock{position:absolute;left:0;right:0;bottom:0;z-index:6;background:#FFFDF7;border-top:3px solid #1E1E1C;border-radius:24px 24px 0 0;padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 12px);box-shadow:0 -6px 18px rgba(0,0,0,.12)}
-.pdock .mpattr{position:absolute;left:10px;top:-22px;bottom:auto}
-.pdrow{display:flex;gap:8px;align-items:stretch}
-.pdock .pdet{position:static;flex:1;min-width:0;border:2.5px solid #1E1E1C;box-shadow:none;border-radius:16px;min-height:72px}
-.pdock .phint i{top:-6px;right:-4px}.pdock .phint{position:relative;flex:none;width:72px;height:auto;min-height:72px;border-radius:16px;box-shadow:none}
-.pinv{margin-top:10px;position:relative;background:#2B2A33;border-radius:16px;padding:16px 8px 8px}.pinvt{position:absolute;left:12px;top:-9px;background:#FFD84D;border:2px solid #1E1E1C;border-radius:99px;padding:0 8px;font-size:11px;font-weight:900;line-height:16px}
-.pdock .pskill{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.pdock *{box-sizing:border-box}
-.pskill .slot{position:relative;width:auto;height:auto;min-width:0;flex-direction:row;justify-content:flex-start;gap:6px;padding:7px 6px;border-radius:12px;background:#3C3B47;border:2px solid #5A5866;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);color:#fff;text-align:left}
-.pskill .ske{flex:none;width:32px;height:32px;border-radius:9px;background:#FFFDF7;border:2px solid #1E1E1C;display:flex;align-items:center;justify-content:center;font-size:18px}
-.pskill .skt{min-width:0;background:none;padding:0;border:0;font-size:inherit;display:flex;flex-direction:column;line-height:1.15}.pskill .skt b{font-size:12.5px;font-weight:900}.pskill .skt small{font-size:9.5px;color:#C9C6D6;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pskill .slot i{position:absolute;right:-5px;top:-7px;min-width:18px;height:18px;border-radius:9px;background:#E5483F;border:2px solid #fff;font-style:normal;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center}
-.pskill .slot.used,.pskill .slot:disabled{opacity:.4;transform:none;box-shadow:none}.pskill .slot.used i{background:#888}.pskill .slot.on{background:#7A5A00;border-color:#FFD84D;opacity:1;animation:thp 1s infinite}.pskill .slot:not(:disabled):active{transform:translateY(2px)}
+.pdock{position:absolute;left:0;right:0;bottom:0;z-index:6;background:#FFFDF7;border-top:3px solid #1E1E1C;border-radius:24px 24px 0 0;padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 12px);box-shadow:0 -6px 18px rgba(0,0,0,.12);display:flex;gap:12px;align-items:center}
+.pdock *{box-sizing:border-box}.pdock .mpattr{position:absolute;left:10px;top:-22px;bottom:auto}
+.pradar{flex:none;width:112px;height:112px}.rsvg{width:100%;height:100%;display:block}.rbg{fill:#1F3A2E;stroke:#1E1E1C;stroke-width:3.5}.rr{fill:none;stroke:#3E7A5C;stroke-width:1}.rlb{font-size:8px;fill:#9FE1BF;text-anchor:middle;font-weight:700}.rme{fill:#5BB0FF;stroke:#fff;stroke-width:1.5}
+.rsw{transform-origin:50px 50px;animation:rad 2.2s linear infinite}.rsw path{fill:#5BE39A;opacity:.28}
+.rb{cursor:pointer}.rb circle{fill:#FFD84D;stroke:#1E1E1C;stroke-width:1.5;animation:blip 1s infinite}.rb.sel circle{fill:#FF6B5B}.rb.gd circle{fill:#FFC400}.rb text{font-size:6.5px;font-weight:900;text-anchor:middle;fill:#1E1E1C;pointer-events:none}@keyframes blip{50%{opacity:.55}}
+.rarr{transform-origin:50px 50px;transition:transform .25s}.rarr path{fill:#FF6B5B;stroke:#fff;stroke-width:1.5}
+.rsvg.jam .rbg{fill:#555}.rsvg.jam{animation:jit .15s infinite}.rsvg.off .rbg{fill:#3A3A3A}.rsvg.off .rr{stroke:#555}.rsvg.comp.hot .rbg{fill:#5A1E1A}
+.pdr{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.pdock .pdet{position:static;padding:0;border:0;box-shadow:none;background:none!important;animation:none!important;min-height:0;display:block;color:#1E1E1C}
+.pdt{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.pdt b{font-size:17px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pdt .clk{font-size:14px;font-weight:900;white-space:nowrap}
+.pds{font-size:12px;color:var(--sub);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pds small{font-size:11px}
+.pdet.comp.warm .pdt b{color:#D96A00}.pdet.comp.hot .pdt b{color:#E5483F}.pdet.jam .pdt b{color:#7A6A9A}.pdet.out .pdt b{color:#E5483F}
+.pds .pdc{display:inline-flex;flex-direction:row;gap:5px;margin:2px 0 0;overflow:visible}.pds .pdc button{display:inline-flex;flex-direction:row;align-items:baseline;gap:3px;background:#FFD84D;border:2px solid #1E1E1C;border-radius:8px;padding:1px 7px;font-weight:900;font-size:12px;color:#1E1E1C}.pdc small{font-weight:700;font-size:10.5px}
+.pdsw{font-size:11px;font-weight:800;text-decoration:underline;color:#1E1E1C}
+.pslots{display:flex;gap:6px}.pdock .pskill{position:static;display:flex;flex-direction:row;gap:6px;flex:3;right:auto;bottom:auto}
+.pslots .slot{position:relative;flex:1;min-width:0;height:54px;border-radius:12px;background:#2B2A33;border:2px solid #1E1E1C;box-shadow:inset 0 -3px 0 rgba(0,0,0,.35);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0}
+.pslots .ske{font-size:20px;line-height:1;display:flex}.pslots .ske svg{width:20px;height:20px}.pslots .slot small{font-size:10px;font-weight:800;line-height:1}
+.pslots .slot i{position:absolute;right:-5px;top:-6px;min-width:17px;height:17px;border-radius:9px;background:#E5483F;border:2px solid #fff;font-style:normal;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.pslots .slot.used,.pslots .slot:disabled{opacity:.38;box-shadow:none}.pslots .slot.used i{background:#888}.pslots .slot.on{background:#7A5A00;border-color:#FFD84D;opacity:1;animation:thp 1s infinite}.pslots .slot:not(:disabled):active{transform:translateY(2px)}
+.pslots .slot.stat{flex:1;background:#FFD84D;color:#1E1E1C}
+.play .ptop{display:flex;align-items:center;gap:8px}.play .ptick{position:static;flex:1;height:44px;border-radius:14px;border:2px solid #1E1E1C}
+.ptick span{display:inline-block;white-space:nowrap;padding:0;animation:tick2 linear 1 forwards}.ptick span.new{color:#FFD84D}@keyframes tick2{from{transform:translateX(var(--from))}to{transform:translateX(var(--to))}}
+.play .pfab{top:70px}
 .play .psheet{z-index:9}
 .play.rep .pdock,.play.rep .ptick,.play.rep .pfab,.play.rep .mpm{display:none}
 .prep{position:absolute;inset:0;z-index:7;pointer-events:none}.prep canvas{position:absolute;inset:0;width:100%;height:100%}
@@ -1115,7 +1126,7 @@ function thStart(){
   TH.watch=navigator.geolocation.watchPosition(p=>{ if(TH.sim) return; const first=!TH.pos; TH.pos={lat:p.coords.latitude,lng:p.coords.longitude}; TH.acc=p.coords.accuracy; TH.err=''; if(first&&$('#play')){ MP.c={...TH.pos}; } thPaint(); },
     e=>{ TH.err=e.code===1?'위치 권한이 꺼져 있어요. 설정에서 허용해 주세요':'위치를 가져오지 못했어요'; thPaint(); },{enableHighAccuracy:true,maximumAge:2000,timeout:15000});
 }
-function thArrows(){ const a=$('#pcomp i'); if(!a||!TH.sel) return; const s=thSpot(TH.sel); if(!s||!TH.pos) return; const b=thBear(TH.pos,s); a.style.transform='rotate('+(TH.head===null?b:b-TH.head)+'deg)'; }
+function thArrows(){ const n=Date.now(); if(n-(TH.arT||0)<200) return; TH.arT=n; if($('#pradar')&&S.th&&S.th.state==='live') thDet(); }
 const thSpot=id=>S.th.spots.find(s=>s.id===id);
 const thLive=()=>S.th.state==='live'&&Date.now()<S.th.endAt;
 
@@ -1195,20 +1206,27 @@ function thClock(){ const r=Math.max(0,S.th.endAt-Date.now()), m=Math.floor(r/60
 
 /* ---------- 탐지기 ---------- */
 function thInRange(){ if(!TH.pos) return []; return S.th.spots.filter(s=>!s.found).map(s=>({s,d:thDist(TH.pos,s)})).filter(x=>x.d<=S.th.cfg.detR).sort((a,b)=>a.d-b.d); }
-function thDet(){ const box=$('#pdet'); if(!box) return; const C=S.th.cfg;
-  if(S.th.state!=='live'){ box.className='pdet idle'; box.innerHTML=S.th.state==='done'?'<b>게임이 끝났어요</b>':'<b>아직 시작 전이에요</b><span>운영진이 시작하면 탐지기가 켜져요</span>'; return; }
-  if(!TH.pos){ box.className='pdet idle'; box.innerHTML='<b>'+ic('pin','sm')+'위치를 켜면 탐지기가 작동해요</b>'; return; }
-  const jm=((S.th.jam||{})[me().team]||0)-Date.now(); if(jm>0){ box.className='pdet jam'; box.innerHTML='<div class="radar jam"><i></i></div><div><b>지지직… 탐지기 고장!</b><span>'+Math.ceil(jm/1000)+'초 뒤에 다시 작동해요</span></div>'; thBeep(0); const pl=$('#play'); if(pl) pl.dataset.sig=''; return; }
-  if(C.center&&thDist(TH.pos,C.center)>C.radius+40){ box.className='pdet out'; box.innerHTML='<b>보물 구역 밖이에요</b><span>지도의 원 안으로 들어가세요</span>'; thBeep(0); return; }
+function thRadar(L,mode){ const C=S.th.cfg, R=40, hd=TH.head||0;
+  let dots=''; (L||[]).forEach((x,k)=>{ const b=(thBear(TH.pos,x.s)-hd)*Math.PI/180, r=Math.min(1,x.d/C.detR)*R*.92, cx=50+Math.sin(b)*r, cy=50-Math.cos(b)*r, sel=x.s.id===TH.sel;
+    dots+='<g class="rb'+(sel?' sel':'')+(x.s.gold?' gd':'')+'" onclick="thPick(\''+x.s.id+'\')"><circle cx="'+cx+'" cy="'+cy+'" r="'+(sel?6.5:5)+'"/>'+(L.length>1&&!sel?'<text x="'+cx+'" y="'+(cy+3)+'">'+String.fromCharCode(65+k)+'</text>':'')+'</g>'; });
+  let arr=''; if(mode==='comp'){ const x=L.find(y=>y.s.id===TH.sel); if(x){ const b=thBear(TH.pos,x.s)-(TH.head===null?0:TH.head); arr='<g class="rarr" style="transform:rotate('+b+'deg)"><path d="M50 22 L57 40 L50 36 L43 40Z"/></g>'; } }
+  return '<svg viewBox="0 0 100 100" class="rsvg '+(mode||'')+'"><circle cx="50" cy="50" r="46" class="rbg"/><circle cx="50" cy="50" r="30" class="rr"/><circle cx="50" cy="50" r="15" class="rr"/><path d="M50 4V96M4 50H96" class="rr"/>'
+   +(mode==='jam'?'':'<g class="rsw"><path d="M50 50 L50 4 A46 46 0 0 1 89 26 Z"/></g>')+arr+dots+'<circle cx="50" cy="50" r="3.5" class="rme"/><text x="50" y="94" class="rlb">'+C.detR+'m</text></svg>'; }
+function thDet(){ const box=$('#pdet'), rd=$('#pradar'); if(!box) return; const C=S.th.cfg;
+  const set=(cls,ttl,sub,radar)=>{ box.className='pdet '+cls; box.innerHTML='<div class="pdt"><b>'+ttl+'</b><span class="clk'+(S.th.state==='live'&&S.th.endAt-Date.now()<300000?' red':'')+'">'+(S.th.state==='live'?'⏱ '+thClock():'')+'</span></div><div class="pds">'+sub+'</div>'; rd.innerHTML=radar; };
+  if(S.th.state!=='live'){ set('idle',S.th.state==='done'?'게임 종료':'시작 전이에요',S.th.state==='done'?'현황에서 결과와 리플레이를 볼 수 있어요':'운영진이 시작하면 탐지기가 켜져요',thRadar([],'off')); thBeep(0); return; }
+  if(!TH.pos){ set('idle','위치를 켜주세요','위치를 켜면 탐지기가 작동해요',thRadar([],'off')); return; }
+  const jm=((S.th.jam||{})[me().team]||0)-Date.now(); if(jm>0){ set('jam','지지직… 고장!',Math.ceil(jm/1000)+'초 뒤에 다시 작동해요',thRadar([],'jam')); thBeep(0); return; }
+  if(C.center&&thDist(TH.pos,C.center)>C.radius+40){ set('out','구역 밖이에요','지도의 빨간 원 안으로 들어가세요',thRadar([],'off')); thBeep(0); return; }
   const L=thInRange();
   if(TH.sel&&!L.find(x=>x.s.id===TH.sel)){ const s=thSpot(TH.sel); if(s&&s.found){ toast('앗! 고른 보물을 '+team(s.found.team).name+'이(가) 먼저 가져갔어요'); SFX.lose(); } TH.sel=null; }
-  if(L.length>TH.cnt){ buzz([60,40,60]); SFX.select(); if(L.length>1&&!TH.sel) toast('📡 '+C.detR+'m 안에 보물 '+L.length+'개 감지! 하나를 골라 쫓아가세요'); }
-  TH.cnt=L.length;
-  if(!L.length){ box.className='pdet scan'; box.innerHTML='<div class="radar"><i></i></div><div><b>탐지 중…</b><span>'+C.detR+'m 안에 보물 신호가 없어요</span></div>'; thBeep(0); return; }
+  if(L.length>TH.cnt){ buzz([60,40,60]); SFX.select(); if(L.length>1&&!TH.sel) toast('📡 보물 '+L.length+'개 감지! 레이더의 점을 눌러 하나를 고르세요'); }
+  TH.cnt=L.length; const left=S.th.spots.filter(s=>!s.found).length;
+  if(!L.length){ set('scan','탐지 중…',C.detR+'m 안에 신호 없음 · 남은 보물 '+left,thRadar([],'scan')); thBeep(0); return; }
   if(L.length===1&&!TH.sel) TH.sel=L[0].s.id;
-  if(!TH.sel){ box.className='pdet pick'; box.innerHTML='<div class="pdh"><b>📡 '+C.detR+'m 안에 보물 '+L.length+'개!</b><span>쫓아갈 보물을 골라주세요</span></div><div class="pdc">'+L.map((x,k)=>'<button onclick="thPick(\''+x.s.id+'\')">'+(x.s.gold?'⭐ 황금':'보물 '+String.fromCharCode(65+k))+'<small>'+thFmt(x.d)+'</small></button>').join('')+'</div>'; thBeep(L[0].d); return; }
-  const x=L.find(y=>y.s.id===TH.sel), d=x.d, b=thBear(TH.pos,x.s), lv=d<=20?'hot':d<=50?'warm':'near';
-  box.className='pdet comp '+lv; box.innerHTML='<div class="pcomp" id="pcomp"><i style="transform:rotate('+(TH.head===null?b:b-TH.head)+'deg)">'+ic('navi')+'</i></div><div class="pci"><b>'+thFmt(d)+'</b><span>'+(x.s.gold?'⭐ 황금 보물':'보물')+' 쪽으로 가세요'+(TH.head===null?' · 화살표는 북쪽 기준':'')+'</span>'+(L.length>1?'<button onclick="TH.sel=null;thDet()">다른 보물 '+(L.length-1)+'개 보기</button>':'')+'</div>';
+  if(!TH.sel){ set('pick','보물 '+L.length+'개 감지!','<span class="pdc">'+L.map((x,k)=>'<button onclick="thPick(\''+x.s.id+'\')">'+(x.s.gold?'⭐':String.fromCharCode(65+k))+' <small>'+thFmt(x.d)+'</small></button>').join('')+'</span>',thRadar(L,'pick')); thBeep(L[0].d); return; }
+  const x=L.find(y=>y.s.id===TH.sel), d=x.d, lv=d<=20?'hot':d<=50?'warm':'near';
+  set('comp '+lv,(x.s.gold?'⭐ 황금 ':'보물 ')+thFmt(d),'화살표 방향으로!'+(L.length>1?' <button class="pdsw" onclick="TH.sel=null;thDet()">다른 보물 '+(L.length-1)+'</button>':'')+(TH.head===null?' <small>(북쪽 기준)</small>':''),thRadar(L,'comp'));
   thBeep(d); }
 function thPick(id){ TH.sel=id; SFX.select(); buzz([30]); thDet(); }
 let thBeepT=null, thBeepD=0;
@@ -1253,7 +1271,8 @@ function thClaim(id){
 /* 스킬 */
 const SKILL={pulse:{n:'펄스',e:'📡',s:'보물 위치 공개',d:'10초 동안 모든 보물 위치가 보여요'},fog:{n:'안개',e:'🌫️',s:'상대 탐지기 마비',d:'다른 조 하나의 탐지기를 1분간 먹통으로'},boost:{n:'부스터',e:'🚀',s:'다음 보물 2배',d:'다음에 찾는 보물 코인 2배'}};
 function thSkillBar(){ const b=$('#pskill'); if(!b) return; const my=me().team, u=(S.th.skills||{})[my]||{}, live=thLive();
-  b.innerHTML=Object.keys(SKILL).map(k=>{ const on=k==='boost'&&(S.th.boost||{})[my]; return '<button class="slot'+(u[k]&&!on?' used':'')+(on?' on':'')+'" '+(u[k]||!live?'disabled':'')+' onclick="thSkill(\''+k+'\')"><span class="ske">'+SKILL[k].e+'</span><span class="skt"><b>'+SKILL[k].n+'</b><small>'+(on?'장착 중!':u[k]?'사용 완료':SKILL[k].s)+'</small></span><i>'+(u[k]?0:1)+'</i></button>'; }).join(''); }
+  const h=Object.keys(SKILL).map(k=>{ const on=k==='boost'&&(S.th.boost||{})[my]; return '<button class="slot'+(u[k]&&!on?' used':'')+(on?' on':'')+'" '+(u[k]||!live?'disabled':'')+' onclick="thSkill(\''+k+'\')" title="'+SKILL[k].d+'"><span class="ske">'+SKILL[k].e+'</span><small>'+(on?'장착!':SKILL[k].n)+'</small><i>'+(u[k]?0:1)+'</i></button>'; }).join('');
+  if(b.dataset.h!==h){ b.dataset.h=h; b.innerHTML=h; } }
 function thSkill(k){ const my=me().team; S.th.skills=S.th.skills||{}; const u=S.th.skills[my]=S.th.skills[my]||{}; if(u[k]||!thLive()) return;
   if(k==='fog'){ const ts=TEAMS.filter(t=>t.id!==my); const el=document.createElement('div'); el.className='zpop'; el.innerHTML='<div><b>🌫️</b><h2>어느 조에 안개를?</h2><p>그 조의 탐지기가 1분간 먹통이 돼요</p><div class="fogpick">'+ts.map(t=>'<button onclick="thFog(\''+t.id+'\',this)"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</button>').join('')+'</div><button class="cx" onclick="this.closest(\'.zpop\').remove()">취소</button></div>'; document.body.appendChild(el); return; }
   u[k]=1;
@@ -1263,8 +1282,13 @@ function thSkill(k){ const my=me().team; S.th.skills=S.th.skills||{}; const u=S.
 function thFog(tid,btn){ const my=me().team, u=S.th.skills[my]=S.th.skills[my]||{}; u.fog=1; S.th.jam=S.th.jam||{}; S.th.jam[tid]=Date.now()+60000; btn.closest('.zpop').remove();
   SFX.steal(); toast('🌫️ '+team(tid).name+'의 탐지기를 1분간 먹통으로 만들었어요!'); thNews('🌫️ '+team(my).name+'이(가) '+team(tid).name+'에 안개를 뿌렸어요!'); save(); thPaint(); }
 /* 속보 띠 */
-function thTicker(fresh){ const el=$('#ptick'); if(!el) return; const N=(S.th.news||[]).slice(-6).reverse(); if(!N.length){ el.innerHTML='<span>📣 보물찾기 진행 중! 먼저 찾는 조가 임자예요</span>'; return; }
-  if(fresh||!el.dataset.k||Date.now()-(+el.dataset.t||0)>5000){ const i=fresh?0:((+el.dataset.k||0)+1)%N.length; el.dataset.k=i; el.dataset.t=Date.now(); el.innerHTML='<span class="'+(fresh?'new':'')+'">'+esc(N[i].txt)+' <small>'+ago(N[i].ts)+'</small></span>'; } }
+function thTicker(fresh){ const el=$('#ptick'); if(!el) return; const N=(S.th.news||[]).slice(-6).reverse();
+  const msgs=N.length?N.map(n=>n.txt):['📣 보물찾기 진행 중! 먼저 찾는 조가 임자예요'];
+  if(fresh){ el.dataset.q=0; } else if(el.firstChild&&el.dataset.run==='1') return;
+  const i=Math.min(+(el.dataset.q||0),msgs.length-1), sp=document.createElement('span'); sp.className=fresh?'new':''; sp.textContent=msgs[i]+(N[i]?'  ·  '+ago(N[i].ts):'');
+  el.innerHTML=''; el.appendChild(sp); el.dataset.run='1';
+  const W=el.clientWidth, w=sp.scrollWidth, dur=(W+w)/70; sp.style.setProperty('--from',W+'px'); sp.style.setProperty('--to',-w+'px'); sp.style.animationDuration=dur+'s';
+  sp.addEventListener('animationend',()=>{ el.dataset.run='0'; el.dataset.q=((+(el.dataset.q||0))+1)%msgs.length; thTicker(); },{once:true}); }
 /* 체험용 다른 조 봇 */
 function thBots(on){ clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null; TH.botw=null; if(!on){ toast('다른 조 봇을 껐어요'); thSheet(0); return; } toast('다른 조 봇이 움직이기 시작했어요'); thSheet(0);
   TH.bw=TH.bw||{}; TH.botw=setInterval(()=>{ if(!thLive()) return; const C=S.th.cfg, ctr=C.center||MP.c, my=me().team; TEAMS.filter(t=>t.id!==my).forEach((t,k)=>{ const sp=0.5+(k%4)*0.35;
@@ -1337,11 +1361,10 @@ function thMPP(){ return 156543.03392*Math.cos(MP.c.lat*Math.PI/180)/Math.pow(2,
 function thPlay(){
   ensureTH(); closeModal(); ui.playing='treasure';
   const el=document.createElement('div'); el.className='play'; el.id='play';
-  el.innerHTML='<div class="mpv" id="mpv"><div class="mpfb" id="mpfb"></div><div class="mpt" id="mpt"></div><canvas class="mpfog" id="mpfog"></canvas><div class="mpm" id="mpm"></div></div><div class="psig"></div><div class="ptick" id="ptick"></div>'
-   +'<div class="ptop"><button class="pbk" onclick="thQuit()" aria-label="나가기">'+ic('back')+'</button><div class="ptt"><b>보물찾기</b><small id="ptsub"></small></div><span class="pchip" id="ptchip"></span></div>'
+  el.innerHTML='<div class="mpv" id="mpv"><div class="mpfb" id="mpfb"></div><div class="mpt" id="mpt"></div><canvas class="mpfog" id="mpfog"></canvas><div class="mpm" id="mpm"></div></div><div class="psig"></div>'
+   +'<div class="ptop"><button class="pbk" onclick="thQuit()" aria-label="나가기">'+ic('back')+'</button><div class="ptick" id="ptick"></div></div>'
    +'<div class="pfab"><button onclick="thZoom(1)" aria-label="확대">+</button><button onclick="thZoom(-1)" aria-label="축소">−</button><button onclick="thMeGo()" aria-label="내 위치">'+ic('navi')+'</button></div>'
-   +'<div class="pdock"><small class="mpattr">© OpenStreetMap</small><div class="pdrow"><div class="pdet" id="pdet"></div><button class="phint" onclick="thSheet(1)">'+ic('chart')+'<span>현황</span><i id="phn"></i></button></div>'
-   +'<div class="pinv"><span class="pinvt">아이템</span><div class="pskill" id="pskill"></div></div></div>'
+   +'<div class="pdock"><small class="mpattr">© OpenStreetMap</small><div class="pradar" id="pradar"></div><div class="pdr"><div class="pdet" id="pdet"></div><div class="pslots"><div class="pskill" id="pskill"></div><button class="slot stat" onclick="thSheet(1)"><span class="ske">'+ic('chart')+'</span><small>현황</small></button></div></div></div>'
    +'<div class="psheet" id="psheet"><div class="psh"><h3>'+ic('trophy','sm')+' 보물 현황</h3><button class="pclose" onclick="thSheet(0)" aria-label="닫기">'+ic('x')+'</button></div><div id="thbox"></div></div>';
   document.body.appendChild(el); document.body.style.overflow='hidden';
   TH.sel=null; TH.cnt=0; TH.busy=false;
@@ -1351,7 +1374,8 @@ function thPlay(){
 }
 function thSheet(o){ const p=$('#psheet'); if(!p) return; if(o) $('#thbox').innerHTML=thStatHTML()+thSimHTML(); p.classList.toggle('open',!!o); SFX.select(); }
 function thQuit(){ clearInterval(TH.bot); clearInterval(TH.botw); TH.bot=null; TH.botw=null; TH.rep=0; const el=$('#play'); if(el) el.remove(); document.body.style.overflow=''; ui.playing=null; MP.tiles.clear(); clearInterval(TH.tick); TH.tick=null; thBeepD=0; render(); openGame('treasure',true); }
-function thTop(){ const sub=$('#ptsub'), ch=$('#ptchip'); if(!sub) return; const ss=S.th.spots, my=me().team, mine=ss.filter(s=>s.found&&s.found.team===my), st=S.th.state; thSkillBar(); thTicker();
+function thTop(){ if(!$('#play')) return; thSkillBar(); thTicker(); }
+function thTopOld(){ const sub=$('#ptsub'), ch=$('#ptchip'); if(!sub) return; const ss=S.th.spots, my=me().team, mine=ss.filter(s=>s.found&&s.found.team===my), st=S.th.state; thSkillBar(); thTicker();
   sub.innerHTML=st==='live'?'<span class="clk'+(S.th.endAt-Date.now()<300000?' red':'')+'">⏱ '+thClock()+'</span> · 남은 보물 '+ss.filter(s=>!s.found).length:st==='done'?'게임 종료':st==='ready'?'시작 전 · 보물 '+ss.length+'개':'준비 중';
   ch.innerHTML='<i style="background:'+team(my).color+'"></i>우리 조 '+mine.length+'개 · '+coinIc+mine.reduce((a,s)=>a+(s.found.got||0),0); const hn=$('#phn'); if(hn) hn.textContent=ss.filter(s=>!s.found).length; }
 function thPaint(){ thTrail(); thMapDraw(); thTop(); thDet(); thAuto(); }
