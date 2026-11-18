@@ -642,6 +642,8 @@ body>#app .mstage,.wrap>.card.maker .mstage{top:0}
 .pstats div{text-align:center}.pstats div+div{border-left:1px solid #EAE7E0}
 .pstats b{display:flex;align-items:center;justify-content:center;gap:4px;font-size:20px;font-weight:900}.pstats small{font-size:11px;color:var(--sub)}
 .pbadge{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid #F1EFEA}.pbadge>small{flex:none;font-size:12px;color:var(--sub);width:28px}.pbadge .tags{margin-top:0}
+.hstat{position:relative;text-align:center;border-left:1px solid #EAE7E0;overflow:visible}.hstat b .i,.hst0 .i{width:20px;height:20px;fill:#FF5C8A}.hstat small{color:#FF5C8A!important;font-weight:700}
+.hstat:active b{transform:scale(1.15)}.hstat.beat b{animation:beat .3s}.hstat .hfly{top:0}
 .hrow{display:flex;align-items:center;gap:10px}
 .hbtn{position:relative;flex:1.3;min-height:56px;border-radius:16px;background:#FF5C8A;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;font-size:16px}
 .hbtn .i{width:24px;height:24px;fill:#fff}.hbtn:disabled{opacity:.4}
@@ -2228,7 +2230,7 @@ function openProfile(id,refresh){
   modal('<section class="pcardx"><div class="pftop">'+fullChar(chO(p),p.team,'sm')
    +'<div class="pinfo"><h2>'+dn(p)+'</h2>'+(SPECIAL[p.dept]?'':'<p class="sub">'+esc(p.dept)+(MASCOT_KEYS.includes(p.mascot)?' · '+esc(MASCOTS[p.mascot].name):'')+'</p>')
    +'<div class="tags left"><span class="pill" style="background:'+t.color+'40">'+esc(t.name)+'</span>'+(p.role?'<span class="pill gold">'+ROLE_LABEL[p.role]+'</span>':'')+(p.admin&&!p.role?'<span class="pill">운영진</span>':'')+'</div></div></div>'
-   +'<div class="pstats"><div><b>'+coinIc+fmt(earned(p.id))+'</b><small>딴 코인</small></div><div><b id="hcount">'+fmt(heartsRecv(p.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(p.id))+'</b><small>준 하트</small></div></div>'
+   +'<div class="pstats"><div><b>'+coinIc+fmt(earned(p.id))+'</b><small>딴 코인</small></div>'+(me()&&me().id!==p.id?'<button class="hstat" onclick="giveHeart(\''+p.id+'\',event)" aria-label="하트 누르기"><b>'+ic('heart')+'<span id="hcount">'+fmt(heartsRecv(p.id))+'</span></b><small>받은 하트 · 탭!</small></button>':'<div><b class="hst0">'+ic('heart')+'<span id="hcount">'+fmt(heartsRecv(p.id))+'</span></b><small>받은 하트</small></div>')+'<div><b>'+fmt(heartsGiven(p.id))+'</b><small>준 하트</small></div></div>'
    +'<div class="pbadge"><small>배지</small><div class="tags left">'+(bs.length?badgeChips(p):'<span class="sub">아직 없어요</span>')+'</div></div></section>'
    +'<section class="card flat"><p class="intro">'+(esc(p.intro)||'<span class="sub">아직 자기소개가 없어요</span>')+'</p>'
    +'<div class="likes"><div><small>좋아하는 것</small>'+(esc(p.like)||'-')+'</div><div><small>좋아하는 음식</small>'+(esc(p.food)||'-')+'</div><div><small>좋아하는 색</small>'+(esc(p.color)||'-')+'</div></div></section>'
@@ -2375,9 +2377,7 @@ function badgeInfo(k,pid,party){ const b=BADGES[k], p=person(pid)||me(), has=bad
   if(party){ SFX.fanfare(); buzz([30,40,30,40,80]); } else SFX.open(); }
 function socialHTML(p){
   ensureSocial(); const m=me(), cs=S.comments.filter(c=>c.to===p.id).sort((a,b)=>b.ts-a.ts);
-  return '<section class="card flat"><div class="hrow"><button class="hbtn" onclick="giveHeart(\''+p.id+'\',event)" '+(m&&m.id===p.id?'disabled':'')+'>'+ic('heart')+'<span>하트 누르기</span></button></div>'
-   +'<p class="sub" style="margin-top:6px">마주칠 때마다 마음껏 눌러주세요. 몇 번이든 눌러져요.</p></section>'
-   +'<section class="card flat"><h3>'+ic('chat','sm')+' 댓글 '+cs.length+'</h3>'
+  return '<section class="card flat"><h3>'+ic('chat','sm')+' 댓글 '+cs.length+'</h3>'
    +(m?'<div class="cin"><input id="cmt_in" maxlength="120" placeholder="'+esc(p.name)+'님에게 한마디" onkeydown="if(event.key===\'Enter\')addComment(\''+p.id+'\')"><button onclick="addComment(\''+p.id+'\')" aria-label="보내기">'+ic('send')+'</button></div>':'')
    +(cs.length?cs.map(c=>{ const w=person(c.from); return '<div class="cmt">'+(w?avatar(w,'s'):'')+'<div><p><b>'+(w?esc(w.name):'?')+'</b> <small>'+ago(c.ts)+'</small></p><p>'+esc(c.text)+'</p></div>'+((m&&(m.id===c.from||m.admin))?'<button class="cdel" onclick="delComment(\''+c.id+'\',\''+p.id+'\')" aria-label="삭제">'+ic('trash')+'</button>':'')+'</div>'; }).join(''):'<p class="sub">첫 댓글을 남겨보세요</p>')+'</section>';
 }
