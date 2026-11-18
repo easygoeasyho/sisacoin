@@ -158,12 +158,15 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .thjoin{margin:4px 0 14px;height:56px;font-size:16px}
 .play{position:fixed;inset:0;z-index:70;background:#EFE6D2;overflow:hidden;touch-action:none}
 .mpv{position:absolute;inset:0;overflow:hidden;cursor:grab}.mpv img,.mpfb{position:absolute;user-select:none;-webkit-user-drag:none;pointer-events:none}.mpfb svg{width:100%;height:100%;display:block}.mpt,.mpm{position:absolute;inset:0;pointer-events:none}
-.mpattr{position:absolute;right:6px;bottom:calc(var(--sh,46vh) + 4px);font-size:10px;color:#555;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:4px}
+.mpattr{position:absolute;left:6px;bottom:2px;font-size:10px;color:#555;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:4px}
 .ptop{position:absolute;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;align-items:center;gap:8px;z-index:5}
 .pbk{width:44px;height:44px;border-radius:14px;background:#fff;border:2px solid #1E1E1C;display:flex;align-items:center;justify-content:center}.ptt{flex:1;background:#fff;border:2px solid #1E1E1C;border-radius:14px;padding:4px 12px;line-height:1.25}.ptt b{display:block;font-size:15px}.ptt small{font-size:11.5px;color:var(--sub)}
 .pchip{display:inline-flex;align-items:center;gap:4px;background:#fff;border:2px solid #1E1E1C;border-radius:14px;height:44px;padding:0 10px;font-size:12px;font-weight:800;white-space:nowrap}.pchip i{width:10px;height:10px;border-radius:50%}
 .pfab{position:absolute;right:12px;top:76px;display:flex;flex-direction:column;gap:6px;z-index:5}.pfab button{width:42px;height:42px;border-radius:12px;background:#fff;border:2px solid #1E1E1C;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center}.pfab svg{width:18px;height:18px;fill:#2F80ED;stroke:#2F80ED}
-.psheet{position:absolute;left:0;right:0;bottom:0;max-height:46vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:6px 14px calc(env(safe-area-inset-bottom,0px) + 14px);box-shadow:0 -4px 20px rgba(0,0,0,.12);z-index:6;transition:max-height .3s;touch-action:pan-y}
+.psheet{position:absolute;left:0;right:0;bottom:0;max-height:62vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom,0px) + 14px);box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:8;transform:translateY(105%);transition:transform .3s cubic-bezier(.3,1.2,.5,1);touch-action:pan-y}.psheet.open{transform:none}
+.psh{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.pclose{width:34px;height:34px;border-radius:50%;background:#F1EEE7;display:flex;align-items:center;justify-content:center}
+.phint{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);z-index:6;width:64px;height:64px;border-radius:20px;background:#FFD84D;border:2.5px solid #1E1E1C;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:900;box-shadow:0 3px 0 #1E1E1C}.phint svg{width:24px;height:24px}.phint i{position:absolute;top:-8px;right:-8px;min-width:22px;height:22px;border-radius:11px;background:#E5483F;color:#fff;font-style:normal;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.phud{position:absolute;left:14px;right:92px;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);z-index:6;background:#fff;border:2.5px solid #1E1E1C;border-radius:16px;padding:8px 12px;display:flex;flex-direction:column;font-size:12px;color:var(--sub);box-shadow:0 3px 0 #1E1E1C;transition:background .3s}.phud b{font-size:15px;color:#1E1E1C}.phud.cold{background:#E6F0FA}.phud.warm{background:#FFF1D6}.phud.hot{background:#FFE1DC;animation:thp .7s infinite}.phud.open{background:#E3F5EA}.phud.done{background:#E3F5EA;font-weight:800;color:#1E1E1C}
 .psheet.min{max-height:58px;overflow:hidden}.pgrab{display:block;width:100%;height:20px;position:relative}.pgrab:after{content:'';position:absolute;left:50%;top:7px;width:40px;height:5px;margin-left:-20px;border-radius:9px;background:#DDD8CC}.psheet h3{margin:0 0 6px;display:flex;align-items:center;gap:4px;font-size:15px}
 .play .thempty{top:32%}.play .thmk{z-index:2}
 .thfl{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;transform:translate(-21%,-100%);pointer-events:auto;cursor:pointer}.thfl.on{z-index:4}
@@ -1082,7 +1085,7 @@ function thArrows(){ document.querySelectorAll('.tharr').forEach(el=>{ const b=N
 function thList(){
   const m=me(), live=S.games.treasure.status==='live';
   let h='<div class="thbar">'+(TH.pos?'<span class="thgps on">'+ic('pin','sm')+(TH.sim?'체험 위치':'내 위치 ±'+Math.round(TH.acc||0)+'m')+'</span>':'<button class="btn primary" onclick="thStart()">'+ic('pin','sm')+'내 위치 켜고 보물 찾기</button>')+'</div>';
-  if(TH.err) h+='<p class="therr">'+esc(TH.err)+'</p>';
+  if(TH.err&&!TH.sim) h+='<p class="therr">'+esc(TH.err)+'</p>';
   if(TH.pos) h+='<p class="sub" id="thnorth">'+(TH.head===null?'화살표는 북쪽 기준이에요':'폰이 향한 방향 기준이에요')+'</p>';
   h+='<div class="thl">'+S.th.spots.map((s,i)=>{
     if(s.found){ const t=team(s.found.team), p=person(s.found.pid);
@@ -1090,12 +1093,21 @@ function thList(){
     let right='<span class="thcoin">'+coinIc+s.coin+'</span>', mid='';
     if(TH.pos){ const d=thDist(TH.pos,s), b=thBear(TH.pos,s), tg=thTag(d,s.r);
       right='<div class="thnav"><i class="tharr" data-b="'+b.toFixed(1)+'" style="transform:rotate('+(TH.head===null?b:b-TH.head)+'deg)">'+ic('navi')+'</i><b>'+thFmt(d)+'</b></div>';
-      mid='<span class="thtag '+tg[0]+'">'+tg[1]+'</span>'+(tg[0]==='open'&&live?'<button class="btn primary thopen" onclick="thClaim(\''+s.id+'\')">'+ic('gift','sm')+'보물 열기 · '+coinIc+s.coin+'</button>':''); }
+      mid='<span class="thtag '+tg[0]+'">'+tg[1]+'</span>'; }
     return '<div class="thc"><div class="thno">'+(i+1)+'</div><div class="thb"><small class="thq">'+ic('bulb','sm')+'힌트</small><p>'+esc(s.hint)+'</p>'+mid+'</div>'+right+'</div>'; }).join('')+'</div>';
   h+='<div class="thsim"><small>'+ic('dice','sm')+' 체험용 · 실제 장소에 안 가도 눌러볼 수 있어요</small><div>'+(TH.pos&&!TH.sim?'<button class="mini" style="background:#1E1E1C;color:#fff" onclick="thHere()">내 주변에 테스트 보물 만들기</button>':'')+S.th.spots.map((s,i)=>s.found?'':'<button class="mini" onclick="thSimGo(\''+s.id+'\')">'+(i+1)+'번 근처로</button>').join('')+'<button class="mini" onclick="thSimFar()">멀리 떨어지기</button></div></div>';
   return h;
 }
-function thPaint(){ const el=$('#thbox'); if(el) el.innerHTML=thList(); thMapDraw(); thTop(); }
+function thPaint(){ const el=$('#thbox'); if(el) el.innerHTML=thList(); thMapDraw(); thTop(); thHud(); thAuto(); }
+function thNearest(){ if(!TH.pos) return null; let b=null; S.th.spots.forEach(s=>{ if(s.found) return; const d=thDist(TH.pos,s); if(!b||d<b.d) b={s,d}; }); return b; }
+function thAuto(){ if(!$('#play')||TH.busy||!TH.pos||S.games.treasure.status!=='live') return; const n=thNearest(); if(!n) return;
+  const lv=n.d<=n.s.r?4:n.d<80?3:n.d<250?2:1;
+  if(TH.lv&&lv>TH.lv&&lv<4){ buzz(lv===3?[60,50,60,50,60]:[80]); SFX.select(); toast(lv===3?'🔥 보물이 아주 가까워요!':'보물에 가까워지고 있어요'); }
+  TH.lv=lv; if(lv===4){ TH.busy=true; setTimeout(()=>{ thClaim(n.s.id); },150); } }
+function thHud(){ const h=$('#phud'); if(!h) return; const n=thNearest();
+  if(!TH.pos){ h.className='phud'; h.innerHTML=ic('pin','sm')+'위치를 켜면 보물 신호가 잡혀요'; return; }
+  if(!n){ h.className='phud done'; h.innerHTML='모든 보물을 찾았어요!'; return; }
+  const tg=thTag(n.d,n.s.r); h.className='phud '+tg[0]; h.innerHTML='<b>'+tg[1]+'</b><span>가장 가까운 보물 '+thFmt(n.d)+'</span>'; }
 /* ---- 보물 지도 (일러스트) ---- */
 function thBox(){ const ss=S.th.spots; let a=34.0675,b=34.0775,c=134.5420,d=134.5600;
   ss.forEach(s=>{ a=Math.min(a,s.lat-.001); b=Math.max(b,s.lat+.001); c=Math.min(c,s.lng-.0012); d=Math.max(d,s.lng+.0012); }); return {a,b,c,d}; }
@@ -1133,15 +1145,15 @@ function thChestFX(s,tm,done){
   el.querySelector('button').onclick=()=>{ el.classList.add('out'); setTimeout(()=>{ el.remove(); done&&done(); },250); };
 }
 function thClaim(id){
-  const s=S.th.spots.find(x=>x.id===id), m=me(); if(!s||s.found) return;
-  if(!TH.pos||thDist(TH.pos,s)>s.r){ SFX.error(); return toast('보물 위치에서 '+s.r+'m 안으로 가야 열 수 있어요'); }
+  const s=S.th.spots.find(x=>x.id===id), m=me(); if(!s||s.found){ TH.busy=false; return; }
+  if(!TH.pos||thDist(TH.pos,s)>s.r){ TH.busy=false; SFX.error(); return toast('보물 위치에서 '+s.r+'m 안으로 가야 열 수 있어요'); }
   const b=balances(); if(b.bank<s.coin){ SFX.error(); return toast('남은 코인이 부족해요'); }
   const lid='l'+(S.n++);
   S.logs.push({id:lid,ts:Date.now(),from:'bank',to:m.team,amount:s.coin,reason:'보물찾기 · '+s.name+' 발견',by:m.name,undone:false,game:'treasure',pid:m.id});
   s.found={team:m.team,pid:m.id,ts:Date.now(),lid}; ui.flash={}; ui.flash[m.team]=s.coin;
   if(S.th.spots.every(x=>x.found)) S.games.treasure.status='done';
   save(); SFX.open(); render();
-  thChestFX(s,m.team,()=>{ TH.justFound=s.id; MP.c={lat:s.lat,lng:s.lng}; if(MP.z<16.5) MP.z=16.5; thPaint(); setTimeout(()=>SFX.select(),450); setTimeout(()=>{ TH.justFound=null; },1200); });
+  buzz([60,40,60,40,200]); thChestFX(s,m.team,()=>{ TH.busy=false; TH.lv=0; TH.justFound=s.id; MP.c={lat:s.lat,lng:s.lng}; if(MP.z<16.5) MP.z=16.5; thPaint(); setTimeout(()=>SFX.select(),450); setTimeout(()=>{ TH.justFound=null; },1200); });
 }
 function thSummary(){
   const all=S.th.spots, tot=all.reduce((a,s)=>a+s.coin,0), got=all.filter(s=>s.found).length, by={};
@@ -1183,12 +1195,14 @@ function thPlay(){
    +'<div class="ptop"><button class="pbk" onclick="thQuit()" aria-label="나가기">'+ic('back')+'</button><div class="ptt"><b>보물찾기</b><small id="ptsub"></small></div><span class="pchip" id="ptchip"></span></div>'
    +'<div class="pfab"><button onclick="thZoom(1)" aria-label="확대">+</button><button onclick="thZoom(-1)" aria-label="축소">−</button><button onclick="thMeGo()" aria-label="내 위치">'+ic('navi')+'</button></div>'
    +'<small class="mpattr">© OpenStreetMap</small>'
-   +'<div class="psheet" id="psheet"><button class="pgrab" onclick="this.parentNode.classList.toggle(\'min\')" aria-label="접기"></button><h3>'+ic('bulb','sm')+' 보물 힌트</h3><div id="thbox">'+thList()+'</div></div>';
+   +'<div class="phud" id="phud"></div><button class="phint" onclick="thSheet(1)">'+ic('bulb')+'<span>힌트</span><i id="phn"></i></button>'
+   +'<div class="psheet" id="psheet"><div class="psh"><h3>'+ic('bulb','sm')+' 보물 힌트</h3><button class="pclose" onclick="thSheet(0)" aria-label="닫기">'+ic('x')+'</button></div><div id="thbox">'+thList()+'</div></div>';
   document.body.appendChild(el); document.body.style.overflow='hidden';
-  thFit(); thBind(); thTop(); thMapDraw(); if(!TH.pos&&!TH.sim) thStart(); SFX.open();
+  TH.lv=0; TH.busy=false; thFit(); thBind(); thTop(); thMapDraw(); thHud(); if(!TH.pos&&!TH.sim) thStart(); SFX.open();
 }
+function thSheet(o){ const p=$('#psheet'); if(p) p.classList.toggle('open',!!o); SFX.select(); }
 function thQuit(){ const el=$('#play'); if(el) el.remove(); document.body.style.overflow=''; ui.playing=null; MP.tiles.clear(); render(); openGame('treasure',true); }
-function thTop(){ const sub=$('#ptsub'), ch=$('#ptchip'); if(!sub) return; const ss=S.th.spots, my=me().team, mine=ss.filter(s=>s.found&&s.found.team===my);
+function thTop(){ const sub=$('#ptsub'), ch=$('#ptchip'); if(!sub) return; const ss=S.th.spots, my=me().team, mine=ss.filter(s=>s.found&&s.found.team===my); const hn=$('#phn'); if(hn) hn.textContent=ss.filter(s=>!s.found).length;
   sub.textContent='찾은 보물 '+ss.filter(s=>s.found).length+' / '+ss.length; ch.innerHTML='<i style="background:'+team(my).color+'"></i>우리 조 '+mine.length+'개 · '+coinIc+mine.reduce((a,s)=>a+s.coin,0); }
 function thZoom(d){ MP.z=Math.max(12,Math.min(19,MP.z+d)); thMapDraw(); }
 function thMeGo(){ if(!TH.pos){ thStart(); return toast('위치를 찾는 중이에요'); } MP.c={...TH.pos}; if(MP.z<16) MP.z=16.5; thMapDraw(); }
