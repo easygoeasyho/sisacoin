@@ -297,6 +297,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .bgup textarea{width:100%;margin-top:8px;min-height:72px;border-radius:12px;border:2px solid #E5E0D5;padding:10px;font:inherit;font-size:14px;resize:none;box-sizing:border-box}.bgupb{display:flex;align-items:center;gap:8px;margin-top:6px}.bgupb small{flex:1;font-size:11.5px;color:var(--sub)}.bgupb .btn{height:42px;padding:0 16px}
 .bgsh.still,.bgsh.still .bgsb{animation:none}
 .bgnote.warn{background:#FFE1DC;color:#C0392B;font-weight:800;animation:sigs 1.6s infinite}
+.bgmine.bgvd2{background:#2E9E6A;color:#fff}
 .bgprog{flex:none;font-size:12px;font-weight:900;background:#1E1E1C;color:#FFD84D;border-radius:99px;padding:5px 10px}
 .bgc.vd{outline:3px solid #2E9E6A;outline-offset:-3px}.bgvd{position:absolute;top:3px;right:3px;z-index:2;font-size:9px;font-weight:900;background:#2E9E6A;color:#fff;border-radius:6px;padding:0 4px}
 .bgsw{position:fixed;inset:0;z-index:80;background:#1E1E1C;color:#fff;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 12px) 0 calc(env(safe-area-inset-bottom,0px) + 14px)}
@@ -1636,8 +1637,7 @@ function bgDraw(){ const el=$('#bingo'); if(!el) return; const cellHTML=$('#bgce
      const pic=st==='done'&&wp?wp.img:(f?f.img:null), col=st==='done'&&w?team(w).color:(f?team(my).color:null);
      const vd=st==='vote'&&bgMyVote(i);
      return '<button class="bgc'+(pic?' pic':'')+(vd?' vd':'')+(c.sisa?' bgS':'')+(c.team?' bgT':'')+(st==='done'&&w?' bgW':'')+'" style="'+(col?'--tc:'+col+';':'')+(pic?'background-image:url('+pic+')':'')+'" onclick="bgOpen('+i+')">'
-      +'<span class="bglvl">'+BG_LV[c.lv].s+'</span>'+(st==='done'&&w?'<span class="bgwin">'+esc(team(w).name)+'</span>':f?'<span class="bgmine">우리 조 ✓</span>':'')
-      +(vd?'<span class="bgvd">✓ 투표</span>':'')+'<span class="bgt">'+esc(c.t)+'</span>'+(nT&&st!=='done'?'<span class="bgn">'+nT+'개 조</span>':'')+'</button>'; }).join('')+'</div>'
+      +'<span class="bglvl">'+BG_LV[c.lv].s+'</span>'+(st==='done'&&w?'<span class="bgwin">'+esc(team(w).name)+'</span>':vd?'<span class="bgmine bgvd2">✓ 투표 완료</span>':f?'<span class="bgmine">우리 조 ✓</span>':'')+'<span class="bgt">'+esc(c.t)+'</span>'+(nT&&st!=='done'?'<span class="bgn">'+nT+'개 조</span>':'')+'</button>'; }).join('')+'</div>'
    +'<div class="bglines"><span><i class="sw"></i>SISA 라인 +'+BG_BONUS.sisa+'</span><span><i class="sw bgT2"></i>팀워크 라인 +'+BG_BONUS.team+'</span><span>가로·세로 한 줄 +'+BG_BONUS.line+'</span><span>📸 참여 빙고 +'+BG_PB.line+' (특별 라인 +'+BG_PB.sp+')</span></div>'
    +(st!=='done'&&(S.bingo.pb||[]).some(x=>x.team===my)?(()=>{const L=S.bingo.pb.filter(x=>x.team===my); return '<p class="bgnote" style="margin-top:8px">📸 참여 빙고 <b>'+L.length+'줄</b> 달성 · '+coinIc+'+'+L.reduce((s,x)=>s+x.coin,0)+' 받음</p>';})():'')
    +(winLines.length?'<div class="bgbonus">'+winLines.map(b=>'<span style="--tc:'+team(b.team).color+'">🎉 '+esc(team(b.team).name)+' · '+b.n+' 빙고! +'+b.coin+'</span>').join('')+'</div>':'')
