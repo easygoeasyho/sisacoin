@@ -360,6 +360,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .hbcard .hbinfo{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding-right:112px}
 .hbcard .hbteam{font-size:11px;padding:2px 8px}
 .hbcard .hbl{font-size:11.5px;margin:0}
+.hbchips{display:flex;gap:5px;margin-bottom:6px}.hbcard .hbrk{background:rgba(255,255,255,.92)}
 .hbcard .hbnum{font-size:26px;letter-spacing:-.5px;line-height:1;margin:0;gap:5px}
 .hbcard .hbnum img{width:22px;height:22px}
 .hbcard .hbgap{font-size:11.5px;margin:0;line-height:1.2}
@@ -2195,7 +2196,7 @@ function topView(){
     const rk=TEAMS.map(x=>({id:x.id,c:b[x.id]})).sort((x,y)=>y.c-x.c), ri=rk.findIndex(x=>x.id===m.team), mc=b[m.team]||0, gap=ri>0?rk[0].c-mc:(rk[1]?mc-rk[1].c:0);
     const L=stampList(), SN=ST_PARTS.length, sd=!!S.finalStamp;
     return '<header class="hb"><div class="hbcard"><div class="hbtop" style="background:'+t.color+'">'
-     +'<div class="hbinfo"><span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><p class="hbl" style="color:'+dk+'">우리 팀 코인 · '+(ri+1)+'위</p>'
+     +'<div class="hbinfo"><div class="hbchips"><span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><span class="hbteam hbrk" style="color:'+dk+'">'+(ri+1)+'위</span></div>'
      +'<p class="hbnum" style="color:'+shade(t.color,.3)+'"><img src="'+COIN3D+'" alt="">'+fmt(mc)+'</p>'
      +'<p class="hbgap" style="color:'+dk+'">'+(z?'이제부턴 뺏는 수밖에!':ri===0?(gap>0?'2위와 '+fmt(gap)+'코인 차이 · 지켜내요!':'공동 1위예요!'):'1위와 '+fmt(gap)+'코인 차이')+'</p></div></div>'
      +'<div class="hbpic"><div class="hbw"><button class="hbfull" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필">'+charHTML(chO(m),{full:true})+'</button>'
