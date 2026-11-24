@@ -900,7 +900,7 @@ const ITEM_IMG={"ribbon": {"src": "data:image/webp;base64,UklGRpgaAABXRUJQVlA4WA
     a.svg=a.team?img+'<mask id="tm-'+a.id+'" style="mask-type:alpha"><image href="'+m.src+'" width="'+m.w+'" height="'+m.h+'"/></mask><rect width="'+m.w+'" height="'+m.h+'" fill="TEAM" mask="url(#tm-'+a.id+')" style="mix-blend-mode:multiply"/>':img; }));
   /* 티셔츠 썸네일: 실제 착용 이미지처럼 가슴 글씨 */
   [['teeS','SISA','#1E1E1C',.2],['tee50','50','#FFFFFF',.3]].forEach(([id,t,c,f])=>{ const a=ACC.body.find(x=>x.id===id), m=ITEM_IMG[id]; if(!a||!m) return; a.svg+='<text x="'+(m.w/2)+'" y="'+(m.h*.66)+'" text-anchor="middle" font-size="'+(m.h*f)+'" font-weight="900" fill="'+c+'" letter-spacing="-.5">'+t+'</text>'; });
-  const nk=ACC.body.find(a=>a.id==='necklace'); if(nk){ delete nk.wear; nk.k=.64; nk.dy=-.03; } })();
+  const nk=ACC.body.find(a=>a.id==='necklace'); if(nk){ delete nk.wear; nk.k=.32; nk.dy=-.015; } })();
 const accOf=(slot,id)=>ACC[slot].find(a=>a.id===id)||ACC[slot][0];
 const isEtc=id=>ACC.etc.some(a=>a.id===id&&id!=='none');
 
