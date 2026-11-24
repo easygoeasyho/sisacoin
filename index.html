@@ -1239,7 +1239,7 @@ function recordResult(id,ranks,by){
     S.games[id].results.push({id:rid,ts:Date.now(),by,ranks,logIds:[]}); S.games[id].status='done'; save(); SFX.fanfare(); buzz([30,40,60]); toast('<b>'+esc(g.name)+'</b> 결과 반영! '+esc(winnerName(g,ranks[0]))+' '+CARD[g.prize].name+' 획득'); return true; }
   const rid='r'+Date.now(), logIds=[];
   ui.flash={};
-  ranks.forEach((r,k)=>{ const tid=g.unit==='person'?person(r.pid).team:r.team; const lid='l'+(S.n++);
+  ranks.forEach((r,k)=>{ const tid=g.unit==='person'?person(r.pid).team:r.team; if(!(r.coin>0)) return; const lid='l'+(S.n++);
     S.logs.push({id:lid,ts:Date.now(),from:'bank',to:tid,amount:r.coin,reason:g.name+' '+(k+1)+'등'+(g.unit==='person'?' ('+person(r.pid).name+')':''),by,undone:false,game:id,pid:g.unit==='person'?r.pid:(r.mvp||undefined)});
     logIds.push(lid); ui.flash[tid]=(ui.flash[tid]||0)+r.coin; });
   S.games[id].results.push({id:rid,ts:Date.now(),by,ranks,logIds}); S.games[id].status='done';
@@ -2866,7 +2866,7 @@ function checkStamp(){ if(!S.me||!me()) return; let seen=null; try{ seen=localSt
 function nextStampDemo(){ ensureGames(); const g=GAME_DEFS.find(x=>isStampGame(x)&&!S.games[x.id].results.length);
   if(!g){ if(S.finalStamp){ SFX.error(); return toast('이미 완성됐어요. 초기화하면 다시 볼 수 있어요'); } S.finalStamp={ts:Date.now(),by:me().name}; save(); return render(); }
   const pool=(g.unit==='person'?S.people.map(p=>p.id):TEAMS.map(t=>t.id)).sort(()=>Math.random()-.5), b=balances().bank;
-  const ranks=g.rewards.map((c,k)=>g.unit==='person'?{pid:pool[k],coin:Math.min(c,Math.floor(b/6))}:{team:pool[k],coin:Math.min(c,Math.floor(b/6))}).filter(r=>r.coin>0);
+  const ranks=g.rewards.map((c,k)=>g.unit==='person'?{pid:pool[k],coin:Math.min(c,Math.floor(b/6))}:{team:pool[k],coin:Math.min(c,Math.floor(b/6))}); if(ranks[0].coin<=0) ranks.splice(1); /* 은행이 비어도 스탬프는 찍히게 1등만 0코인으로 */
   if(recordResult(g.id,ranks,'체험')) render(); }
 
 render();
