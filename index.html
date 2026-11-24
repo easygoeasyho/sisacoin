@@ -2832,6 +2832,7 @@ function openStamp(){ const L=stampList(), N=ST_PARTS.length, m=me(), done=!!S.f
    +'<section class="card flat stbig">'+stampPic(L.length,done)+'</section>'
    +'<div class="stline">'+ST_PARTS.map((p,k)=>{ const x=L[k], c=x?team(x.team):null; return '<button class="stl'+(x?' on':'')+'" onclick="stampTip('+k+')"><i style="'+(x?'background:'+c.color:'')+'"></i><small>'+(x?esc(x.g.name):'?')+'</small>'+(x?'<em>'+esc(c.title||c.no+'조')+'</em>':'')+'</button>'; }).join('')+'<button class="stl fin'+(done?' on':'')+'"><i></i><small>마지막</small></button></div>'
    +'<p class="sub" style="text-align:center;margin-bottom:12px"><b>'+L.length+'/'+N+'</b> 겹 완성'+(done?' · 마지막 도장까지 찍었어요!':L.length>=N?' · 마지막 도장만 남았어요':'')+(L.length?'<br>찍힌 부분을 누르면 누가 찍었는지 보여요':'')+'</p>'
+   +(L.length?'<button class="btn ghost full" style="margin-bottom:10px" onclick="closeModal();playStamp('+(done?N:L.length-1)+')">'+'▶ '+'찍히는 장면 다시 보기</button>':'')
    +(m.admin&&!done?'<button class="btn primary full" '+(L.length>=N?'':'disabled')+' onclick="stampFinal()">'+ic('star')+'마지막 도장 찍기</button>'+(L.length>=N?'':'<p class="sub" style="margin-top:6px;text-align:center">정규 게임 '+N+'개가 모두 끝나면 찍을 수 있어요.</p>'):'')); }
 function stampFinal(){ if(stampList().length<ST_PARTS.length){ SFX.error(); return toast('아직 안 찍힌 겹이 있어요'); } S.finalStamp={ts:Date.now(),by:me().name}; save(); closeModal(); render(); }
 /* 도장 찍히는 연출 */
@@ -2843,9 +2844,11 @@ function playStamp(idx){ const L=stampList(), N=L.length, fin=idx>=ST_PARTS.leng
   setTimeout(()=>{ if($('#stfx')){ thud(); buzz([90]); } },560);
   setTimeout(()=>{ const p=$('#sfpic'); if(!p) return; p.innerHTML=stampPic(fin?N:idx+1,fin); p.classList.add('hit'); if(fin) setTimeout(()=>SFX.fanfare(),500); },620); }
 const ST_SEEN='sisa-stamp-seen';
-function checkStamp(){ if(!S.me||!me()) return; let seen=null; try{ seen=localStorage.getItem(ST_SEEN); }catch(e){} const cur=stampCount();
-  if(seen===null||cur<=+seen){ if(seen===null||cur<+seen) try{ localStorage.setItem(ST_SEEN,cur); }catch(e){} return; }
-  try{ localStorage.setItem(ST_SEEN,cur); }catch(e){}
+let stSeenMem=null;
+function stSeenSet(v){ stSeenMem=v; try{ localStorage.setItem(ST_SEEN,v); }catch(e){} }
+function checkStamp(){ if(!S.me||!me()) return; let seen=null; try{ seen=localStorage.getItem(ST_SEEN); }catch(e){} if(seen===null&&stSeenMem!==null) seen=stSeenMem; const cur=stampCount();
+  if(seen===null||cur<=+seen){ if(seen===null||cur<+seen) stSeenSet(cur); return; }
+  stSeenSet(cur);
   clearTimeout(checkStamp.t); checkStamp.t=setTimeout(()=>playStamp(S.finalStamp?ST_PARTS.length:cur-1),700); }
 function nextStampDemo(){ ensureGames(); const g=GAME_DEFS.find(x=>!S.games[x.id].results.length);
   if(!g){ if(S.finalStamp){ SFX.error(); return toast('이미 완성됐어요. 초기화하면 다시 볼 수 있어요'); } S.finalStamp={ts:Date.now(),by:me().name}; save(); return render(); }
