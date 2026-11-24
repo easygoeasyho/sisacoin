@@ -2017,6 +2017,15 @@ function tone(seq,type,vol){
       g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.12,t+.012); g.gain.exponentialRampToValueAtTime(0.0001,t+d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d+.02);} t+=d*.8; });
   }catch(e){}
 }
+function thud(){ if(muted) return;
+  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); const t=AC.currentTime, out=AC.createGain(); out.gain.value=.9; out.connect(AC.destination);
+    /* 낮은 몸통 울림: 120Hz → 38Hz로 떨어지는 사인 */
+    const o=AC.createOscillator(), g=AC.createGain(); o.type='sine'; o.frequency.setValueAtTime(120,t); o.frequency.exponentialRampToValueAtTime(38,t+.32);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(.85,t+.008); g.gain.exponentialRampToValueAtTime(0.0001,t+.42); o.connect(g).connect(out); o.start(t); o.stop(t+.45);
+    /* 종이에 닿는 '탁' 질감: 짧은 노이즈를 저역 통과 */
+    const n=AC.sampleRate*.08, buf=AC.createBuffer(1,n,AC.sampleRate), d=buf.getChannelData(0); for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+    const s=AC.createBufferSource(), f=AC.createBiquadFilter(), ng=AC.createGain(); s.buffer=buf; f.type='lowpass'; f.frequency.value=900; ng.gain.value=.55; s.connect(f).connect(ng).connect(out); s.start(t);
+  }catch(e){} }
 function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
 const SFX={
   tap:()=>tone([[520,.06,620]],'sine',.06),
@@ -2736,7 +2745,8 @@ function playStamp(idx){ const L=stampList(), N=L.length, fin=idx>=ST_PARTS.leng
   const c=fin?'#1E1E1C':team(x.team).color;
   el.innerHTML='<div class="sfc"><p class="bpk">'+(fin?'마지막 도장':'새 스탬프 '+(idx+1)+'/'+ST_PARTS.length)+'</p><div class="sfp"><div id="sfpic">'+stampPic(fin?N:idx,false)+'</div><div class="sfstamp"><img src="'+ST_IMG+'" alt=""><i style="background:'+c+';-webkit-mask-image:url('+ST_MASK+');mask-image:url('+ST_MASK+')"></i></div></div>'
    +'<h2>'+(fin?'완성! 시사 50주년':'<span style="box-shadow:inset 0 -.5em '+c+'">'+esc(team(x.team).name)+'</span>'+josa(team(x.team).name,'이','가').slice(-1)+' 찍었어요')+'</h2><p class="bpd">'+(fin?'모두 함께 찍은 그림이 완성됐어요.':'<b>'+esc(x.g.name)+'</b> 우승으로 <b>'+ST_PARTS[idx].n+'</b>'+josa(ST_PARTS[idx].n,'이','가').slice(-1)+' 찍혔어요')+'</p><button class="btn primary full" onclick="document.getElementById(\'stfx\').remove()">확인</button></div>';
-  setTimeout(()=>{ const p=$('#sfpic'); if(!p) return; p.innerHTML=stampPic(fin?N:idx+1,fin); p.classList.add('hit'); tone([[150,.22,55]],'sine',.32); buzz([70]); if(fin) setTimeout(()=>SFX.fanfare(),500); },620); }
+  setTimeout(()=>{ if($('#stfx')){ thud(); buzz([90]); } },560);
+  setTimeout(()=>{ const p=$('#sfpic'); if(!p) return; p.innerHTML=stampPic(fin?N:idx+1,fin); p.classList.add('hit'); if(fin) setTimeout(()=>SFX.fanfare(),500); },620); }
 const ST_SEEN='sisa-stamp-seen';
 function checkStamp(){ if(!S.me||!me()) return; let seen=null; try{ seen=localStorage.getItem(ST_SEEN); }catch(e){} const cur=stampCount();
   if(seen===null||cur<=+seen){ if(seen===null||cur<+seen) try{ localStorage.setItem(ST_SEEN,cur); }catch(e){} return; }
