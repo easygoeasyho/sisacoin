@@ -407,6 +407,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .admfold>summary::after{content:'▾';margin-left:auto}.admfold[open]>summary::after{content:'▴'}
 .admfold .thctl{margin-top:8px}.admfold .admset{margin-left:auto}.admfold .admset+*{}.admfold>summary:has(.admset)::after{margin-left:8px}
 .grules .bglv{display:flex;flex-wrap:wrap;gap:6px}.grules .bglv span{flex:none;padding:5px 10px}
+.sndb{width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;margin-right:8px;color:#1E1E1C}.sndb .i{width:19px;height:19px}.sndb.off{background:#EAE7E0;color:#9A958A}
 #ptr{position:fixed;left:50%;top:0;z-index:60;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-50%,-56px);pointer-events:none}#ptr img{width:26px;height:26px}#ptr.spin img{animation:spin .6s linear infinite}
 .morerow{display:flex;gap:8px;margin-top:10px}.morerow .more{flex:1;margin-top:0}
 .tgl{flex:none;width:48px;height:28px;border-radius:99px;background:#D9D5CB;position:relative;transition:.2s}.tgl i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.tgl.on{background:#2E9E6A}.tgl.on i{left:23px}
@@ -2232,7 +2233,7 @@ function topView(){
      +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프"><span class="stp">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></span></button></div></div></div>'
      +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbbank"><span>'+(z?ic('swords','sm')+' 쟁탈전 중 · 은행 코인이 모두 풀렸어요':'은행 남은 코인 <b>'+fmt(b.bank)+'</b> / '+fmt(TOTAL))+'</span>'+(z?'':'<em>'+left+'%</em>')+'</div>'
      +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div></div></header>'; }
-  return '<header class="bar"><h2>'+t+'</h2><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
+  return '<header class="bar"><h2>'+t+'</h2><button class="sndb'+(muted?' off':'')+'" onclick="toggleMute();toast(muted?\'효과음을 껐어요\':\'효과음을 켰어요\')" aria-label="효과음 '+(muted?'켜기':'끄기')+'">'+ic(muted?'mute':'sound')+'</button><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
 }
 function navView(){
   const tabs=[['home','trophy','현황'],['games','dice','게임'],['people','users','사람들'],['mine','user','내 정보']];
@@ -2427,7 +2428,6 @@ function mineView(){
   return '<section class="card mehead"><button class="meav" onclick="keepIntro(draft);openMaker()" aria-label="캐릭터 꾸미기">'+avatar(m,'l')+'<i>'+ic('edit')+'</i></button><div><p class="nm">'+dn(m)+' <small>'+(SPECIAL[m.dept]?'':esc(m.dept))+(m.admin?(SPECIAL[m.dept]?'':' · ')+'운영진':'')+'</small></p><span class="pill" style="background:'+t.color+'33">'+esc(t.name)+' · '+coinIc+fmt(b[m.team])+'</span></div></section>'
    +'<section class="card"><h3>'+ic('trophy','sm')+' 내 기록</h3><div class="mystat"><div><b>'+fmt(earned(m.id))+'</b><small>딴 코인</small></div><div><b>'+fmt(heartsRecv(m.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(m.id))+'</b><small>준 하트</small></div><div><b>'+fmt(commentsBy(m.id))+'</b><small>쓴 댓글</small></div></div>'
    +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')
-   +'<section class="card setrow"><div><b>'+ic(muted?'mute':'sound','sm')+' 효과음</b><small>도장·코인 소리와 진동 효과</small></div><button class="tgl'+(muted?'':' on')+'" onclick="toggleMute()" aria-label="효과음 켜고 끄기"><i></i></button></section>'
    +'<section class="card"><h3>자기소개</h3>'+introFields(draft)+'</section>'
    +(m.gleader?'<section class="card"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'</section>':'')
    +'<div class="actions col"><button class="btn primary" onclick="saveProfile()">저장하기</button><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
