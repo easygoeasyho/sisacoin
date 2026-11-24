@@ -359,6 +359,20 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .hbteam{display:inline-block;margin-top:4px;font-size:12px;font-weight:800;background:rgba(255,255,255,.55);border-radius:99px;padding:2px 9px}
 .hbtop h1{font-size:21px;line-height:1.3;margin-top:4px;max-width:64%;word-break:keep-all}
 .hbav{position:absolute;right:16px;bottom:-18px;width:86px;height:86px;border-radius:50%;background:#fff;border:3px solid #fff;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.08)}.hbav .stk{width:80%;filter:url(#stk2)}
+.hbmain{display:flex;align-items:flex-end;gap:10px;margin-top:6px}.hbinfo{flex:1;min-width:0}
+.hbl{font-size:12px;font-weight:700;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbnum{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:clamp(26px,8.6vw,34px);font-weight:900;letter-spacing:-1px;line-height:1.15}.hbnum img{width:30px;height:30px}.hbnum span{flex:none;white-space:nowrap;font-size:13px;font-weight:800;letter-spacing:0;background:rgba(255,255,255,.6);border-radius:99px;padding:2px 8px;margin-left:2px}
+.hbgap{font-size:12px;font-weight:700;margin-top:2px}
+.hbtop .hbav{position:static;flex:none;width:76px;height:76px}
+.hbstamp{flex:none;position:relative;width:54px;height:66px;background:#fff;border:2px dashed rgba(30,30,28,.55);border-radius:6px;transform:rotate(6deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px;margin-bottom:6px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.hbstamp .stpic{width:40px;height:40px}.hbstamp b{font-size:11px;font-weight:900;color:#1E1E1C}
+.hbbank{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--sub);margin-bottom:6px}.hbbank b{color:#1E1E1C}.hbbank em{font-style:normal;font-weight:800;color:#8A6400}
+.hbcoin.zero .hbbank span{color:#C0392B;font-weight:800}
+.todo h3{display:flex;align-items:center;gap:6px}.todo h3 span{font-size:11px;background:#1E1E1C;color:#fff;border-radius:99px;padding:1px 7px}
+.tdi{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 2px;border-top:1px solid #EFECE5}.todo h3+.tdi{border-top:0;margin-top:4px}
+.tdt{flex:none;width:40px;height:40px;border-radius:10px;background:#F1EEE6 center/cover;border:1.5px solid #1E1E1C}.tdx{flex:1;min-width:0;display:flex;flex-direction:column}.tdx b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tdx small{font-size:12px;color:var(--sub)}
+.tdi.urg .tdx small{color:#C0392B;font-weight:700}.tdi .i{color:#B8B3A7}
+.stline{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;margin:-4px 0 12px}.stl{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}.stl i{width:22px;height:22px;border-radius:50%;border:2px dashed #C9C4B8}.stl.on i{border:2px solid #1E1E1C}.stl small{font-size:9.5px;font-weight:700;color:var(--sub);text-align:center;line-height:1.2;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.stl em{font-style:normal;font-size:9px;font-weight:800;color:#1E1E1C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.stl.fin i{border-color:#E5A800}.stl.fin.on i{background:#FFD84D}
 .hbcoin{background:#fff;border-radius:0 0 22px 22px;padding:14px 16px 14px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
 .hbc1{display:flex;align-items:center;gap:8px}.hbc1 img{width:34px;height:34px}.hbc1 b{font-size:26px;font-weight:900;letter-spacing:-.5px}.hbc1 small{font-size:12px;color:var(--sub)}.hbc1 .pill{margin-left:auto}
 .hbcoin .sub{margin-top:8px}.pill.red{background:#E5483F;color:#fff;display:inline-flex;align-items:center;gap:3px}
@@ -1127,7 +1141,7 @@ let gameFilter='all', gameUnit='all';
 function gamesView(){
   ensureGames();
   const list=allGames().filter(g=>(gameFilter==='all'||gStatus(g.id)===gameFilter||(gameFilter==='auto'&&g.mode==='auto')));
-  let h=stampBanner()+'<div class="filter">'+[['live','진행 중'],['soon','예정'],['done','종료']].map(f=>'<button class="fchip '+(gameFilter===f[0]?'on':'')+'" onclick="gameFilter=gameFilter===\''+f[0]+'\'?\'all\':\''+f[0]+'\';SFX.select();render()">'+f[1]+'</button>').join('')+'</div>';
+  let h='<div class="filter">'+[['live','진행 중'],['soon','예정'],['done','종료']].map(f=>'<button class="fchip '+(gameFilter===f[0]?'on':'')+'" onclick="gameFilter=gameFilter===\''+f[0]+'\'?\'all\':\''+f[0]+'\';SFX.select();render()">'+f[1]+'</button>').join('')+'</div>';
   h+='<div class="ggrid">'+list.map((g,i)=>{ const st=S.games[g.id], last=st.results[st.results.length-1];
     const win=last&&last.ranks[0]?winnerName(g,last.ranks[0]):'';
     const wp=last&&last.ranks[0]&&g.unit==='person'?person(last.ranks[0].pid):null;
@@ -2161,11 +2175,16 @@ function topView(){
   const m=me(), t={home:'',games:'게임',people:'사람들',mine:'내 정보',admin:'운영진'}[ui.tab];
   if(ui.tab==='home'){ const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100), left=Math.max(0,Math.round(b.bank/TOTAL*100)), t=team(m.team), z=b.bank<=0, nm=t.title||t.no+'조', dk=shade(t.color,.42);
     checkBankZero(z);
+    const rk=TEAMS.map(x=>({id:x.id,c:b[x.id]})).sort((x,y)=>y.c-x.c), ri=rk.findIndex(x=>x.id===m.team), mc=b[m.team]||0, gap=ri>0?rk[0].c-mc:(rk[1]?mc-rk[1].c:0);
+    const L=stampList(), SN=ST_PARTS.length, sd=!!S.finalStamp;
     return '<header class="hb"><div class="hbtop" style="background:'+t.color+'"><div class="hbrow"><p class="eyebrow" style="color:'+dk+'">2027 워크샵 · SISA 50th anniversary</p><button class="snd" onclick="toggleMute()" aria-label="소리">'+ic(muted?'mute':'sound')+'</button></div>'
-     +'<span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><h1 style="color:'+shade(t.color,.3)+'">'+esc(m.name)+'님,<br>'+(z?'이제부턴 뺏는 수밖에!':cheer())+'</h1>'
-     +'<button class="hbav" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필"><span class="stk">'+charHTML(chO(m))+'</span></button></div>'
-     +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbc1"><img src="'+COIN3D+'" alt=""><b>'+fmt(b.bank)+'</b><small>남은 코인</small>'+(z?'<span class="pill red">'+ic('swords','sm')+'쟁탈전 시작</span>':'<span class="pill gold">'+left+'% 남음</span>')+'</div>'
-     +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div><p class="sub">'+(z?'10,000 코인이 전부 조들 손에 있어요 · 이제 게임과 뺏기 카드로만 코인이 움직여요':'총 '+fmt(TOTAL)+' 중 조들이 '+fmt(dist)+' 보유 · 다 떨어지면 서로 뺏어야 해요')+'</p></div></header>'; }
+     +'<div class="hbmain"><div class="hbinfo"><span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><p class="hbl" style="color:'+dk+'">'+esc(m.name)+'님 · 우리 팀 코인</p>'
+     +'<p class="hbnum" style="color:'+shade(t.color,.3)+'"><img src="'+COIN3D+'" alt="">'+fmt(mc)+'<span>'+(ri+1)+'위</span></p>'
+     +'<p class="hbgap" style="color:'+dk+'">'+(z?'이제부턴 뺏는 수밖에!':ri===0?(gap>0?'2위와 '+fmt(gap)+'코인 차이 · 지켜내요!':'공동 1위예요!'):'1위와 '+fmt(gap)+'코인 차이')+'</p></div>'
+     +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></button>'
+     +'<button class="hbav" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필"><span class="stk">'+charHTML(chO(m))+'</span></button></div></div>'
+     +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbbank"><span>'+(z?ic('swords','sm')+' 쟁탈전 중 · 은행 코인이 모두 풀렸어요':'은행 남은 코인 <b>'+fmt(b.bank)+'</b> / '+fmt(TOTAL))+'</span>'+(z?'':'<em>'+left+'%</em>')+'</div>'
+     +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div></div></header>'; }
   return '<header class="bar"><h2>'+t+'</h2><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
 }
 function navView(){
@@ -2313,7 +2332,7 @@ function homeView(){
   const b=balances(), dist=TOTAL-b.bank, pct=Math.round(dist/TOTAL*100), left=Math.max(0,Math.round(b.bank/TOTAL*100));
   const ranked=TEAMS.map(t=>({...t,c:b[t.id]})).sort((x,y)=>y.c-x.c);
   const max=Math.max(...ranked.map(t=>t.c),1), my=me().team;
-  let h=betBanner()+stampBanner();
+  let h=todoCard();
   /* 조 순위 무대: 조장 캐릭터가 순위대로 도열, 크기는 등비(0.87배씩) */
   const N=ranked.length, R=.87, W1=N>7?15:17;
   const SM=ui.stageMode||'day';
@@ -2328,7 +2347,7 @@ function homeView(){
      +'<span class="lb"><b class="'+(nm.length>4?'long':'')+'" style="background:'+t.color+'">'+esc(nm.length>5?nm.slice(0,5)+'…':nm)+'</b><small>'+coinIc+fmt(t.c)+'</small></span></button>';
   });
   h+='</div></section>';
-  h+='<section class="feedsec"><p class="fhd">history</p>';
+  h+='<section class="feedsec"><p class="fhd">최근 소식</p>';
   const items=S.logs.map(l=>({ts:l.ts,html:'<div class="feed '+(l.undone?'undone':'')+'">'+logIcon(l)+'<div><p>'+logText(l)+'</p><small>'+ago(l.ts)+'</small></div></div>'})).concat((S.badgeEvents||[]).map(e=>({ts:e.ts,html:badgeFeed(e)}))).concat((S.cardLogs||[]).map(e=>({ts:e.ts,html:cardFeed(e)})));
   const FN=ui.feedN||5, recent=items.sort((x,y)=>y.ts-x.ts).slice(0,FN);
   h+=recent.length?recent.map(x=>x.html).join(''):'<p class="sub">아직 소식이 없어요</p>';
@@ -2474,6 +2493,16 @@ window.addEventListener('storage',e=>{
   }catch(err){}
 });
 
+
+/* 지금 할 일 */
+function todoItems(){ const m=me(), out=[];
+  if(typeof betTodo==='function') betTodo().forEach(t=>{ const r=t.dl?t.dl-Date.now():null; out.push({art:gdef('bet').art,t:'예측 베팅 · '+t.q,s:r!=null?betLeft(t):'답을 아직 안 냈어요',urg:r!=null&&r<1800000,go:"betPlay('"+t.id+"')"}); });
+  ensureGames(); if(typeof ensureBG==='function') ensureBG();
+  if(S.bingo&&gStatus('photo')==='live'){ if(bgOpenUp()){ const empty=BG_CELLS.filter((c,i)=>!bgFinal(i,m.team)).length; if(empty) out.push({art:gdef('photo').art,t:'포토 빙고 · 빈칸 '+empty+'개',s:S.bingo.dl?bgDL(1):'사진을 올려 칸을 채워요',urg:S.bingo.dl&&S.bingo.dl-Date.now()<3600000,go:"bgPlay()"}); } else if(bgVote()&&bgLeft()) out.push({art:gdef('photo').art,t:'포토 빙고 · 투표 '+bgLeft()+'칸 남음',s:'마음에 드는 사진에 투표해요',urg:false,go:"bgPlay();bgSwipe()"}); }
+  if(S.th&&typeof thLive==='function'&&thLive()) out.push({art:gdef('treasure').art,t:'보물찾기 진행 중',s:Math.max(0,Math.ceil((S.th.endAt-Date.now())/60000))+'분 남음',urg:true,go:"openGame('treasure')"});
+  return out.sort((x,y)=>(y.urg?1:0)-(x.urg?1:0)); }
+function todoCard(){ const L=todoItems(); if(!L.length) return '';
+  return '<section class="card flat todo"><h3>지금 할 일 <span>'+L.length+'</span></h3>'+L.map(x=>'<button class="tdi'+(x.urg?' urg':'')+'" onclick="'+x.go+'"><span class="tdt" style="background-image:url('+x.art+')"></span><span class="tdx"><b>'+esc(x.t)+'</b><small>'+(x.urg?'⏰ ':'')+esc(x.s)+'</small></span>'+ic('next')+'</button>').join('')+'</section>'; }
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
@@ -2737,6 +2766,7 @@ function stampBanner(){ const L=stampList(), N=ST_PARTS.length, done=!!S.finalSt
 function openStamp(){ const L=stampList(), N=ST_PARTS.length, m=me(), done=!!S.finalStamp;
   modal('<h2>50주년 기념 스탬프</h2><p class="sub" style="margin:4px 0 10px">정규 게임이 하나 끝날 때마다 우승한 조의 색으로 그림이 한 겹씩 찍혀요. 어떤 그림이 될지는 다 찍혀야 알 수 있어요.</p>'
    +'<section class="card flat stbig">'+stampPic(L.length,done)+'</section>'
+   +'<div class="stline">'+ST_PARTS.map((p,k)=>{ const x=L[k], c=x?team(x.team):null; return '<button class="stl'+(x?' on':'')+'" onclick="stampTip('+k+')"><i style="'+(x?'background:'+c.color:'')+'"></i><small>'+(x?esc(x.g.name):'?')+'</small>'+(x?'<em>'+esc(c.title||c.no+'조')+'</em>':'')+'</button>'; }).join('')+'<button class="stl fin'+(done?' on':'')+'"><i></i><small>마지막</small></button></div>'
    +'<p class="sub" style="text-align:center;margin-bottom:12px"><b>'+L.length+'/'+N+'</b> 겹 완성'+(done?' · 마지막 도장까지 찍었어요!':L.length>=N?' · 마지막 도장만 남았어요':'')+(L.length?'<br>찍힌 부분을 누르면 누가 찍었는지 보여요':'')+'</p>'
    +(m.admin&&!done?'<button class="btn primary full" '+(L.length>=N?'':'disabled')+' onclick="stampFinal()">'+ic('star')+'마지막 도장 찍기</button>'+(L.length>=N?'':'<p class="sub" style="margin-top:6px;text-align:center">정규 게임 '+N+'개가 모두 끝나면 찍을 수 있어요.</p>'):'')); }
 function stampFinal(){ if(stampList().length<ST_PARTS.length){ SFX.error(); return toast('아직 안 찍힌 겹이 있어요'); } S.finalStamp={ts:Date.now(),by:me().name}; save(); closeModal(); render(); }
