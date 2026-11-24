@@ -355,7 +355,17 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .bgzoom{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}.bgzoom img{max-width:100%;max-height:75vh;border-radius:12px}.bgzoom p{margin-top:10px;font-size:13.5px;line-height:1.5}
 /* 홈 배너 */
 .hb{padding:10px 16px 4px}.hbtop{position:relative;border-radius:22px 22px 0 0;padding:14px 16px 22px}
-.hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
+.hbrow{display:flex;justify-content:space-between;align-items:center}.hbrow .eyebrow{font-size:12px;font-weight:600}.hbcard{position:relative}
+.hbtop{padding:16px 16px 18px}
+.hbcard .hbinfo{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding-right:112px}
+.hbcard .hbteam{font-size:11px;padding:2px 8px}
+.hbcard .hbl{font-size:11.5px;margin:0}
+.hbcard .hbnum{font-size:26px;letter-spacing:-.5px;line-height:1;margin:0;gap:5px}
+.hbcard .hbnum img{width:22px;height:22px}
+.hbcard .hbgap{font-size:11.5px;margin:0;line-height:1.2}
+.hbcard .hbpic{position:absolute;right:20px;top:auto;bottom:-12px;height:100px;width:auto;z-index:3}
+.hbcard .hbstamp{left:-34px;bottom:14px;width:40px;height:49px}
+.hbtop .snd{background:rgba(255,255,255,.55);width:36px;height:36px}
 .hbteam{display:inline-block;margin-top:0;font-size:12px;font-weight:800;background:rgba(255,255,255,.55);border-radius:99px;padding:2px 9px}
 .hbtop h1{font-size:21px;line-height:1.3;margin-top:4px;max-width:64%;word-break:keep-all}
 .hbav{position:absolute;right:16px;bottom:-18px;width:86px;height:86px;border-radius:50%;background:#fff;border:3px solid #fff;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.08)}.hbav .stk{width:80%;filter:url(#stk2)}
@@ -2184,13 +2194,12 @@ function topView(){
     checkBankZero(z);
     const rk=TEAMS.map(x=>({id:x.id,c:b[x.id]})).sort((x,y)=>y.c-x.c), ri=rk.findIndex(x=>x.id===m.team), mc=b[m.team]||0, gap=ri>0?rk[0].c-mc:(rk[1]?mc-rk[1].c:0);
     const L=stampList(), SN=ST_PARTS.length, sd=!!S.finalStamp;
-    return '<header class="hb"><div class="hbtop" style="background:'+t.color+'">'
-     +'<span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span>'
-     +'<div class="hbmain"><div class="hbinfo"><p class="hbl" style="color:'+dk+'">우리 팀 코인 · '+(ri+1)+'위</p>'
+    return '<header class="hb"><div class="hbcard"><div class="hbtop" style="background:'+t.color+'">'
+     +'<div class="hbinfo"><span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><p class="hbl" style="color:'+dk+'">우리 팀 코인 · '+(ri+1)+'위</p>'
      +'<p class="hbnum" style="color:'+shade(t.color,.3)+'"><img src="'+COIN3D+'" alt="">'+fmt(mc)+'</p>'
-     +'<p class="hbgap" style="color:'+dk+'">'+(z?'이제부턴 뺏는 수밖에!':ri===0?(gap>0?'2위와 '+fmt(gap)+'코인 차이 · 지켜내요!':'공동 1위예요!'):'1위와 '+fmt(gap)+'코인 차이')+'</p></div>'
+     +'<p class="hbgap" style="color:'+dk+'">'+(z?'이제부턴 뺏는 수밖에!':ri===0?(gap>0?'2위와 '+fmt(gap)+'코인 차이 · 지켜내요!':'공동 1위예요!'):'1위와 '+fmt(gap)+'코인 차이')+'</p></div></div>'
      +'<div class="hbpic"><div class="hbw"><button class="hbfull" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필">'+charHTML(chO(m),{full:true})+'</button>'
-     +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프"><span class="stp">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></span></button></div></div></div></div>'
+     +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프"><span class="stp">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></span></button></div></div></div>'
      +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbbank"><span>'+(z?ic('swords','sm')+' 쟁탈전 중 · 은행 코인이 모두 풀렸어요':'은행 남은 코인 <b>'+fmt(b.bank)+'</b> / '+fmt(TOTAL))+'</span>'+(z?'':'<em>'+left+'%</em>')+'</div>'
      +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div></div></header>'; }
   return '<header class="bar"><h2>'+t+'</h2><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
