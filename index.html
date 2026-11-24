@@ -362,11 +362,14 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .hbtop{padding:16px 16px 18px}.hbmain{display:flex;align-items:flex-end;gap:10px;margin-top:10px}.hbinfo{flex:1;min-width:0}
 .hbl{font-size:12.5px;font-weight:700}
 .hbnum{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:clamp(30px,9.6vw,38px);font-weight:900;letter-spacing:-1px;line-height:1.1;margin-top:2px}.hbnum img{width:30px;height:30px}
-.hbgap{font-size:12px;font-weight:700;margin-top:3px}
-.hbpic{position:relative;flex:none;width:76px;height:76px;margin-right:2px}
-.hbtop .hbav{position:static;width:76px;height:76px}
-.hbstamp{position:absolute;left:-22px;bottom:-6px;width:38px;height:46px;background:#fff;border:1.5px solid #1E1E1C;border-radius:5px;transform:rotate(-8deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:3px;box-shadow:0 2px 5px rgba(0,0,0,.12)}
-.hbstamp .stpic.mini{width:26px;height:auto;border-radius:3px;border:1px solid #ECE8DF}.hbstamp b{font-size:10px;font-weight:900;color:#1E1E1C;line-height:1}
+.hbgap{font-size:12.5px;font-weight:500;margin-top:3px;opacity:.95}
+.hbtop{overflow:hidden}.hbinfo{padding-right:118px}
+.hbpic{position:absolute;right:16px;top:12px;bottom:6px;width:112px;pointer-events:none}
+.hbpic{display:flex;justify-content:flex-end}.hbw{position:relative;height:100%}.hbfull{display:block;height:100%;pointer-events:auto}.hbfull>.chr{height:100%;width:auto;max-width:none}
+.hbstamp{position:absolute;left:-30px;bottom:8px;width:44px;height:54px;transform:rotate(-8deg);filter:drop-shadow(0 3px 4px rgba(0,0,0,.22)) drop-shadow(0 1px 1px rgba(0,0,0,.12));pointer-events:auto;z-index:2}
+.stp{position:absolute;inset:0;background:#FFFDF7;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ -webkit-mask:radial-gradient(circle,transparent 1.9px,#000 2.3px) -3px -3px/6px 6px,linear-gradient(#000 0 0) content-box;-webkit-mask-composite:source-over;mask:radial-gradient(circle,transparent 1.9px,#000 2.3px) -3px -3px/6px 6px,linear-gradient(#000 0 0) content-box;mask-composite:add}
+.stp .stpic.mini{width:30px;border-radius:2px;border:0}.stp b{font-size:10px;font-weight:900;color:#1E1E1C;line-height:1}
 .hbbank{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--sub);margin-bottom:6px}.hbbank b{color:#1E1E1C}.hbbank em{font-style:normal;font-weight:800;color:#8A6400}
 .hbcoin.zero .hbbank span{color:#C0392B;font-weight:800}
 .todo{padding-top:12px;padding-bottom:6px}.todo h3{display:flex;align-items:center;gap:6px;font-size:15px;margin-bottom:2px}.todo h3 span{font-size:11px;background:#1E1E1C;color:#fff;border-radius:99px;padding:1px 7px}
@@ -606,7 +609,6 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .stban{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 12px 12px 12px}.stban>.i{width:18px;height:18px;color:var(--sub);flex:none}
 .stb{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.stb b{font-size:15px}.stb small{font-size:12px;color:var(--sub);line-height:1.35;word-break:keep-all}
 .stdots{display:flex;align-items:center;gap:4px;margin-top:4px}.stdots i{width:14px;height:14px;border-radius:50%}.stdots i.fin{border-radius:4px;background:#E4E0D6;transform:rotate(45deg) scale(.8)}.stdots i.fin.on{background:var(--ink)}.stdots em{font-style:normal;font-size:12px;font-weight:800;margin-left:4px}
-.hbstamp .stpic.mini{width:26px;border-radius:3px;border-width:1px}
 .stbig{padding:10px}.stbig .stpic{max-width:320px;margin:0 auto}
 .strow{display:flex;align-items:center;gap:10px;padding:8px 0}.strow+.strow{border-top:1px solid #F1EFEA}.strow>i{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:900}
 .strow>i.fin{background:#E4E0D6;border-radius:8px}.strow>i.fin.on{background:var(--ink);color:#fff}.strow>i .i{width:14px;height:14px}
@@ -2182,12 +2184,12 @@ function topView(){
     const rk=TEAMS.map(x=>({id:x.id,c:b[x.id]})).sort((x,y)=>y.c-x.c), ri=rk.findIndex(x=>x.id===m.team), mc=b[m.team]||0, gap=ri>0?rk[0].c-mc:(rk[1]?mc-rk[1].c:0);
     const L=stampList(), SN=ST_PARTS.length, sd=!!S.finalStamp;
     return '<header class="hb"><div class="hbtop" style="background:'+t.color+'">'
-     +'<span class="hbteam" style="color:'+dk+'">'+esc(nm)+' · '+esc(m.name)+'님</span>'
+     +'<span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span>'
      +'<div class="hbmain"><div class="hbinfo"><p class="hbl" style="color:'+dk+'">우리 팀 코인 · '+(ri+1)+'위</p>'
      +'<p class="hbnum" style="color:'+shade(t.color,.3)+'"><img src="'+COIN3D+'" alt="">'+fmt(mc)+'</p>'
      +'<p class="hbgap" style="color:'+dk+'">'+(z?'이제부턴 뺏는 수밖에!':ri===0?(gap>0?'2위와 '+fmt(gap)+'코인 차이 · 지켜내요!':'공동 1위예요!'):'1위와 '+fmt(gap)+'코인 차이')+'</p></div>'
-     +'<div class="hbpic"><button class="hbav" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필"><span class="stk">'+charHTML(chO(m))+'</span></button>'
-     +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></button></div></div></div>'
+     +'<div class="hbpic"><div class="hbw"><button class="hbfull" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필">'+charHTML(chO(m),{full:true})+'</button>'
+     +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프"><span class="stp">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></span></button></div></div></div></div>'
      +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbbank"><span>'+(z?ic('swords','sm')+' 쟁탈전 중 · 은행 코인이 모두 풀렸어요':'은행 남은 코인 <b>'+fmt(b.bank)+'</b> / '+fmt(TOTAL))+'</span>'+(z?'':'<em>'+left+'%</em>')+'</div>'
      +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div></div></header>'; }
   return '<header class="bar"><h2>'+t+'</h2><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
