@@ -389,6 +389,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .tdx{flex:1;min-width:0;font-size:13.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tdx b{color:#1E1E1C;font-weight:800}
 .tdi em{flex:none;font-style:normal;font-size:12px;font-weight:700;color:var(--sub)}.tdi.urg em{color:#C0392B}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.setrow b{display:flex;align-items:center;gap:6px;font-size:15px}.setrow small{display:block;font-size:12px;color:var(--sub);margin-top:2px}
+#ptr{position:fixed;left:50%;top:0;z-index:60;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-50%,-56px);pointer-events:none}#ptr img{width:26px;height:26px}#ptr.spin img{animation:spin .6s linear infinite}
 .morerow{display:flex;gap:8px;margin-top:10px}.morerow .more{flex:1;margin-top:0}
 .tgl{flex:none;width:48px;height:28px;border-radius:99px;background:#D9D5CB;position:relative;transition:.2s}.tgl i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.tgl.on{background:#2E9E6A}.tgl.on i{left:23px}
 .hbcoin{background:#fff;border-radius:0 0 22px 22px;padding:14px 16px 14px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
@@ -2522,6 +2523,22 @@ function todoItems(){ const m=me(), out=[];
   return out.sort((x,y)=>(y.urg?1:0)-(x.urg?1:0)); }
 function todoCard(){ const L=todoItems(); if(!L.length) return '';
   return '<section class="card flat todo"><h3>지금 할 일 <span>'+L.length+'</span></h3>'+L.map(x=>'<button class="tdi'+(x.urg?' urg':'')+'" onclick="'+x.go+'"><span class="tdt" style="background-image:url('+x.art+')"></span><span class="tdx"><b>'+esc(x.g)+'</b> · '+esc(x.t)+'</span><em>'+esc(x.s)+'</em></button>').join('')+'</section>'; }
+
+/* 당겨서 새로고침 — 맨 위에서 아래로 당기면 최신 데이터 다시 불러오기 (서버 연결 후엔 pullLatest만 교체) */
+function pullLatest(){ try{ const s=localStorage.getItem(KEY); if(s){ const keep=S.me; S=JSON.parse(s); refreshGroups(); S.me=keep; } }catch(e){} }
+(function(){
+  const TH=70, MAX=110; let y0=null, dy=0, busy=false, el=null;
+  const fixedUp=n=>{ for(;n&&n!==document.body;n=n.parentElement){ if(getComputedStyle(n).position==='fixed') return true; } return false; };
+  const ind=()=>{ if(!el){ el=document.createElement('div'); el.id='ptr'; el.innerHTML='<img src="'+COIN3D+'" alt="">'; document.body.appendChild(el); } return el; };
+  const set=(d,anim)=>{ const e=ind(); e.style.transition=anim?'transform .25s,opacity .25s':'none'; e.style.transform='translate(-50%,'+(d-56)+'px)'; e.style.opacity=Math.min(1,d/40); e.querySelector('img').style.transform='rotate('+(d*4)+'deg) scale('+(d>=TH?1.1:.9)+')'; };
+  window.addEventListener('touchstart',e=>{ if(busy||window.scrollY>0||e.touches.length>1||!S.me||document.querySelector('.sheet-bg')||fixedUp(e.target)){ y0=null; return; } y0=e.touches[0].clientY; dy=0; },{passive:true});
+  window.addEventListener('touchmove',e=>{ if(y0==null) return; const d=e.touches[0].clientY-y0; if(d<=0||window.scrollY>0){ if(dy) set(0,true); dy=0; return; } dy=Math.min(MAX,d*.5); set(dy); },{passive:true});
+  window.addEventListener('touchend',()=>{ if(y0==null) return; y0=null;
+    if(dy<TH){ set(0,true); dy=0; return; }
+    busy=true; set(60,true); ind().classList.add('spin'); if(window.SFX&&SFX.select) SFX.select();
+    setTimeout(()=>{ pullLatest(); if(!document.activeElement.matches('input,textarea,select')) render(); ind().classList.remove('spin'); set(0,true); toast('최신 상태예요'); busy=false; dy=0; },700);
+  });
+})();
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
