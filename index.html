@@ -344,6 +344,12 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .betbn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#1E1E1C;color:#fff;border-radius:18px;padding:12px 14px;margin-bottom:12px}.betbn.urg{background:#C0392B;animation:sigs 1.6s infinite}
 .bbi{font-size:24px}.bbt{flex:1;min-width:0;display:flex;flex-direction:column}.bbt small{font-size:11.5px;color:#FFD84D;font-weight:800}.betbn.urg .bbt small{color:#fff}.bbt b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bbg{flex:none;background:#FFD84D;color:#1E1E1C;font-weight:900;font-size:13px;border-radius:99px;padding:6px 12px}
 .btrg{text-align:center;font-size:12px;color:var(--sub);font-weight:700;margin:-4px 0 10px}.btrng{display:flex;align-items:center;gap:8px}.btrng input{flex:1;min-width:0;height:48px;border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:0 12px;font-size:16px;font-weight:700;text-align:center}.btrng span{font-weight:900}
+.bthist{margin-top:14px;background:#FAF9F6;border-radius:16px;padding:12px 10px 10px}.bthh{display:flex;justify-content:space-between;align-items:center;padding:0 4px 4px}.bthh b{font-size:14px}.bthh small{font-size:12px;color:var(--sub);font-weight:700}
+.bthist svg{width:100%;display:block;overflow:visible}.hax{stroke:#1E1E1C;stroke-width:2}.hbo{fill:none;stroke:#1E1E1C;stroke-width:1.6}.hn{font-size:10px;font-weight:800;text-anchor:middle;fill:#1E1E1C}.bthist svg text{font-size:9.5px;fill:#8A867C;font-weight:700;text-anchor:middle}.bthist svg .hn{fill:#1E1E1C}
+.hmean{stroke:#7B61FF;stroke-width:2;stroke-dasharray:4 3}.hme{fill:#1E1E1C}
+.bthl{display:flex;gap:12px;justify-content:center;font-size:11px;color:var(--sub);font-weight:700;margin-top:2px}.bthl span{display:inline-flex;align-items:center;gap:4px}.lg{display:inline-block;width:14px;height:0;border-top:2px dashed #E5A800}.lg.mean{border-color:#7B61FF}.lg.me{width:0;height:0;border:5px solid transparent;border-bottom:8px solid #1E1E1C;border-top:0}
+.lgs{font-style:normal;color:#FFD84D;-webkit-text-stroke:1px #1E1E1C;font-size:13px}
+.bthst{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}.bthst div{background:#fff;border-radius:10px;padding:6px 4px;text-align:center}.bthst small{display:block;font-size:10px;color:var(--sub);font-weight:700}.bthst b{font-size:13px}
 .bthow summary{font-weight:900;font-size:15px;display:flex;align-items:center;gap:6px;cursor:pointer;list-style:none}.bthow summary::-webkit-details-marker{display:none}.bthow summary::after{content:'▾';margin-left:auto;color:var(--sub)}.bthow[open] summary::after{content:'▴'}
 .bthow p{font-size:13px;line-height:1.7;color:var(--sub);margin:6px 0 0}
 .bgzoom{position:fixed;inset:0;z-index:99;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff;text-align:center}.bgzoom img{max-width:100%;max-height:75vh;border-radius:12px}.bgzoom p{margin-top:10px;font-size:13.5px;line-height:1.5}
@@ -1840,7 +1846,7 @@ function betDetail(t){ const m=me(), s=betStat(t), my=t.g&&t.g[m.id], G=betGs(t)
      +(t.mode==='pot'?'<p class="sub tcp">💰 지면 우리 조 코인에서 '+(t.pt==='team'?'조당 '+t.stake+'코인(조원 여럿이 내도 한 번만)':t.stake+'코인')+'이 빠져 이긴 조로 가요.</p>':'<p class="sub tcp">🎁 코인을 잃지 않아요. 맞히면 상금을 받아요.</p>')
      +(my?'<p class="bgnote" style="margin-top:8px">내 답 <b>'+betNum(my.v)+t.unit+'</b> · '+ago(my.ts)+'</p>':'');
     h+=betTeamBars(t); }
-  else if(s==='closed') h+='<p class="bgnote" style="margin-top:12px">마감됐어요. 운영진이 정답을 공개하면 결과가 떠요.'+(my?'<br>내 답 <b>'+betNum(my.v)+t.unit+'</b>':'')+'</p>'+betTeamBars(t);
+  else if(s==='closed') h+='<p class="bgnote" style="margin-top:12px">마감됐어요. 다들 어떻게 예측했는지 볼까요? 정답은 운영진이 곧 공개해요.'+(my?'<br>내 답 <b>'+betNum(my.v)+t.unit+'</b>':'')+'</p>'+(betHist(t,null)||betTeamBars(t));
   else h+=betResult(t);
   h+='</section>';
   if(m.admin) h+=betAdmin(t);
@@ -1853,9 +1859,7 @@ function betResult(t){ const G=betGs(t).map(x=>({...x,d:Math.abs(x.v-t.ans)})).s
   const stack={}; const dots=G.slice().sort((a,b)=>a.v-b.v).map(x=>{ const px=Math.round(X(x.v)/9); stack[px]=(stack[px]||0)+1; const cy=62-(stack[px]-1)*11, w=W.includes(x.pid);
     return '<circle cx="'+X(x.v).toFixed(1)+'" cy="'+cy+'" r="'+(w?6.5:4.8)+'" fill="'+team(x.p.team).color+'" stroke="'+(w?'#1E1E1C':'#fff')+'" stroke-width="'+(w?2.4:1.4)+'"/>'; }).join('');
   let h='<div class="btans"><small>정답</small><b>'+betNum(t.ans)+'<em>'+esc(t.unit)+'</em></b></div>'
-   +'<svg class="btline" viewBox="0 0 340 96"><line x1="10" y1="70" x2="330" y2="70"/>'+dots
-   +'<g transform="translate('+X(t.ans).toFixed(1)+',0)"><line class="bta1" y1="8" y2="74"/><path class="btstar" d="M0 -1 L3.2 6 L10.5 6.6 L5 11.4 L6.7 18.6 L0 14.8 L-6.7 18.6 L-5 11.4 L-10.5 6.6 L-3.2 6Z" transform="translate(0,-2) scale(.9)"/></g>'
-   +'<text x="10" y="90">'+betNum(lo)+'</text><text x="330" y="90" text-anchor="end">'+betNum(hi)+'</text></svg>';
++betHist(t,t.ans);
   h+='<div class="btrk">'+G.slice(0,Math.max(8,W.length+S2.length)).map((x,k)=>{ const tm=team(x.p.team), w=W.includes(x.pid), s2=S2.includes(x.pid);
     return '<div class="'+(w?'w':'')+(x.pid===me_.id?' me':'')+'"><span class="medal m'+(w?1:s2?2:3)+'">'+(w?1:s2?2:k+1)+'</span>'+avatar(x.p,'s')+'<span class="btn2"><b>'+esc(x.p.name)+'</b><small style="color:'+shade(tm.color,.4)+'">'+esc(tm.name)+'</small></span><span class="btv"><b>'+betNum(x.v)+t.unit+'</b><small>'+(x.d?'차이 '+betNum(x.d):'정확히!')+'</small></span></div>'; }).join('')
    +(G.length>8?'<p class="sub" style="text-align:center;margin-top:6px">외 '+(G.length-8)+'명</p>':'')+'</div>';
@@ -1931,6 +1935,23 @@ function betReopen(id){ const t=betT(id); t.state='open'; if(t.dl&&t.dl<=Date.no
 function betTodo(){ const m=me(); if(!m||!S.bet) return []; return S.bet.topics.filter(t=>betOpen(t)&&!(t.g&&t.g[m.id])).sort((a,b)=>(a.dl||9e15)-(b.dl||9e15)); }
 function betBanner(){ const L=betTodo(); if(!L.length) return ''; const t=L[0], urg=t.dl&&t.dl-Date.now()<1800000;
   return '<button class="betbn'+(urg?' urg':'')+'" onclick="betPlay(\''+t.id+'\')"><span class="bbi">🎯</span><span class="bbt"><small>'+(urg?'⏰ 마감 임박 · '+betLeft(t):'예측 베팅 · 아직 답을 안 냈어요')+(L.length>1?' 외 '+(L.length-1)+'개':'')+'</small><b>'+esc(t.q)+'</b></span><span class="bbg">참여</span></button>'; }
+
+/* ---------- 답 분포 ---------- */
+function betShort(v){ const a=Math.abs(v); return a>=10000?(Math.round(v/1000)/10)+'만':a>=1000?(Math.round(v/100)/10)+'천':betNum(v); }
+function betHist(t,ans){ const G=betGs(t); if(G.length<2) return ''; const vals=G.map(x=>x.v).sort((a,b)=>a-b), my=(t.g||{})[me().id];
+  const pool=ans!=null?vals.concat(ans):vals, lo0=Math.min(...pool), hi0=Math.max(...pool), raw=((hi0-lo0)||1)/7, mag=Math.pow(10,Math.floor(Math.log10(raw))), step=[1,2,2.5,5,10].map(k=>k*mag).find(s=>s>=raw), start=Math.floor(lo0/step)*step, nb=Math.max(1,Math.ceil((hi0-start)/step+1e-9)+(hi0===start+Math.ceil((hi0-start)/step)*step?1:0));
+  const bins=Array.from({length:nb},()=>({n:0,tm:{}})); G.forEach(x=>{ const k=Math.min(nb-1,Math.floor((x.v-start)/step)); bins[k].n++; bins[k].tm[x.p.team]=(bins[k].tm[x.p.team]||0)+1; });
+  const mx=Math.max(...bins.map(b=>b.n)), W=312/nb, H=88, X=v=>14+(v-start)/step*W;
+  let bars=''; bins.forEach((bn,k)=>{ let y=104; TEAMS.forEach(tm=>{ const c=bn.tm[tm.id]; if(!c) return; const h=c/mx*H; y-=h; bars+='<rect x="'+(14+k*W+2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(W-4).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+tm.color+'"/>'; });
+    if(bn.n) bars+='<rect class="hbo" x="'+(14+k*W+2).toFixed(1)+'" y="'+(104-bn.n/mx*H).toFixed(1)+'" width="'+(W-4).toFixed(1)+'" height="'+(bn.n/mx*H).toFixed(1)+'" rx="3"/><text class="hn" x="'+(14+k*W+W/2).toFixed(1)+'" y="'+(100-bn.n/mx*H).toFixed(1)+'">'+bn.n+'</text>'; });
+  let lab=''; const every=nb>8?2:1; for(let k=0;k<=nb;k+=every) lab+='<text x="'+(14+k*W).toFixed(1)+'" y="120">'+betShort(start+k*step)+'</text>';
+  const mean=vals.reduce((a,b)=>a+b,0)/vals.length, med=vals.length%2?vals[(vals.length-1)/2]:(vals[vals.length/2-1]+vals[vals.length/2])/2;
+  let mk='<line class="hmean" x1="'+X(mean).toFixed(1)+'" x2="'+X(mean).toFixed(1)+'" y1="10" y2="106"/>';
+  if(my) mk+='<g transform="translate('+X(my.v).toFixed(1)+',108)"><path class="hme" d="M0 0 L5 8 L-5 8Z"/></g>';
+  if(ans!=null) mk+='<g transform="translate('+X(ans).toFixed(1)+',0)"><line class="bta1" y1="10" y2="104"/><path class="btstar" d="M0 -1 L3.2 6 L10.5 6.6 L5 11.4 L6.7 18.6 L0 14.8 L-6.7 18.6 L-5 11.4 L-10.5 6.6 L-3.2 6Z" transform="translate(0,-4) scale(.8)"/></g>';
+  return '<div class="bthist"><div class="bthh"><b>📊 답 분포</b><small>'+G.length+'명</small></div><svg viewBox="0 0 340 128"><line class="hax" x1="12" y1="104" x2="328" y2="104"/>'+bars+mk+lab+'</svg>'
+   +'<div class="bthl">'+(ans!=null?'<span><em class="lgs">★</em>정답</span>':'')+'<span><i class="lg mean"></i>평균</span>'+(my?'<span><i class="lg me"></i>내 답</span>':'')+'</div>'
+   +'<div class="bthst"><div><small>평균</small><b>'+betNum(Math.round(mean*10)/10)+'</b></div><div><small>중앙값</small><b>'+betNum(med)+'</b></div><div><small>가장 작은 답</small><b>'+betNum(vals[0])+'</b></div><div><small>가장 큰 답</small><b>'+betNum(vals[vals.length-1])+'</b></div></div></div>'; }
 
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
