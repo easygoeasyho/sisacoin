@@ -495,6 +495,13 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .wdli em{font-style:normal;font-weight:900;display:flex;align-items:center;gap:2px}.wdli em img{width:15px;height:15px}
 .wdempty{text-align:center;color:var(--sub);padding:60px 20px}.wdempty .wdsil{width:120px;opacity:.5}.wdempty p{font-weight:800;margin-top:10px}
 .wdnew{display:block;margin:18px auto 30px;background:#fff;color:#1E1E1C;border:1.5px dashed #C9C2B3}
+.psort{display:flex;align-items:center;gap:5px;margin:2px 0 12px}.psort>span{font-size:12px;font-weight:800;color:var(--sub);margin-right:2px}
+.psort button{display:inline-flex;align-items:center;gap:3px;height:30px;padding:0 11px;border-radius:99px;background:#fff;border:1.5px solid #E5E0D5;font-size:12.5px;font-weight:800;color:#7A766C}
+.psort button.on{background:#1E1E1C;border-color:#1E1E1C;color:#fff}.psort button img{width:14px;height:14px}.psort button .i{width:13px;height:13px}
+.prk{flex:none;width:22px;text-align:center;font-size:13px;font-weight:900;color:#B8B1A3}
+.prow.top1 .prk,.prow.top2 .prk,.prow.top3 .prk{width:22px;height:22px;line-height:22px;border-radius:50%;color:#fff;font-size:12px}
+.prow.top1 .prk{background:#F5B700}.prow.top2 .prk{background:#A7A9AC}.prow.top3 .prk{background:#CD7F45}
+.ranked.s-heart .htag,.ranked.s-coin .ctg2{transform:scale(1.12);font-weight:900}
 #ptr{position:fixed;left:50%;top:0;z-index:60;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-50%,-56px);pointer-events:none}#ptr img{width:26px;height:26px}#ptr.spin img{animation:spin .6s linear infinite}
 .morerow{display:flex;gap:8px;margin-top:10px}.morerow .more{flex:1;margin-top:0}
 .tgl{flex:none;width:48px;height:28px;border-radius:99px;background:#D9D5CB;position:relative;transition:.2s}.tgl i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.tgl.on{background:#2E9E6A}.tgl.on i{left:23px}
@@ -2288,7 +2295,7 @@ function budView(){ const B=ensureBud(), C=budCalc(), o=budPlan(), U=budUsed(), 
   h+='<section class="card jack"><h3>🎰 마지막 잭팟 (예상)</h3><p class="jkn">'+coinIc+fmt(Math.max(0,left-unspent))+'</p><p class="sub">예정보다 적게 진행돼 남는 코인은 마지막에 잭팟으로 풀려요. 지금 은행 '+fmt(left)+' − 아직 안 쓴 예산 '+fmt(unspent)+'</p></section>';
   return h; }
 
-const APP_VER='11-25 10:47';
+const APP_VER='11-25 10:53';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2683,11 +2690,14 @@ function peopleView(){
   let ps=S.people.slice();
   if(ui.filter!=='all') ps=ps.filter(p=>p.team===ui.filter);
   if(ui.q) ps=ps.filter(p=>(p.name+p.title+p.dept+p.like+p.food+p.intro+MASCOTS[p.mascot].name+team(p.team).name).toLowerCase().includes(ui.q.trim().toLowerCase()));
-  ps.sort((a,b)=>(b.role?1:0)-(a.role?1:0)||a.name.localeCompare(b.name,'ko'));
+  const SO=ui.sort||'name', met={heart:p=>heartsRecv(p.id),badge:p=>badgesOf(p).length,coin:p=>earned(p.id)}[SO];
+  if(met){ const v={}; ps.forEach(p=>v[p.id]=met(p)); ps.sort((a,b)=>v[b.id]-v[a.id]||a.name.localeCompare(b.name,'ko')); let r=0,prev=null; ps.forEach((p,k)=>{ if(v[p.id]!==prev){ r=k+1; prev=v[p.id]; } p._rk=v[p.id]>0?r:0; }); }
+  else { ps.sort((a,b)=>(b.role?1:0)-(a.role?1:0)||a.name.localeCompare(b.name,'ko')); ps.forEach(p=>p._rk=0); }
   let h='<div class="search">'+ic('search')+'<input placeholder="이름, 부서, 좋아하는 것으로 찾기" value="'+esc(ui.q)+'" oninput="ui.q=this.value;reSearch()"></div>';
   h+='<div class="filter"><button class="fchip '+(ui.filter==='all'?'on':'')+'" onclick="setFilter(\'all\')">전체 '+S.people.length+'</button>'+TEAMS.map(t=>'<button class="fchip '+(ui.filter===t.id?'on':'')+'" onclick="setFilter(\''+t.id+'\')"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</button>').join('')+'</div>';
-  h+='<div class="plist">'+ps.map(p=>{ const bs=badgesOf(p), MAXB=5, e=earned(p.id), hr=heartsRecv(p.id);
-    return '<button class="prow" onclick="openProfile(\''+p.id+'\')">'+avatar(p,'m')+'<span class="pi"><b>'+esc(p.name)+(p.title?' <i>'+esc(p.title)+'</i>':'')+'</b><small>'+(SPECIAL[p.dept]?'':esc(p.dept)+' · ')+esc(team(p.team).name)+'</small></span>'
+  h+='<div class="psort"><span>정렬</span>'+[['name','이름순',''],['heart','하트',ic('heart','sm')],['badge','배지','🏅'],['coin','코인','<img src="'+COIN3D+'" alt="">']].map(s=>'<button class="'+(SO===s[0]?'on':'')+'" onclick="ui.sort=\''+s[0]+'\';SFX.select();render()">'+s[2]+s[1]+'</button>').join('')+'</div>';
+  h+='<div class="plist'+(met?' ranked s-'+SO:'')+'">'+ps.map(p=>{ const bs=badgesOf(p), MAXB=5, e=earned(p.id), hr=heartsRecv(p.id);
+    return '<button class="prow'+(p._rk&&p._rk<=3?' top'+p._rk:'')+'" onclick="openProfile(\''+p.id+'\')">'+(met?'<span class="prk">'+(p._rk||'-')+'</span>':'')+avatar(p,'m')+'<span class="pi"><b>'+esc(p.name)+(p.title?' <i>'+esc(p.title)+'</i>':'')+'</b><small>'+(SPECIAL[p.dept]?'':esc(p.dept)+' · ')+esc(team(p.team).name)+'</small></span>'
      +'<span class="pr">'+(e>0||hr>0?'<span class="ptg">'+(hr>0?'<span class="htag">'+ic('heart','sm')+fmt(hr)+'</span>':'')+(e>0?'<span class="ctg2">'+coinIc+fmt(e)+'</span>':'')+'</span>':'')+(bs.length?'<span class="pbs">'+bs.slice(0,MAXB).map(k=>'<span class="bdmini" title="'+BADGES[k].name+'">'+medal(k,'on tiny')+'</span>').join('')+(bs.length>MAXB?'<em>+'+(bs.length-MAXB)+'</em>':'')+'</span>':'')+'</span></button>'; }).join('')+'</div>';
   if(!ps.length) h+='<p class="sub center">찾는 사람이 없어요</p>';
   return h;
