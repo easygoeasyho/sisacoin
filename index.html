@@ -896,6 +896,13 @@ body>#app .mstage,.wrap>.card.maker .mstage{top:0}
 .fold.card.big>summary{padding:14px 16px;gap:12px;justify-content:flex-start;color:var(--ink)}
 .fold.card.big>summary .ftxt{flex:1;display:flex;flex-direction:column}.fold.card.big>summary b{font-size:16px}.fold.card.big>summary small{font-size:12px;color:var(--sub);font-weight:400}
 .fold.card.big .card.maker{margin:0;padding-top:4px}
+.pinpop .pindots{display:flex;gap:12px;justify-content:center;margin:4px 0 14px}.pindots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink,#1E1E1C)}.pindots i.on{background:var(--ink,#1E1E1C)}
+.pindots.bad{animation:shk .4s}@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pinpad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;justify-content:center;margin-bottom:10px}.pinpad button{height:52px;border-radius:14px;border:2px solid #1E1E1C;background:#fff;font:800 20px inherit;box-shadow:0 3px 0 #1E1E1C;color:#1E1E1C}.pinpad button:active{transform:translateY(2px);box-shadow:0 1px 0 #1E1E1C}
+.fsrow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700}
+.fseg{display:flex;background:#F0EBE0;border-radius:12px;padding:3px}.fseg button{border:0;background:none;padding:8px 14px;border-radius:9px;font:800 13px inherit;color:#8A8477}.fseg button.on{background:#fff;color:#1E1E1C;box-shadow:0 1px 3px rgba(0,0,0,.12)}.fseg button:last-child{font-size:15px}
+html.bigtxt #app{zoom:1.1}
+.stno{font-size:13px;font-weight:900;letter-spacing:-.5px;line-height:1}.stno small{font-size:8.5px;font-weight:800;margin-left:.5px}
 </style>
 </head>
 <body>
@@ -2408,7 +2415,7 @@ function midDemo(btn){
   try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
   save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
 
-const APP_VER='11-25 11:40';
+const APP_VER='11-25 13:31';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2634,7 +2641,7 @@ function navView(){
   if(me().admin) tabs.push(['admin','tool','운영진']);
   return '<nav class="nav">'+tabs.map(t=>'<button class="'+(ui.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+ic(t[1])+(t[0]==='games'&&betTodo().length?'<i class="ndot"></i>':'')+'<span>'+t[2]+'</span></button>').join('')+'</nav>';
 }
-function go(t){ ui.tab=t; ui.msgSeed=Math.floor(Math.random()*1000); ui.backTeam=null; ui.mcolor=''; ui.feedN=5; draft=null; render(); window.scrollTo(0,0); }
+function go(t){ if(t==='admin'&&!pinOK()) return pinAsk(); ui.tab=t; ui.msgSeed=Math.floor(Math.random()*1000); ui.backTeam=null; ui.mcolor=''; ui.feedN=5; draft=null; render(); window.scrollTo(0,0); }
 
 /* --- 시작 · 등록 --- */
 function newReg(){ return {step:0,dept:'',title:'',name:'',team:TEAMS[0].id,pos:'member',gtitle:'',gmotto:'',pin:'',mascot:'',role:'',expr:0,accHead:'none',accFace:'none',accBody:'none',accEtc:'none',intro:'',like:'',food:'',color:''}; }
@@ -2825,7 +2832,7 @@ function mineView(){
   const m=me(); if(!draft||draft.id!==m.id) draft={...m}; CUR=draft; const b=balances(), t=team(m.team);
   return '<section class="card mehead"><button class="meav" onclick="keepIntro(draft);openMaker()" aria-label="캐릭터 꾸미기">'+avatar(m,'l')+'<i>'+ic('edit')+'</i></button><div><p class="nm">'+dn(m)+' <small>'+(SPECIAL[m.dept]?'':esc(m.dept))+(m.admin?(SPECIAL[m.dept]?'':' · ')+'운영진':'')+'</small></p><span class="pill" style="background:'+t.color+'33">'+esc(t.name)+' · '+coinIc+fmt(b[m.team])+'</span></div></section>'
    +'<section class="card"><h3>'+ic('trophy','sm')+' 내 기록</h3><div class="mystat"><div><b>'+fmt(earned(m.id))+'</b><small>딴 코인</small></div><div><b>'+fmt(heartsRecv(m.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(m.id))+'</b><small>준 하트</small></div><div><b>'+fmt(commentsBy(m.id))+'</b><small>쓴 댓글</small></div></div>'
-   +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')
+   +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')+'<section class="card"><h3>'+ic('user','sm')+' 화면 설정</h3><div class="fsrow"><span>글자 크기</span><div class="fseg"><button class="'+(BIG()?'':'on')+'" onclick="fontSet(\'n\')">보통</button><button class="'+(BIG()?'on':'')+'" onclick="fontSet(\'big\')">크게</button></div></div></section>'
    +'<section class="card"><h3>자기소개</h3>'+introFields(draft)+'</section>'
    +(m.gleader?'<section class="card"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'</section>':'')
    +'<div class="actions col"><button class="btn primary" onclick="saveProfile()">저장하기</button><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
@@ -2971,6 +2978,20 @@ function pullLatest(){ try{ const s=localStorage.getItem(KEY); if(s){ const keep
 })();
 
 document.addEventListener('click',e=>{ if(ui.sortOpen&&!e.target.closest('.psort')){ ui.sortOpen=0; render(); } });
+
+/* --- 운영진 PIN --- */
+function pinOK(){ try{ return localStorage.getItem('sisa_pin_ok')===(S.adminPin||'0000'); }catch(e){ return !!ui.pinOk; } }
+function pinAsk(){ ui.pin=''; const el=document.createElement('div'); el.className='zpop pinpop'; el.innerHTML='<div><b>'+ic('tool')+'</b><h2>운영진 확인</h2><p>운영진 PIN 4자리를 입력해 주세요</p><div class="pindots"><i></i><i></i><i></i><i></i></div><div class="pinpad">'+[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':'<button onclick="pinKey(\''+k+'\')">'+k+'</button>').join('')+'</div><button class="cx" onclick="this.closest(\'.zpop\').remove()">취소</button></div>'; document.body.appendChild(el); }
+function pinKey(k){ ui.pin=k==='⌫'?ui.pin.slice(0,-1):(ui.pin+k).slice(0,4); document.querySelectorAll('.pindots i').forEach((d,i)=>d.classList.toggle('on',i<ui.pin.length));
+  if(ui.pin.length===4){ if(ui.pin===(S.adminPin||'0000')){ try{localStorage.setItem('sisa_pin_ok',ui.pin);}catch(e){ ui.pinOk=1; } document.querySelector('.pinpop').remove(); go('admin'); } else { SFX.error(); const d=document.querySelector('.pindots'); d.classList.add('bad'); setTimeout(()=>{ d.classList.remove('bad'); ui.pin=''; d.querySelectorAll('i').forEach(x=>x.classList.remove('on')); },450); } } }
+/* --- 글자 크기 --- */
+function fontSet(v){ try{ localStorage.setItem('sisa_font',v); }catch(e){} document.documentElement.classList.toggle('bigtxt',v==='big'); render(); }
+(function(){ try{ if(localStorage.getItem('sisa_font')==='big') document.documentElement.classList.add('bigtxt'); }catch(e){} })();
+/* --- 화면 꺼짐 방지 (보물찾기 화면) --- */
+let WL=null; async function wakeSync(){ const on=document.visibilityState==='visible'&&!!document.querySelector('.thme,.thfl'); try{ if(on&&!WL&&navigator.wakeLock){ WL=await navigator.wakeLock.request('screen'); WL.addEventListener('release',()=>WL=null); } else if(!on&&WL){ WL.release(); WL=null; } }catch(e){} }
+document.addEventListener('visibilitychange',wakeSync); setInterval(wakeSync,3000);
+
+function BIG(){ return document.documentElement.classList.contains('bigtxt'); }
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
@@ -3246,7 +3267,7 @@ function stampBanner(){ const L=stampList(), N=ST_PARTS.length, done=!!S.finalSt
 function openStamp(){ const L=stampList(), N=ST_PARTS.length, m=me(), done=!!S.finalStamp;
   modal('<h2>50주년 기념 스탬프</h2><p class="sub" style="margin:4px 0 10px">정규 게임이 하나 끝날 때마다 우승한 조의 색으로 그림이 한 겹씩 찍혀요. 어떤 그림이 될지는 다 찍혀야 알 수 있어요.<br>게임 목록에서 <span class="gstp inl"><i>50</i></span> 표시가 있는 게임만 스탬프에 반영돼요.</p>'
    +'<section class="card flat stbig">'+stampPic(L.length,done)+'</section>'
-   +'<div class="stline">'+ST_PARTS.map((p,k)=>{ const x=L[k], c=x?team(x.team):null; return '<button class="stl'+(x?' on':'')+'" onclick="stampTip('+k+')"'+(x?' style="--tc:'+c.color+'"':'')+' aria-label="'+(k+1)+'번째">'+(x?'✓':k+1)+'</button>'; }).join('<i></i>')+'<i></i><button class="stl fin'+(done?' on':'')+'" onclick="toast(\''+(done?'마지막 도장까지 찍었어요!':'모든 게임이 끝나면 마지막 도장을 찍어요')+'\')" aria-label="마지막 도장">★</button></div>'
+   +'<div class="stline">'+ST_PARTS.map((p,k)=>{ const x=L[k], c=x?team(x.team):null; return '<button class="stl'+(x?' on':'')+'" onclick="stampTip('+k+')"'+(x?' style="--tc:'+c.color+'"':'')+' aria-label="'+(k+1)+'번째">'+(x?'<span class="stno">'+(c.title?esc([...c.title][0]):c.no+'<small>조</small>')+'</span>':k+1)+'</button>'; }).join('<i></i>')+'<i></i><button class="stl fin'+(done?' on':'')+'" onclick="toast(\''+(done?'마지막 도장까지 찍었어요!':'모든 게임이 끝나면 마지막 도장을 찍어요')+'\')" aria-label="마지막 도장">★</button></div>'
    +'<p class="sub" style="text-align:center;margin-bottom:12px"><b>'+L.length+'/'+N+'</b> 겹 완성'+(done?' · 마지막 도장까지 찍었어요!':L.length>=N?' · 마지막 도장만 남았어요':'')+(L.length?'<br>찍힌 부분을 누르면 누가 찍었는지 보여요':'')+'</p>'
    +(L.length?'<button class="btn ghost full" style="margin-bottom:10px" onclick="closeModal();playStamp('+(done?N:L.length-1)+')">'+'▶ '+'찍히는 장면 다시 보기</button>':'')
    +(m.admin&&!done?'<button class="btn primary full" '+(L.length>=N?'':'disabled')+' onclick="stampFinal()">'+ic('star')+'마지막 도장 찍기</button>'+(L.length>=N?'':'<p class="sub" style="margin-top:6px;text-align:center">정규 게임 '+N+'개가 모두 끝나면 찍을 수 있어요.</p>'):'')); }
