@@ -504,6 +504,12 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .prow.top1 .prk,.prow.top2 .prk,.prow.top3 .prk{width:22px;height:22px;line-height:22px;border-radius:50%;color:#fff;font-size:12px}
 .prow.top1 .prk{background:#F5B700}.prow.top2 .prk{background:#A7A9AC}.prow.top3 .prk{background:#CD7F45}
 .ranked.s-heart .htag,.ranked.s-coin .ctg2{transform:scale(1.12);font-weight:900}
+.srow .search input{min-height:40px;font-size:14.5px}.psort>.pso{min-height:40px;border-radius:12px}.srow .search{border-radius:12px}
+.filter .fchip{padding:6px 12px;font-size:12.5px}
+.plist .prow{min-height:0;padding:7px 0;gap:9px}.plist .av.m{width:40px;height:40px}
+.plist .prow .pi b{font-size:14.5px}.plist .prow .pi small{font-size:11.5px}
+.plist .prow .pr{flex-direction:row-reverse;align-items:center;gap:6px}
+.plist .pbs{gap:1px}
 #ptr{position:fixed;left:50%;top:0;z-index:60;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-50%,-56px);pointer-events:none}#ptr img{width:26px;height:26px}#ptr.spin img{animation:spin .6s linear infinite}
 .morerow{display:flex;gap:8px;margin-top:10px}.morerow .more{flex:1;margin-top:0}
 .tgl{flex:none;width:48px;height:28px;border-radius:99px;background:#D9D5CB;position:relative;transition:.2s}.tgl i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.tgl.on{background:#2E9E6A}.tgl.on i{left:23px}
@@ -2297,7 +2303,7 @@ function budView(){ const B=ensureBud(), C=budCalc(), o=budPlan(), U=budUsed(), 
   h+='<section class="card jack"><h3>🎰 마지막 잭팟 (예상)</h3><p class="jkn">'+coinIc+fmt(Math.max(0,left-unspent))+'</p><p class="sub">예정보다 적게 진행돼 남는 코인은 마지막에 잭팟으로 풀려요. 지금 은행 '+fmt(left)+' − 아직 안 쓴 예산 '+fmt(unspent)+'</p></section>';
   return h; }
 
-const APP_VER='11-25 10:55';
+const APP_VER='11-25 10:59';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2699,7 +2705,7 @@ function peopleView(){
   h+='<div class="filter"><button class="fchip '+(ui.filter==='all'?'on':'')+'" onclick="setFilter(\'all\')">전체 '+S.people.length+'</button>'+TEAMS.map(t=>'<button class="fchip '+(ui.filter===t.id?'on':'')+'" onclick="setFilter(\''+t.id+'\')"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</button>').join('')+'</div>';
   const SL={name:['이름순',''],heart:['하트순',ic('heart','sm')],badge:['배지순','🏅'],coin:['코인순','<img src="'+COIN3D+'" alt="">']};
   h=h.replace('<div class="search">','<div class="srow"><div class="search">').replace('reSearch()"></div>','reSearch()"></div><div class="psort"><button class="pso'+(met?' on':'')+'" onclick="event.stopPropagation();ui.sortOpen=!ui.sortOpen;render()">'+SL[SO][1]+'<b>'+SL[SO][0]+'</b>▾</button>'+(ui.sortOpen?'<div class="psm">'+Object.keys(SL).map(k=>'<button class="'+(SO===k?'on':'')+'" onclick="ui.sort=\''+k+'\';ui.sortOpen=0;SFX.select();render()">'+SL[k][1]+SL[k][0]+'</button>').join('')+'</div>':'')+'</div></div>');
-  h+='<div class="plist'+(met?' ranked s-'+SO:'')+'">'+ps.map(p=>{ const bs=badgesOf(p), MAXB=5, e=earned(p.id), hr=heartsRecv(p.id);
+  h+='<div class="plist'+(met?' ranked s-'+SO:'')+'">'+ps.map(p=>{ const bs=badgesOf(p), MAXB=3, e=earned(p.id), hr=heartsRecv(p.id);
     return '<button class="prow'+(p._rk&&p._rk<=3?' top'+p._rk:'')+'" onclick="openProfile(\''+p.id+'\')">'+(met?'<span class="prk">'+(p._rk||'-')+'</span>':'')+avatar(p,'m')+'<span class="pi"><b>'+esc(p.name)+(p.title?' <i>'+esc(p.title)+'</i>':'')+'</b><small>'+(SPECIAL[p.dept]?'':esc(p.dept)+' · ')+esc(team(p.team).name)+'</small></span>'
      +'<span class="pr">'+(e>0||hr>0?'<span class="ptg">'+(hr>0?'<span class="htag">'+ic('heart','sm')+fmt(hr)+'</span>':'')+(e>0?'<span class="ctg2">'+coinIc+fmt(e)+'</span>':'')+'</span>':'')+(bs.length?'<span class="pbs">'+bs.slice(0,MAXB).map(k=>'<span class="bdmini" title="'+BADGES[k].name+'">'+medal(k,'on tiny')+'</span>').join('')+(bs.length>MAXB?'<em>+'+(bs.length-MAXB)+'</em>':'')+'</span>':'')+'</span></button>'; }).join('')+'</div>';
   if(!ps.length) h+='<p class="sub center">찾는 사람이 없어요</p>';
