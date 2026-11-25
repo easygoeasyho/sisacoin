@@ -2029,6 +2029,7 @@ function betHist(t,ans){ const G=betGs(t); if(G.length<2) return ''; const vals=
    +'<div class="bthl">'+(ans!=null?'<span><em class="lgs">★</em>정답</span>':'')+'<span><i class="lg mean"></i>평균</span>'+(my?'<span><i class="lg me"></i>내 답</span>':'')+'</div>'
    +'<div class="bthst"><div><small>평균</small><b>'+betNum(Math.round(mean*10)/10)+'</b></div><div><small>중앙값</small><b>'+betNum(med)+'</b></div><div><small>가장 작은 답</small><b>'+betNum(vals[0])+'</b></div><div><small>가장 큰 답</small><b>'+betNum(vals[vals.length-1])+'</b></div></div></div>'; }
 
+const APP_VER='11-25 09:15';
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2499,7 +2500,7 @@ function teamAssign(){
 function setTeam(pid,t){ const pp=person(pid); if(pp.gleader){ pp.gleader=false; toast(dn(pp)+' 님은 조를 옮겨서 조장에서 해제됐어요'); } pp.team=t; save(); keepY(render); SFX.open(); }
 function toolView(){
   return '<section class="card"><h3>실시간 느낌 체험</h3><p class="sub">다른 운영진이 코인을 준 것처럼 랜덤 이벤트를 일으켜요. 이 페이지를 창 두 개로 띄우면 한쪽에서 바꾼 게 다른 쪽에도 바로 반영돼요.</p><button class="btn primary full" onclick="randomEvent()">'+ic('dice')+'랜덤 이벤트 발생</button></section>'
-   +'<section class="card"><h3>스탬프 체험</h3><p class="sub">다음 정규 게임에 임의의 우승 결과를 넣어서 스탬프가 찍히는 모습을 볼 수 있어요. 8겹이 다 차면 마지막 도장이 찍혀요.</p><button class="btn primary full" onclick="nextStampDemo()">'+ic('star')+'다음 스탬프 찍어보기</button></section>'
+   +'<section class="card"><h3>스탬프 체험</h3><p class="sub">다음 정규 게임에 임의의 우승 결과를 넣어서 스탬프가 찍히는 모습을 볼 수 있어요. 8겹이 다 차면 마지막 도장이 찍혀요.</p><button class="btn primary full" onclick="nextStampDemo()">'+ic('star')+'다음 스탬프 찍어보기</button><p class="sub" style="margin-top:8px;text-align:center;font-size:11px">앱 버전 '+APP_VER+'</p></section>'
    +'<section class="card"><h3>초기화</h3><p class="sub">임시 데이터를 처음 상태로 되돌려요.</p><button class="btn ghost full" onclick="resetAll(this)">'+ic('refresh')+'초기화하기</button></section>';
 }
 function randomEvent(){
@@ -2864,10 +2865,10 @@ function checkStamp(){ if(!S.me||!me()) return; let seen=null; try{ seen=localSt
   stSeenSet(cur);
   clearTimeout(checkStamp.t); checkStamp.t=setTimeout(()=>playStamp(S.finalStamp?ST_PARTS.length:cur-1),700); }
 function nextStampDemo(){ ensureGames(); const g=GAME_DEFS.find(x=>isStampGame(x)&&!S.games[x.id].results.length);
-  if(!g){ if(S.finalStamp){ SFX.error(); return toast('이미 완성됐어요. 초기화하면 다시 볼 수 있어요'); } S.finalStamp={ts:Date.now(),by:me().name}; save(); return render(); }
+  if(!g){ if(S.finalStamp){ SFX.error(); return toast('이미 완성됐어요. 초기화하면 다시 볼 수 있어요'); } S.finalStamp={ts:Date.now(),by:me().name}; save(); stSeenSet(stampCount()); render(); clearTimeout(checkStamp.t); checkStamp.t=setTimeout(()=>playStamp(ST_PARTS.length),400); return; }
   const pool=(g.unit==='person'?S.people.map(p=>p.id):TEAMS.map(t=>t.id)).sort(()=>Math.random()-.5), b=balances().bank;
   const ranks=g.rewards.map((c,k)=>g.unit==='person'?{pid:pool[k],coin:Math.min(c,Math.floor(b/6))}:{team:pool[k],coin:Math.min(c,Math.floor(b/6))}); if(ranks[0].coin<=0) ranks.splice(1); /* 은행이 비어도 스탬프는 찍히게 1등만 0코인으로 */
-  if(recordResult(g.id,ranks,'체험')) render(); }
+  if(recordResult(g.id,ranks,'체험')){ const cur=stampCount(); stSeenSet(cur); render(); clearTimeout(checkStamp.t); checkStamp.t=setTimeout(()=>playStamp(cur-1),700); } }
 
 render();
 </script>
