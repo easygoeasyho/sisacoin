@@ -435,17 +435,11 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .mtrow em{font-style:normal;font-weight:800;font-size:13px;display:flex;align-items:center;gap:2px;min-width:54px;justify-content:flex-end}.mtrow em img{width:14px;height:14px}
 .rce{padding:10px 0;border-bottom:1px solid #F1EEE7}.rce:last-child{border:0}.rceh{display:flex;align-items:center;gap:8px;margin-bottom:4px}.rceh b{font-size:15px}.rceh small{color:var(--sub);flex:1}
 .tdt.emo{display:flex;align-items:center;justify-content:center;font-size:16px;background:#FFE1E6}
-.stline{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0 10px}
-.stl{display:flex;align-items:center;gap:7px;padding:8px 7px;border-radius:12px;background:#fff;border:1.5px dashed #DDD7CB;text-align:left;min-width:0}
-.stl i{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11.5px;font-weight:900;background:#EFEBE3;color:#ABA493}
-.stl span{display:flex;flex-direction:column;min-width:0;line-height:1.2}
-.stl small{font-size:10px;color:#ABA493;font-weight:700}
-.stl b{font-size:12px;font-weight:800;color:#B8B1A3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stl em{font-style:normal;font-size:10px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stl.on{border:1.5px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(var(--tc),var(--tc)) border-box;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.stl.on i{background:var(--tc);color:#fff;box-shadow:inset 0 -2px 0 rgba(0,0,0,.15)}
-.stl.on small{color:var(--sub)}.stl.on b{color:#1E1E1C}
-.stl.fin.on{border:1.5px solid #1E1E1C}.stl.fin.on i{background:#1E1E1C;color:#FFD43B}.stl.fin.on b{color:#1E1E1C}
+.stline{display:flex;align-items:center;margin:14px 2px 10px}
+.stline>i{flex:1;height:2px;background:#E2DDD2;min-width:3px}
+.stl{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:900;background:#fff;color:#B8B1A3;border:1.5px dashed #D2CABA;padding:0}
+.stl.on{background:var(--tc);color:#fff;border:0;box-shadow:inset 0 -2px 0 rgba(0,0,0,.15),0 2px 5px rgba(0,0,0,.12);font-size:13px}
+.stl.fin{width:32px;height:32px;font-size:14px}.stl.fin.on{background:#1E1E1C;color:#FFD43B}
 #ptr{position:fixed;left:50%;top:0;z-index:60;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-50%,-56px);pointer-events:none}#ptr img{width:26px;height:26px}#ptr.spin img{animation:spin .6s linear infinite}
 .morerow{display:flex;gap:8px;margin-top:10px}.morerow .more{flex:1;margin-top:0}
 .tgl{flex:none;width:48px;height:28px;border-radius:99px;background:#D9D5CB;position:relative;transition:.2s}.tgl i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.tgl.on{background:#2E9E6A}.tgl.on i{left:23px}
@@ -2149,7 +2143,7 @@ function rcAdd(){ const d=RC.d, name=(d.name||'').trim(), R=d.r.filter(r=>r.t).m
   RC.d=null; save(); SFX.fanfare(); buzz([30,40,60]); toast('<b>'+esc(name)+'</b> 1등 '+esc(team(R[0].team).name)+'!'); const e=$('#thset'); if(e) e.remove(); render(); openGame('rec',true); }
 function rcUndo(id){ const e=S.rec.ev.find(x=>x.id===id); if(!e) return; e.ranks.forEach(r=>{ const l=r.lid&&S.logs.find(y=>y.id===r.lid); if(l) l.undone=true; }); S.rec.ev=S.rec.ev.filter(x=>x.id!==id); save(); SFX.undo(); toast('기록을 취소하고 코인을 되돌렸어요'); render(); openGame('rec',true); }
 
-const APP_VER='11-25 09:35';
+const APP_VER='11-25 09:38';
 /* ================= 설정 ================= */
 const COIN='시사코인', TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2959,13 +2953,13 @@ function stampPic(n,fin,cls){ const L=stampList(), col=k=>k<n&&L[k]?team(L[k].te
    +G(7,'<path d="M62 338h176v24H62z" fill="currentColor"/><path d="M62 338H40l9 12-9 12h22zM238 338h22l-9 12 9 12h-22z" fill="currentColor" opacity=".75"/><text x="150" y="355" text-anchor="middle" font-size="13" font-weight="900" fill="#FFFDF7" letter-spacing="1.5">SISA FRIENDS</text>')
    +B.map((x,i)=>'<g fill="'+team(x.team).color+'" onclick="toast(\'돌발 게임 <b>'+esc(x.g.name)+'</b> · '+esc(team(x.team).name)+'\')">'+star(BP[i][0],BP[i][1],8)+'</g>').join('')+'</svg>';
   return '<div class="stpic '+(cls||'')+'">'+back+heads+front+'</div>'; }
-function stampTip(k){ const L=stampList(), p=ST_PARTS[k]; if(!p) return; toast(L[k]?'<b>'+p.n+'</b> · '+esc(L[k].g.name)+' 우승 <b>'+esc(josa(team(L[k].team).name,'이','가'))+'</b> 찍었어요':'<b>'+p.n+'</b> · 아직 안 찍혔어요'); }
+function stampTip(k){ const L=stampList(), p=ST_PARTS[k]; if(!p) return; toast(L[k]?'<b>'+(k+1)+'번째</b> · '+esc(L[k].g.name)+' 우승 <b>'+esc(josa(team(L[k].team).name,'이','가'))+'</b> 찍었어요':'<b>'+(k+1)+'번째</b> · 아직 안 찍혔어요'); }
 function stampBanner(){ const L=stampList(), N=ST_PARTS.length, done=!!S.finalStamp;
   return '<button class="card stban" onclick="openStamp()">'+stampPic(L.length,done,'mini')+'<span class="stb"><b>50주년 기념 스탬프</b><small>'+(done?'완성! 모두 함께 찍었어요':L.length>=N?'마지막 도장만 남았어요':'게임이 끝날 때마다 우승 조의 색으로 한 겹씩 찍혀요')+'</small><span class="stdots">'+ST_PARTS.map((p,k)=>'<i style="background:'+(L[k]?team(L[k].team).color:'#E4E0D6')+'"></i>').join('')+'<i class="fin '+(done?'on':'')+'"></i><em>'+L.length+'/'+N+'</em></span></span>'+ic('next')+'</button>'; }
 function openStamp(){ const L=stampList(), N=ST_PARTS.length, m=me(), done=!!S.finalStamp;
   modal('<h2>50주년 기념 스탬프</h2><p class="sub" style="margin:4px 0 10px">정규 게임이 하나 끝날 때마다 우승한 조의 색으로 그림이 한 겹씩 찍혀요. 어떤 그림이 될지는 다 찍혀야 알 수 있어요.<br>게임 목록에서 <span class="gstp inl"><i>50</i></span> 표시가 있는 게임만 스탬프에 반영돼요.</p>'
    +'<section class="card flat stbig">'+stampPic(L.length,done)+'</section>'
-   +'<div class="stline">'+ST_PARTS.map((p,k)=>{ const x=L[k], c=x?team(x.team):null; return '<button class="stl'+(x?' on':'')+'" onclick="stampTip('+k+')"'+(x?' style="--tc:'+c.color+'"':'')+'><i>'+(k+1)+'</i><span><small>'+esc(p.n)+'</small><b>'+(x?esc(c.name):'대기 중')+'</b>'+(x?'<em>'+esc(x.g.name)+'</em>':'')+'</span></button>'; }).join('')+'<button class="stl fin'+(done?' on':'')+'"><i>★</i><span><small>마지막 도장</small><b>'+(done?'완성!':'대기 중')+'</b></span></button></div>'
+   +'<div class="stline">'+ST_PARTS.map((p,k)=>{ const x=L[k], c=x?team(x.team):null; return '<button class="stl'+(x?' on':'')+'" onclick="stampTip('+k+')"'+(x?' style="--tc:'+c.color+'"':'')+' aria-label="'+(k+1)+'번째">'+(x?'✓':k+1)+'</button>'; }).join('<i></i>')+'<i></i><button class="stl fin'+(done?' on':'')+'" onclick="toast(\''+(done?'마지막 도장까지 찍었어요!':'모든 게임이 끝나면 마지막 도장을 찍어요')+'\')" aria-label="마지막 도장">★</button></div>'
    +'<p class="sub" style="text-align:center;margin-bottom:12px"><b>'+L.length+'/'+N+'</b> 겹 완성'+(done?' · 마지막 도장까지 찍었어요!':L.length>=N?' · 마지막 도장만 남았어요':'')+(L.length?'<br>찍힌 부분을 누르면 누가 찍었는지 보여요':'')+'</p>'
    +(L.length?'<button class="btn ghost full" style="margin-bottom:10px" onclick="closeModal();playStamp('+(done?N:L.length-1)+')">'+'▶ '+'찍히는 장면 다시 보기</button>':'')
    +(m.admin&&!done?'<button class="btn primary full" '+(L.length>=N?'':'disabled')+' onclick="stampFinal()">'+ic('star')+'마지막 도장 찍기</button>'+(L.length>=N?'':'<p class="sub" style="margin-top:6px;text-align:center">정규 게임 '+N+'개가 모두 끝나면 찍을 수 있어요.</p>'):'')); }
@@ -2975,7 +2969,7 @@ function playStamp(idx){ const L=stampList(), N=L.length, fin=idx>=ST_PARTS.leng
   let el=$('#stfx'); if(el) el.remove(); el=document.createElement('div'); el.id='stfx'; document.body.appendChild(el);
   const c=fin?'#1E1E1C':team(x.team).color;
   el.innerHTML='<div class="sfc"><p class="bpk">'+(fin?'마지막 도장':'새 스탬프 '+(idx+1)+'/'+ST_PARTS.length)+'</p><div class="sfp"><div id="sfpic">'+stampPic(fin?N:idx,false)+'</div><div class="sfstamp"><img src="'+ST_IMG+'" alt=""><i style="background:'+c+';-webkit-mask-image:url('+ST_MASK+');mask-image:url('+ST_MASK+')"></i></div></div>'
-   +'<h2>'+(fin?'완성! 시사 50주년':'<span style="box-shadow:inset 0 -.5em '+c+'">'+esc(team(x.team).name)+'</span>'+josa(team(x.team).name,'이','가').slice(-1)+' 찍었어요')+'</h2><p class="bpd">'+(fin?'모두 함께 찍은 그림이 완성됐어요.':'<b>'+esc(x.g.name)+'</b> 우승으로 <b>'+ST_PARTS[idx].n+'</b>'+josa(ST_PARTS[idx].n,'이','가').slice(-1)+' 찍혔어요')+'</p><button class="btn primary full" onclick="document.getElementById(\'stfx\').remove()">확인</button></div>';
+   +'<h2>'+(fin?'완성! 시사 50주년':'<span style="box-shadow:inset 0 -.5em '+c+'">'+esc(team(x.team).name)+'</span>'+josa(team(x.team).name,'이','가').slice(-1)+' 찍었어요')+'</h2><p class="bpd">'+(fin?'모두 함께 찍은 그림이 완성됐어요.':'<b>'+esc(x.g.name)+'</b> 우승으로 <b>'+(idx+1)+'번째 겹</b>이 찍혔어요')+'</p><button class="btn primary full" onclick="document.getElementById(\'stfx\').remove()">확인</button></div>';
   setTimeout(()=>{ if($('#stfx')){ thud(); buzz([90]); } },560);
   setTimeout(()=>{ const p=$('#sfpic'); if(!p) return; p.innerHTML=stampPic(fin?N:idx+1,fin); p.classList.add('hit'); if(fin) setTimeout(()=>SFX.fanfare(),500); },620); }
 const ST_SEEN='sisa-stamp-seen';
