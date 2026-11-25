@@ -1387,7 +1387,7 @@ let GS={id:null,tab:'info'};
 const GSET_TABS={wanted:[['wm','새 수배령'],['info','게임 정보']],rec:[['re','종목 기록'],['info','게임 정보']],photo:[['bg','빙고 설정'],['info','게임 정보']],bet:[['new','새 주제'],['info','게임 정보']]};
 function gSet(id,tab){ GS.id=id; const T=GSET_TABS[id]||[['info','게임 정보']]; GS.tab=tab||T[0][0]; gSetDraw(); }
 function sheetRedraw(){ const e=$('#thset'); if(!e) return; if(e.dataset.g&&e.dataset.g!=='treasure') gSetDraw(); else thSetDraw(); }
-function gSetClose(){ const e=$('#thset'); if(e) e.remove(); if(GS.id==='wanted'&&$('#wdx')) return wdDraw(); if(GS.id==='bet'&&BET.d&&BET.d.edit) BET.d=null; if(GS.id==='bet'&&$('#betx')) return betDraw(); openGame(GS.id,true); }
+function gSetClose(){ const e=$('#thset'); if(e) e.remove(); if(GS.id==='wanted'&&$('#wdx')) return wdDraw(); if(GS.id==='rec'&&$('#rcx')) return rcDraw(); if(GS.id==='bet'&&BET.d&&BET.d.edit) BET.d=null; if(GS.id==='bet'&&$('#betx')) return betDraw(); openGame(GS.id,true); }
 function gSetDraw(){ const id=GS.id, g=gdef(id), T=GSET_TABS[id]||[['info','게임 정보']]; let body='';
   if(GS.tab==='info') body=gameInfoHTML(id);
   else if(GS.tab==='bg') body=bgSetBody();
@@ -2222,12 +2222,18 @@ function wdTodo(){ if(!S.wanted) return []; return S.wanted.ms.filter(x=>x.state
 
 /* ---------- 레크레이션 ---------- */
 function rcSummary(R){ ensureRC(); const E=S.rec.ev, tot=gameTotals('rec'), L=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]), my=me().team, rk=L.indexOf(my);
-  let h='<section class="card flat rewsec"><div class="thsum"><div><b>'+E.length+'개</b><small>끝난 종목</small></div><div><b>'+(L[0]?esc(team(L[0]).name):'-')+'</b><small>현재 1위</small></div><div><b>'+(rk>=0?(rk+1)+'위':'-')+'</b><small>우리 조</small></div></div>'
-   +'<p class="thst '+(gStatus('rec')==='live'?'live':gStatus('rec')==='done'?'done':'')+'">'+(E.length?'종목이 끝날 때마다 순위가 바로 올라와요':'운영진이 종목 결과를 기록하면 여기에 떠요')+'</p></section>';
-  h+=gTotalBars('rec','누적 순위');
-  h+=R||'';
-  if(E.length) h+='<section class="card flat"><h3>'+ic('list','sm')+' 종목별 결과</h3>'+E.slice().reverse().map(e=>'<div class="rce"><div class="rceh"><b>'+esc(e.name)+'</b><small>'+ago(e.ts)+'</small>'+(me().admin?'<button class="mini" onclick="rcUndo(\''+e.id+'\')">취소</button>':'')+'</div>'+e.ranks.map((r,k)=>{ const t=team(r.team); return '<div class="rk-row"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+t.color+'"></span><span class="rk-n"><b>'+esc(t.name)+'</b></span><b class="camt">'+coinIc+'+'+r.coin+'</b></div>'; }).join('')+'</div>').join('')+'</section>';
-  return h; }
+  return '<section class="card flat rewsec"><div class="thsum"><div><b>'+E.length+'개</b><small>끝난 종목</small></div><div><b>'+(L[0]?esc(team(L[0]).name):'-')+'</b><small>현재 1위</small></div><div><b>'+(rk>=0?(rk+1)+'위':'-')+'</b><small>우리 조</small></div></div>'
+   +'<p class="thst '+(gStatus('rec')==='live'?'live':gStatus('rec')==='done'?'done':'')+'">'+(E.length?'최근 종목: '+esc(E[E.length-1].name)+' · 1등 '+esc(team(E[E.length-1].ranks[0].team).name):'운영진이 종목 결과를 기록하면 여기에 떠요')+'</p></section>'
+   +'<button class="btn primary full thjoin" onclick="rcPlay()">🏆 게임 현황 보기</button>'+(R||''); }
+function rcPlay(){ ensureRC(); closeModal(); let el=$('#rcx'); if(!el){ el=document.createElement('div'); el.id='rcx'; el.className='bgx'; document.body.appendChild(el); document.body.style.overflow='hidden'; } rcDraw(); SFX.open(); }
+function rcQuit(){ const e=$('#rcx'); if(e) e.remove(); document.body.style.overflow=''; render(); openGame('rec',true); }
+function rcRefresh(){ if($('#rcx')) rcDraw(); else openGame('rec',true); }
+function rcDraw(){ const el=$('#rcx'); if(!el) return; const E=S.rec.ev, adm=me().admin, sy=el.scrollTop;
+  let h='<div class="bgtop"><button class="pbk" onclick="rcQuit()" aria-label="뒤로">'+ic('back')+'</button><div class="bgtt"><b>레크레이션</b><small>'+(E.length?'종목 '+E.length+'개 진행':'아직 기록된 종목이 없어요')+'</small></div></div>';
+  h+=gTotalBars('rec','누적 순위')||'<section class="card flat"><p class="sub center" style="padding:18px 0">첫 종목이 끝나면 순위가 올라와요 🏃</p></section>';
+  if(E.length) h+='<section class="card flat"><h3>'+ic('list','sm')+' 종목별 결과</h3>'+E.slice().reverse().map(e=>'<div class="rce"><div class="rceh"><b>'+esc(e.name)+'</b><small>'+ago(e.ts)+'</small>'+(adm?'<button class="mini" onclick="rcUndo(\''+e.id+'\')">취소</button>':'')+'</div>'+e.ranks.map((r,k)=>{ const t=team(r.team); return '<div class="rk-row"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><span class="tdotS" style="background:'+t.color+'"></span><span class="rk-n"><b>'+esc(t.name)+'</b></span><b class="camt">'+coinIc+'+'+r.coin+'</b></div>'; }).join('')+'</div>').join('')+'</section>';
+  if(adm) h+='<button class="btn primary full" style="margin-top:6px" onclick="gSet(\'rec\',\'re\')">＋ 종목 결과 기록하기</button>';
+  el.innerHTML=h; el.scrollTop=sy; }
 function rcCtrl(){ ensureRC();
   return '<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 진행 관리</h3><button class="mini" onclick="gSet(\'rec\')">⚙️ 설정</button></div>'
    +'<p class="tcsum">🏃 기록한 종목 '+S.rec.ev.length+'개</p><button class="btn primary full" onclick="gSet(\'rec\',\'re\')">＋ 종목 결과 기록하기</button><p class="sub tcp">잘못 기록했으면 종목별 결과의 [취소]를 누르면 코인도 되돌아가요.</p>'+mFinishRow('rec')+'</section>'; }
@@ -2244,8 +2250,8 @@ function rcAdd(){ const d=RC.d, name=(d.name||'').trim(), R=d.r.filter(r=>r.t).m
   if(R.reduce((a,r)=>a+r.coin,0)>balances().bank){ SFX.error(); return toast('남은 코인이 부족해요'); }
   ui.flash={}; R.forEach((r,k)=>{ if(!r.coin) return; const lid='l'+(S.n++); r.lid=lid; S.logs.push({id:lid,ts:Date.now(),from:'bank',to:r.team,amount:r.coin,reason:'레크레이션 · '+name+' '+(k+1)+'등',by:me().name,undone:false,game:'rec'}); ui.flash[r.team]=r.coin; });
   ensureRC().ev.push({id:'e'+Date.now(),name,ts:Date.now(),ranks:R}); ensureGames(); if(S.games.rec.status==='soon') S.games.rec.status='live';
-  RC.d=null; save(); SFX.fanfare(); buzz([30,40,60]); toast('<b>'+esc(name)+'</b> 1등 '+esc(team(R[0].team).name)+'!'); const e=$('#thset'); if(e) e.remove(); render(); openGame('rec',true); }
-function rcUndo(id){ const e=S.rec.ev.find(x=>x.id===id); if(!e) return; e.ranks.forEach(r=>{ const l=r.lid&&S.logs.find(y=>y.id===r.lid); if(l) l.undone=true; }); S.rec.ev=S.rec.ev.filter(x=>x.id!==id); save(); SFX.undo(); toast('기록을 취소하고 코인을 되돌렸어요'); render(); openGame('rec',true); }
+  RC.d=null; save(); SFX.fanfare(); buzz([30,40,60]); toast('<b>'+esc(name)+'</b> 1등 '+esc(team(R[0].team).name)+'!'); const e=$('#thset'); if(e) e.remove(); render(); rcRefresh(); }
+function rcUndo(id){ const e=S.rec.ev.find(x=>x.id===id); if(!e) return; e.ranks.forEach(r=>{ const l=r.lid&&S.logs.find(y=>y.id===r.lid); if(l) l.undone=true; }); S.rec.ev=S.rec.ev.filter(x=>x.id!==id); save(); SFX.undo(); toast('기록을 취소하고 코인을 되돌렸어요'); render(); rcRefresh(); }
 
 /* ================= 코인 예산 (운영진) ================= */
 const BUD0={won:1000000,rounds:2,wpc:50,start:500,mode:'weight',w:{treasure:3,photo:3,bet:2,wanted:1,rec:2},reserve:15,ratio:[5,3,2],plan:{bet:10,wanted:10,rec:5,guer:3}};
@@ -2303,7 +2309,7 @@ function budView(){ const B=ensureBud(), C=budCalc(), o=budPlan(), U=budUsed(), 
   h+='<section class="card jack"><h3>🎰 마지막 잭팟 (예상)</h3><p class="jkn">'+coinIc+fmt(Math.max(0,left-unspent))+'</p><p class="sub">예정보다 적게 진행돼 남는 코인은 마지막에 잭팟으로 풀려요. 지금 은행 '+fmt(left)+' − 아직 안 쓴 예산 '+fmt(unspent)+'</p></section>';
   return h; }
 
-const APP_VER='11-25 10:59';
+const APP_VER='11-25 11:01';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
