@@ -495,9 +495,11 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .wdli em{font-style:normal;font-weight:900;display:flex;align-items:center;gap:2px}.wdli em img{width:15px;height:15px}
 .wdempty{text-align:center;color:var(--sub);padding:60px 20px}.wdempty .wdsil{width:120px;opacity:.5}.wdempty p{font-weight:800;margin-top:10px}
 .wdnew{display:block;margin:18px auto 30px;background:#fff;color:#1E1E1C;border:1.5px dashed #C9C2B3}
-.psort{display:flex;align-items:center;gap:5px;margin:2px 0 12px}.psort>span{font-size:12px;font-weight:800;color:var(--sub);margin-right:2px}
-.psort button{display:inline-flex;align-items:center;gap:3px;height:30px;padding:0 11px;border-radius:99px;background:#fff;border:1.5px solid #E5E0D5;font-size:12.5px;font-weight:800;color:#7A766C}
-.psort button.on{background:#1E1E1C;border-color:#1E1E1C;color:#fff}.psort button img{width:14px;height:14px}.psort button .i{width:13px;height:13px}
+.srow{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}.srow .search{flex:1;min-width:0;margin-bottom:0}
+.psort{position:relative;flex:none;display:flex;align-self:stretch}.psort>.pso{height:auto;min-height:48px}
+.pso{display:flex;align-items:center;gap:4px;padding:0 12px;border-radius:14px;background:#fff;font-size:13px;color:#7A766C;font-weight:700;white-space:nowrap}.pso b{font-weight:800}.pso.on{background:#1E1E1C;color:#fff}.pso img{width:15px;height:15px}.pso .i{width:13px;height:13px}
+.psm{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.15);padding:6px;min-width:120px;display:flex;flex-direction:column}
+.psm button{display:flex;align-items:center;gap:6px;padding:9px 10px;border-radius:9px;font-size:13.5px;font-weight:700;text-align:left}.psm button.on{background:#F3EFE6;font-weight:900}.psm button img{width:15px;height:15px}
 .prk{flex:none;width:22px;text-align:center;font-size:13px;font-weight:900;color:#B8B1A3}
 .prow.top1 .prk,.prow.top2 .prk,.prow.top3 .prk{width:22px;height:22px;line-height:22px;border-radius:50%;color:#fff;font-size:12px}
 .prow.top1 .prk{background:#F5B700}.prow.top2 .prk{background:#A7A9AC}.prow.top3 .prk{background:#CD7F45}
@@ -2295,7 +2297,7 @@ function budView(){ const B=ensureBud(), C=budCalc(), o=budPlan(), U=budUsed(), 
   h+='<section class="card jack"><h3>🎰 마지막 잭팟 (예상)</h3><p class="jkn">'+coinIc+fmt(Math.max(0,left-unspent))+'</p><p class="sub">예정보다 적게 진행돼 남는 코인은 마지막에 잭팟으로 풀려요. 지금 은행 '+fmt(left)+' − 아직 안 쓴 예산 '+fmt(unspent)+'</p></section>';
   return h; }
 
-const APP_VER='11-25 10:53';
+const APP_VER='11-25 10:55';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2693,9 +2695,10 @@ function peopleView(){
   const SO=ui.sort||'name', met={heart:p=>heartsRecv(p.id),badge:p=>badgesOf(p).length,coin:p=>earned(p.id)}[SO];
   if(met){ const v={}; ps.forEach(p=>v[p.id]=met(p)); ps.sort((a,b)=>v[b.id]-v[a.id]||a.name.localeCompare(b.name,'ko')); let r=0,prev=null; ps.forEach((p,k)=>{ if(v[p.id]!==prev){ r=k+1; prev=v[p.id]; } p._rk=v[p.id]>0?r:0; }); }
   else { ps.sort((a,b)=>(b.role?1:0)-(a.role?1:0)||a.name.localeCompare(b.name,'ko')); ps.forEach(p=>p._rk=0); }
-  let h='<div class="search">'+ic('search')+'<input placeholder="이름, 부서, 좋아하는 것으로 찾기" value="'+esc(ui.q)+'" oninput="ui.q=this.value;reSearch()"></div>';
+  let h='<div class="search">'+ic('search')+'<input placeholder="이름·부서·취향으로 찾기" value="'+esc(ui.q)+'" oninput="ui.q=this.value;reSearch()"></div>';
   h+='<div class="filter"><button class="fchip '+(ui.filter==='all'?'on':'')+'" onclick="setFilter(\'all\')">전체 '+S.people.length+'</button>'+TEAMS.map(t=>'<button class="fchip '+(ui.filter===t.id?'on':'')+'" onclick="setFilter(\''+t.id+'\')"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</button>').join('')+'</div>';
-  h+='<div class="psort"><span>정렬</span>'+[['name','이름순',''],['heart','하트',ic('heart','sm')],['badge','배지','🏅'],['coin','코인','<img src="'+COIN3D+'" alt="">']].map(s=>'<button class="'+(SO===s[0]?'on':'')+'" onclick="ui.sort=\''+s[0]+'\';SFX.select();render()">'+s[2]+s[1]+'</button>').join('')+'</div>';
+  const SL={name:['이름순',''],heart:['하트순',ic('heart','sm')],badge:['배지순','🏅'],coin:['코인순','<img src="'+COIN3D+'" alt="">']};
+  h=h.replace('<div class="search">','<div class="srow"><div class="search">').replace('reSearch()"></div>','reSearch()"></div><div class="psort"><button class="pso'+(met?' on':'')+'" onclick="event.stopPropagation();ui.sortOpen=!ui.sortOpen;render()">'+SL[SO][1]+'<b>'+SL[SO][0]+'</b>▾</button>'+(ui.sortOpen?'<div class="psm">'+Object.keys(SL).map(k=>'<button class="'+(SO===k?'on':'')+'" onclick="ui.sort=\''+k+'\';ui.sortOpen=0;SFX.select();render()">'+SL[k][1]+SL[k][0]+'</button>').join('')+'</div>':'')+'</div></div>');
   h+='<div class="plist'+(met?' ranked s-'+SO:'')+'">'+ps.map(p=>{ const bs=badgesOf(p), MAXB=5, e=earned(p.id), hr=heartsRecv(p.id);
     return '<button class="prow'+(p._rk&&p._rk<=3?' top'+p._rk:'')+'" onclick="openProfile(\''+p.id+'\')">'+(met?'<span class="prk">'+(p._rk||'-')+'</span>':'')+avatar(p,'m')+'<span class="pi"><b>'+esc(p.name)+(p.title?' <i>'+esc(p.title)+'</i>':'')+'</b><small>'+(SPECIAL[p.dept]?'':esc(p.dept)+' · ')+esc(team(p.team).name)+'</small></span>'
      +'<span class="pr">'+(e>0||hr>0?'<span class="ptg">'+(hr>0?'<span class="htag">'+ic('heart','sm')+fmt(hr)+'</span>':'')+(e>0?'<span class="ctg2">'+coinIc+fmt(e)+'</span>':'')+'</span>':'')+(bs.length?'<span class="pbs">'+bs.slice(0,MAXB).map(k=>'<span class="bdmini" title="'+BADGES[k].name+'">'+medal(k,'on tiny')+'</span>').join('')+(bs.length>MAXB?'<em>+'+(bs.length-MAXB)+'</em>':'')+'</span>':'')+'</span></button>'; }).join('')+'</div>';
@@ -2852,6 +2855,8 @@ function pullLatest(){ try{ const s=localStorage.getItem(KEY); if(s){ const keep
     setTimeout(()=>{ pullLatest(); if(!document.activeElement.matches('input,textarea,select')) render(); ind().classList.remove('spin'); set(0,true); toast('최신 상태예요'); busy=false; dy=0; },700);
   });
 })();
+
+document.addEventListener('click',e=>{ if(ui.sortOpen&&!e.target.closest('.psort')){ ui.sortOpen=0; render(); } });
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
