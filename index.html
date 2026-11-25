@@ -2415,7 +2415,7 @@ function midDemo(btn){
   try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
   save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
 
-const APP_VER='11-25 13:31';
+const APP_VER='11-25 13:35';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2853,6 +2853,7 @@ function adminView(){
   if(ui.adminTab==='log') h+=logList();
   if(ui.adminTab==='team') h+=teamAssign();
   if(ui.adminTab==='tool') h+=toolView();
+  if(ui.adminTab==='tool') h+='<section class="card"><h3>'+ic('tool','sm')+' 운영진 PIN</h3><p class="sub" style="margin-bottom:8px">운영진 탭을 열 때 묻는 4자리 숫자예요. 바꾸면 다른 운영진도 새 PIN으로 다시 들어와야 해요.</p><div class="fsrow"><input id="pinNew" inputmode="numeric" maxlength="4" placeholder="'+(S.adminPin||'0000')+'" style="flex:1"><button class="btn primary" onclick="pinChange()">바꾸기</button></div></section>';
   return h;
 }
 let pickTo='t1', pickFrom='t2', pickPid='';
@@ -2992,6 +2993,8 @@ let WL=null; async function wakeSync(){ const on=document.visibilityState==='vis
 document.addEventListener('visibilitychange',wakeSync); setInterval(wakeSync,3000);
 
 function BIG(){ return document.documentElement.classList.contains('bigtxt'); }
+
+function pinChange(){ const v=($('#pinNew').value||'').trim(); if(!/^\d{4}$/.test(v)){ SFX.error(); return toast('숫자 4자리로 입력해 주세요'); } S.adminPin=v; try{ localStorage.setItem('sisa_pin_ok',v); }catch(e){} save(); render(); toast('운영진 PIN을 바꿨어요'); }
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
