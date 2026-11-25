@@ -378,7 +378,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .hbgap{font-size:12.5px;font-weight:500;margin-top:3px;opacity:.95}
 .hbtop{overflow:hidden}.hbinfo{padding-right:118px}
 .hbpic{position:absolute;right:16px;top:12px;bottom:6px;width:112px;pointer-events:none}
-.hbpic{display:flex;justify-content:flex-end}.hbw{position:relative;height:100%}.hbfull{display:block;height:100%;pointer-events:auto}.hbfull>.chr{height:100%;width:auto;max-width:none}
+.hbpic{display:flex;justify-content:flex-end}.hbw{position:relative;height:100%}.hbfull{display:block;height:100%;pointer-events:auto}.hbfull{width:100%}.hbfull>.chr{width:100%;height:auto;max-width:none}
 .hbstamp{position:absolute;left:-30px;bottom:8px;width:44px;height:54px;transform:rotate(-8deg);filter:drop-shadow(0 3px 4px rgba(0,0,0,.22)) drop-shadow(0 1px 1px rgba(0,0,0,.12));pointer-events:auto;z-index:2}
 .stp{position:absolute;inset:0;background:#FFFDF7;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
  -webkit-mask:radial-gradient(circle,transparent 1.9px,#000 2.3px) -3px -3px/6px 6px,linear-gradient(#000 0 0) content-box;-webkit-mask-composite:source-over;mask:radial-gradient(circle,transparent 1.9px,#000 2.3px) -3px -3px/6px 6px,linear-gradient(#000 0 0) content-box;mask-composite:add}
@@ -477,9 +477,9 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .wddeco.cuff{width:22%;left:-3%;top:3%;transform:rotate(-18deg)}
 .wddeco.glass{width:17%;right:-2%;bottom:5%;transform:rotate(8deg)}
 .wdp.caught .wdw1,.wdp.caught .wdw2{visibility:hidden}
-.wdstamp{position:absolute;top:11.5%;left:50%;width:72%;transform:translateX(-50%) rotate(-8deg);text-align:center;pointer-events:none;z-index:3;--ik:color-mix(in srgb,var(--ink) 75%,#1a0a0a)}
-.wdstamp i{display:block;width:100%;aspect-ratio:640/211;background:var(--ik);-webkit-mask-size:100% 100%;mask-size:100% 100%}
-.wdstamp small{display:inline-block;margin-top:4px;background:var(--ik);color:#fff;font-size:11.5px;font-weight:900;padding:3px 10px;border-radius:99px}
+.wdstamp{position:absolute;top:11.5%;left:50%;width:72%;transform:translateX(-50%) rotate(-8deg);text-align:center;pointer-events:none;z-index:3;--ik:var(--ink)}
+.wdstamp i{filter:brightness(.78) saturate(1.2);display:block;width:100%;aspect-ratio:640/211;background:var(--ik);-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.wdstamp small{filter:brightness(.78) saturate(1.2);display:inline-block;margin-top:4px;background:var(--ik);color:#fff;font-size:11.5px;font-weight:900;padding:3px 10px;border-radius:99px}
 .wdstamp.slam{animation:wdslam .45s cubic-bezier(.2,.9,.3,1.2)}@keyframes wdslam{0%{transform:translateX(-50%) rotate(-20deg) scale(2.6);opacity:0}55%{transform:translateX(-50%) rotate(-6deg) scale(.92);opacity:1}100%{transform:translateX(-50%) rotate(-8deg) scale(1)}}
 .wdslide:has(.slam) .wdw1,.wdslide:has(.slam) .wdw2{visibility:visible;animation:wdout .3s .2s forwards}@keyframes wdout{to{opacity:0}}
 .wdslide:has(.slam) .wdp{animation:wdshake .4s .2s}@keyframes wdshake{0%,100%{transform:none}25%{transform:translate(-3px,2px)}50%{transform:translate(3px,-1px)}75%{transform:translate(-1px,1px)}}
@@ -2309,7 +2309,57 @@ function budView(){ const B=ensureBud(), C=budCalc(), o=budPlan(), U=budUsed(), 
   h+='<section class="card jack"><h3>🎰 마지막 잭팟 (예상)</h3><p class="jkn">'+coinIc+fmt(Math.max(0,left-unspent))+'</p><p class="sub">예정보다 적게 진행돼 남는 코인은 마지막에 잭팟으로 풀려요. 지금 은행 '+fmt(left)+' − 아직 안 쓴 예산 '+fmt(unspent)+'</p></section>';
   return h; }
 
-const APP_VER='11-25 11:01';
+/* ================= 체험: 모든 게임이 중반 이상 진행된 상태 만들기 ================= */
+function midDemo(btn){
+  if(btn&&btn.dataset.sure!=='1'){ btn.dataset.sure='1'; btn.textContent='한 번 더 누르면 지금 데이터를 지우고 만들어요'; btn.classList.add('danger'); SFX.error(); return; }
+  const keep=S.me; S=seed(); refreshGroups(); S.me=keep; if(!me()) S.me='p0'; ensureGames();
+  const now=Date.now(), rnd=a=>a[Math.floor(Math.random()*a.length)], ago=m=>now-m*60000, by=me().name;
+  const ppl=t=>S.people.filter(p=>p.team===t), tid=TEAMS.map(t=>t.id);
+  const pay=(to,amt,reason,game,pid,ts)=>{ if(amt<=0) return null; const lid='l'+(S.n++); S.logs.push({id:lid,ts:ts||now,from:'bank',to,amount:amt,reason,by,undone:false,game,pid}); return lid; };
+  /* 1. 보물찾기: 40분 중 22분 지남, 보물 절반 이상 발견 */
+  ensureTH(); const C=S.th.cfg; C.center={lat:34.07035,lng:134.5465};
+  S.th.spots=Array.from({length:C.count},(_,i)=>{ const p=thRandIn(C.center,C.radius*.9), r=Math.random(), k=r<.6?'coin':r<.75?'jack':r<.85?'trap':'card';
+    return {id:'t'+now.toString(36)+i,lat:p.lat,lng:p.lng,kind:k,coin:k==='coin'?C.coin:k==='jack'?Math.round(C.coin*2.5):0,card:k==='card'?(Math.random()<.5?'steal':'shield'):null,found:null}; });
+  S.th.spots.forEach((s,i)=>{ if(Math.random()>.6) return; const t=rnd(tid), p=rnd(ppl(t)); if(!p) return; const ts=ago(2+Math.random()*20);
+    const lid=pay(t,s.coin,'보물찾기 · '+(s.kind==='jack'?'대박 보물':'보물'),'treasure',p.id,ts); s.found={team:t,pid:p.id,ts,lid,got:s.coin};
+    if(s.kind==='card') grantCard(t,s.card,'보물찾기에서 발견',p.name,{game:'treasure',pid:p.id}); });
+  S.th.saved=null; S.th.news=[]; S.th.skills={}; S.th.jam={}; S.th.boost={}; S.th.pulse={}; S.th.trail={};
+  S.th.state='live'; S.th.endAt=now+18*60000; S.th.gold=null; S.games.treasure.status='live';
+  /* 2. 포토 빙고: 업로드 진행 중(약 65%), 마감 5시간 남음 */
+  S.bingo={state:'live',photos:[],win:{},bonus:[],round:1,dl:now+5*3600000};
+  TEAMS.forEach(t=>{ const P=ppl(t.id); BG_CELLS.forEach((c,i)=>{ if(Math.random()>.65||!P.length) return; const n=1+(Math.random()<.3?1:0);
+    for(let k=0;k<n;k++){ const p=rnd(P); S.bingo.photos.push({id:'bp'+now.toString(36)+t.id+i+k,cell:i,team:t.id,pid:p.id,img:bgFake(t,i),cm:rnd(['ㅋㅋㅋ 세 번 만에 성공','이게 진짜 최선이었어요','우리 조 최고!','']),ts:ago(Math.random()*300),tl:P.filter(()=>Math.random()<.4).map(x=>x.id),vl:[]}); } }); });
+  TEAMS.forEach(t=>bgPartCheck(t.id)); S.games.photo.status='live';
+  /* 3. 예측 베팅: 진행 중 2 · 정답 대기 1 · 결과 공개 2 */
+  ensureBet(); S.bet.topics=[];
+  const mk=(q,unit,o)=>{ const t=Object.assign({id:'bt'+(S.n++).toString(36),q,unit,mode:'prize',prize:[70,30],stake:50,pt:'team',lo:null,hi:null,dl:null,state:'open',g:{},ts:ago(60),by},o); S.bet.topics.push(t); betDemo(t.id); return t; };
+  mk('대표님 건배사는 몇 초?','초',{dl:now+25*60000});
+  const b2=mk('오늘 저녁 맥주 몇 잔 나올까?','잔',{mode:'pot',stake:30,pt:'person'}); b2.g[me().id]={v:24,ts:ago(10)};
+  const c3=mk('버스 이동 시간은 몇 분?','분',{}); c3.state='closed';
+  const settle=(t,a)=>{ const G=betGs(t).map(x=>({...x,d:Math.abs(x.v-a)})).sort((x,y)=>x.d-y.d), win=G.filter(x=>x.d===G[0].d), rest=G.filter(x=>!win.includes(x)), sec=rest.length?rest.filter(x=>x.d===rest[0].d):[], lids=[], payT={};
+    const sp=(arr,amt,lb)=>{ const each=Math.floor(amt/arr.length); arr.forEach(x=>{ const l=pay(x.p.team,each,'예측 베팅 · '+lb+' ('+x.p.name+')','bet',x.pid,ago(30)); if(l){ lids.push(l); payT[x.p.team]=(payT[x.p.team]||0)+each; } }); };
+    sp(win,t.prize[0],'1등'); if(sec.length) sp(sec,t.prize[1],'2등');
+    t.ans=a; t.state='done'; t.res={win:win.map(x=>x.pid),second:sec.map(x=>x.pid),lids,pay:Object.entries(payT).map(([team,amt])=>({team,amt})).sort((x,y)=>y.amt-x.amt)}; };
+  settle(mk('1일차 걸음 수는?','보',{ts:ago(300)}),9120); settle(mk('아와오도리 공연 몇 분?','분',{ts:ago(200)}),42);
+  S.games.bet.status='live';
+  /* 4. 현상 수배: 5건 중 3건 검거 */
+  ensureWD(); S.wanted.ms=[];
+  ['좋아하는 음식이 떡볶이인 사람','오늘 흰 양말 신은 사람','생일이 3월인 사람','MBTI가 E로 시작하는 사람','입사 10년 차 이상인 사람'].forEach((q,i)=>{ const x={id:'w'+now.toString(36)+i,q,coin:30,ts:ago(40-i*7),state:'open'};
+    if(i<3){ const p=rnd(S.people), tg=rnd(S.people.filter(o=>o.team!==p.team)); x.state='done'; x.dts=x.ts+(60+Math.random()*200)*1000; x.win={pid:p.id,target:tg.id}; x.lid=pay(p.team,30,'현상 수배 · '+q+' ('+p.name+')','wanted',p.id,x.dts); }
+    S.wanted.ms.push(x); });
+  S.games.wanted.status='live';
+  /* 5. 레크레이션: 3종목 기록 */
+  ensureRC(); S.rec.ev=[];
+  ['2인3각','몸으로 말해요','풍선 터뜨리기'].forEach((name,i)=>{ const T=tid.slice().sort(()=>Math.random()-.5).slice(0,3), ts=ago(50-i*15);
+    S.rec.ev.push({id:'e'+now.toString(36)+i,name,ts,ranks:T.map((t,k)=>({team:t,coin:[100,60,30][k],lid:pay(t,[100,60,30][k],'레크레이션 · '+name+' '+(k+1)+'등','rec',undefined,ts)}))}); });
+  S.games.rec.status='live';
+  /* 6. 하트 */
+  ensureSocial(); S.people.forEach(p=>{ if(Math.random()<.5) return; for(let k=0;k<1+Math.floor(Math.random()*3);k++){ const o=rnd(S.people); if(o.id!==p.id) S.hearts[o.id+'>'+p.id]=(S.hearts[o.id+'>'+p.id]||0)+1; } });
+  S.badgeSeen=null; initBadges();
+  try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
+  save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
+
+const APP_VER='11-25 11:07';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2523,7 +2573,7 @@ function topView(){
      +'<div class="hbinfo"><div class="hbchips"><span class="hbteam" style="color:'+dk+'">'+esc(nm)+'</span><span class="hbteam hbrk" style="color:'+dk+'">'+(ri+1)+'위</span></div>'
      +'<p class="hbnum" style="color:'+shade(t.color,.3)+'"><img src="'+COIN3D+'" alt="">'+fmt(mc)+'</p>'
      +'<p class="hbgap" style="color:'+dk+'">'+(z?'이제부턴 뺏는 수밖에!':ri===0?(gap>0?'2위와 '+fmt(gap)+'코인 차이 · 지켜내요!':'공동 1위예요!'):'1위와 '+fmt(gap)+'코인 차이')+'</p></div></div>'
-     +'<div class="hbpic"><div class="hbw"><button class="hbfull" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필">'+charHTML(chO(m),{full:true})+'</button>'
+     +'<div class="hbpic"><div class="hbw" style="width:'+Math.round(100/((MASCOT_ANCHORS[m.mascot]||{}).bar||1.2))+'px"><button class="hbfull" onclick="openProfile(\''+m.id+'\')" aria-label="내 프로필">'+charHTML(chO(m),{full:true})+'</button>'
      +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프"><span class="stp">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></span></button></div></div></div>'
      +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbbank"><span>'+(z?ic('swords','sm')+' 쟁탈전 중 · 은행 코인이 모두 풀렸어요':'은행 남은 코인 <b>'+fmt(b.bank)+'</b> / '+fmt(TOTAL))+'</span>'+(z?'':'<em>'+left+'%</em>')+'</div>'
      +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div></div></header>'; }
@@ -2785,6 +2835,7 @@ function teamAssign(){
 function setTeam(pid,t){ const pp=person(pid); if(pp.gleader){ pp.gleader=false; toast(dn(pp)+' 님은 조를 옮겨서 조장에서 해제됐어요'); } pp.team=t; save(); keepY(render); SFX.open(); }
 function toolView(){
   return '<section class="card"><h3>실시간 느낌 체험</h3><p class="sub">다른 운영진이 코인을 준 것처럼 랜덤 이벤트를 일으켜요. 이 페이지를 창 두 개로 띄우면 한쪽에서 바꾼 게 다른 쪽에도 바로 반영돼요.</p><button class="btn primary full" onclick="randomEvent()">'+ic('dice')+'랜덤 이벤트 발생</button></section>'
+   +'<section class="card"><h3>게임 중반 상태 만들기</h3><p class="sub">보물찾기·포토 빙고·예측 베팅·현상 수배·레크레이션이 모두 한창 진행 중인 상태로 데이터를 채워요. 버그 확인용이에요. 지금 데이터는 지워져요.</p><button class="btn primary full" onclick="midDemo(this)">'+ic('dice')+'중반 진행 상태로 만들기</button></section>'
    +'<section class="card"><h3>스탬프 체험</h3><p class="sub">다음 정규 게임에 임의의 우승 결과를 넣어서 스탬프가 찍히는 모습을 볼 수 있어요. 8겹이 다 차면 마지막 도장이 찍혀요.</p><button class="btn primary full" onclick="nextStampDemo()">'+ic('star')+'다음 스탬프 찍어보기</button><p class="sub" style="margin-top:8px;text-align:center;font-size:11px">앱 버전 '+APP_VER+'</p></section>'
    +'<section class="card"><h3>초기화</h3><p class="sub">임시 데이터를 처음 상태로 되돌려요.</p><button class="btn ghost full" onclick="resetAll(this)">'+ic('refresh')+'초기화하기</button></section>';
 }
@@ -2971,7 +3022,9 @@ function addComment(to){
 function delComment(id,to){ ensureSocial(); S.comments=S.comments.filter(c=>c.id!==id); save(); SFX.undo(); openProfile(to,true); }
 const BQ=[];
 function badgeToast(k){ BQ.push(k); if(!$('#bpop')) nextBadge(); }
-function nextBadge(){ const k=BQ.shift(); if(k&&S.me) badgeInfo(k,S.me,true); }
+/* 게임 연출(보물 상자·자물쇠·도장 등) 중에는 배지 축하 창을 미뤘다가 끝나면 띄워요 */
+const fxBusy=()=>!!document.querySelector('.thfx,.thlock,.zpop,#stfx,#bgsw .slam');
+function nextBadge(){ if(!BQ.length||!S.me) return; if(fxBusy()){ clearTimeout(nextBadge.t); nextBadge.t=setTimeout(nextBadge,1200); return; } badgeInfo(BQ.shift(),S.me,true); }
 /* 배지 상세 / 획득 축하 */
 function badgeInfo(k,pid,party){ const b=BADGES[k], p=person(pid)||me(), has=badgesOf(p).includes(k), know=knows(k), mine=p.id===S.me;
   let el=$('#bpop'); if(!el){ el=document.createElement('div'); el.id='bpop'; document.body.appendChild(el); }
