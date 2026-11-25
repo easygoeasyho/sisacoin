@@ -899,9 +899,9 @@ body>#app .mstage,.wrap>.card.maker .mstage{top:0}
 .pinpop .pindots{display:flex;gap:12px;justify-content:center;margin:4px 0 14px}.pindots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink,#1E1E1C)}.pindots i.on{background:var(--ink,#1E1E1C)}
 .pindots.bad{animation:shk .4s}@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .pinpad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;justify-content:center;margin-bottom:10px}.pinpad button{height:52px;border-radius:14px;border:2px solid #1E1E1C;background:#fff;font:800 20px inherit;box-shadow:0 3px 0 #1E1E1C;color:#1E1E1C}.pinpad button:active{transform:translateY(2px);box-shadow:0 1px 0 #1E1E1C}
-.fsrow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700}
-.fseg{display:flex;background:#F0EBE0;border-radius:12px;padding:3px}.fseg button{border:0;background:none;padding:8px 14px;border-radius:9px;font:800 13px inherit;color:#8A8477}.fseg button.on{background:#fff;color:#1E1E1C;box-shadow:0 1px 3px rgba(0,0,0,.12)}.fseg button:last-child{font-size:15px}
 html.bigtxt #app{zoom:1.1}
+.fsb{font-size:15px;font-weight:900;line-height:1}.fsb.on{background:#1E1E1C;color:#fff;font-size:17px}
+.pinrow{display:flex;gap:8px;align-items:stretch}.pinrow input{flex:1;min-width:0;width:auto;min-height:50px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#FBFAF8;outline:none;font-size:16px;letter-spacing:2px}.pinrow input:focus{border-color:var(--ink);background:#fff}.pinrow .btn{flex:none;width:auto;padding:0 18px}
 .stno{font-size:13px;font-weight:900;letter-spacing:-.5px;line-height:1}.stno small{font-size:8.5px;font-weight:800;margin-left:.5px}
 </style>
 </head>
@@ -2415,7 +2415,7 @@ function midDemo(btn){
   try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
   save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
 
-const APP_VER='11-25 13:35';
+const APP_VER='11-25 13:42';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2634,7 +2634,7 @@ function topView(){
      +'<button class="hbstamp" onclick="openStamp()" aria-label="50주년 스탬프"><span class="stp">'+stampPic(L.length,sd,'mini')+'<b>'+(sd?'완성':L.length+'/'+SN)+'</b></span></button></div></div></div>'
      +'<div class="hbcoin'+(z?' zero':'')+'"><div class="hbbank"><span>'+(z?ic('swords','sm')+' 쟁탈전 중 · 은행 코인이 모두 풀렸어요':'은행 남은 코인 <b>'+fmt(b.bank)+'</b> / '+fmt(TOTAL))+'</span>'+(z?'':'<em>'+left+'%</em>')+'</div>'
      +'<div class="meter"><i style="width:'+(z?0:left)+'%"></i></div></div></header>'; }
-  return '<header class="bar"><h2>'+t+'</h2><button class="sndb'+(muted?' off':'')+'" onclick="toggleMute();toast(muted?\'효과음을 껐어요\':\'효과음을 켰어요\')" aria-label="효과음 '+(muted?'켜기':'끄기')+'">'+ic(muted?'mute':'sound')+'</button><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
+  return '<header class="bar"><h2>'+t+'</h2><button class="sndb fsb'+(BIG()?' on':'')+'" onclick="fontToggle()" aria-label="글자 '+(BIG()?'보통으로':'크게')+'">가</button><button class="sndb'+(muted?' off':'')+'" onclick="toggleMute();toast(muted?\'효과음을 껐어요\':\'효과음을 켰어요\')" aria-label="효과음 '+(muted?'켜기':'끄기')+'">'+ic(muted?'mute':'sound')+'</button><button class="me" onclick="openProfile(\''+m.id+'\')">'+avatar(m,'s')+'</button></header>';
 }
 function navView(){
   const tabs=[['home','trophy','현황'],['games','dice','게임'],['people','users','사람들'],['mine','user','내 정보']];
@@ -2832,7 +2832,7 @@ function mineView(){
   const m=me(); if(!draft||draft.id!==m.id) draft={...m}; CUR=draft; const b=balances(), t=team(m.team);
   return '<section class="card mehead"><button class="meav" onclick="keepIntro(draft);openMaker()" aria-label="캐릭터 꾸미기">'+avatar(m,'l')+'<i>'+ic('edit')+'</i></button><div><p class="nm">'+dn(m)+' <small>'+(SPECIAL[m.dept]?'':esc(m.dept))+(m.admin?(SPECIAL[m.dept]?'':' · ')+'운영진':'')+'</small></p><span class="pill" style="background:'+t.color+'33">'+esc(t.name)+' · '+coinIc+fmt(b[m.team])+'</span></div></section>'
    +'<section class="card"><h3>'+ic('trophy','sm')+' 내 기록</h3><div class="mystat"><div><b>'+fmt(earned(m.id))+'</b><small>딴 코인</small></div><div><b>'+fmt(heartsRecv(m.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(m.id))+'</b><small>준 하트</small></div><div><b>'+fmt(commentsBy(m.id))+'</b><small>쓴 댓글</small></div></div>'
-   +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')+'<section class="card"><h3>'+ic('user','sm')+' 화면 설정</h3><div class="fsrow"><span>글자 크기</span><div class="fseg"><button class="'+(BIG()?'':'on')+'" onclick="fontSet(\'n\')">보통</button><button class="'+(BIG()?'on':'')+'" onclick="fontSet(\'big\')">크게</button></div></div></section>'
+   +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')
    +'<section class="card"><h3>자기소개</h3>'+introFields(draft)+'</section>'
    +(m.gleader?'<section class="card"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'</section>':'')
    +'<div class="actions col"><button class="btn primary" onclick="saveProfile()">저장하기</button><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
@@ -2853,7 +2853,7 @@ function adminView(){
   if(ui.adminTab==='log') h+=logList();
   if(ui.adminTab==='team') h+=teamAssign();
   if(ui.adminTab==='tool') h+=toolView();
-  if(ui.adminTab==='tool') h+='<section class="card"><h3>'+ic('tool','sm')+' 운영진 PIN</h3><p class="sub" style="margin-bottom:8px">운영진 탭을 열 때 묻는 4자리 숫자예요. 바꾸면 다른 운영진도 새 PIN으로 다시 들어와야 해요.</p><div class="fsrow"><input id="pinNew" inputmode="numeric" maxlength="4" placeholder="'+(S.adminPin||'0000')+'" style="flex:1"><button class="btn primary" onclick="pinChange()">바꾸기</button></div></section>';
+  if(ui.adminTab==='tool') h+='<section class="card"><h3>'+ic('tool','sm')+' 운영진 PIN</h3><p class="sub" style="margin-bottom:8px">운영진 탭을 열 때 묻는 4자리 숫자예요. 바꾸면 다른 운영진도 새 PIN으로 다시 들어와야 해요.</p><div class="pinrow"><input id="pinNew" inputmode="numeric" maxlength="4" placeholder="'+(S.adminPin||'0000')+'"><button class="btn primary" onclick="pinChange()">바꾸기</button></div></section>';
   return h;
 }
 let pickTo='t1', pickFrom='t2', pickPid='';
@@ -2992,6 +2992,7 @@ function fontSet(v){ try{ localStorage.setItem('sisa_font',v); }catch(e){} docum
 let WL=null; async function wakeSync(){ const on=document.visibilityState==='visible'&&!!document.querySelector('.thme,.thfl'); try{ if(on&&!WL&&navigator.wakeLock){ WL=await navigator.wakeLock.request('screen'); WL.addEventListener('release',()=>WL=null); } else if(!on&&WL){ WL.release(); WL=null; } }catch(e){} }
 document.addEventListener('visibilitychange',wakeSync); setInterval(wakeSync,3000);
 
+function fontToggle(){ const b=!BIG(); fontSet(b?'big':'n'); toast(b?'글자를 크게 키웠어요':'글자를 보통 크기로 돌렸어요'); }
 function BIG(){ return document.documentElement.classList.contains('bigtxt'); }
 
 function pinChange(){ const v=($('#pinNew').value||'').trim(); if(!/^\d{4}$/.test(v)){ SFX.error(); return toast('숫자 4자리로 입력해 주세요'); } S.adminPin=v; try{ localStorage.setItem('sisa_pin_ok',v); }catch(e){} save(); render(); toast('운영진 PIN을 바꿨어요'); }
