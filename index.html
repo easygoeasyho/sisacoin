@@ -1403,7 +1403,7 @@ function gStatus(id){ const st=S.games[id].status; if(id==='bet'){ const T=(S.be
 /* 게임 화면 공통: 규칙 보기 · 운영진 메뉴 접기 */
 const G_RULES={
  treasure:()=>{ const C=S.th.cfg; return '<div class="bglv"><span>📍 반경 '+C.radius+'m</span><span>📡 탐지 '+C.detR+'m</span><span>🎯 발견 '+C.findR+'m</span>'+(C.goldCoin?'<span>⭐ 황금 보물 종료 '+C.goldAt+'분 전</span>':'')+'</div>'; },
- photo:()=>'<div class="bglv"><span>★ '+BG_LV[1].c+'코인</span><span>★★ '+BG_LV[2].c+'코인</span><span>★★★ '+BG_LV[3].c+'코인</span></div><p>· 칸마다 난이도(★)에 따라 상금이 달라요.<br>· 빙고 한 줄을 모두 이기면 +'+BG_BONUS.line+'코인 보너스!</p>',
+ photo:()=>'<div class="bglv"><span>★ '+BG_LV[1].c+'코인</span><span>★★ '+BG_LV[2].c+'코인</span><span>★★★ '+BG_LV[3].c+'코인</span></div><p>· 칸마다 난이도(★)에 따라 상금이 달라요.<br>· 빙고 한 줄을 모두 이기면 +'+BG_BONUS.line+'코인 보너스!<br>· 득표수가 같으면 먼저 올린 사진이 이겨요.</p>',
  wanted:()=>'<p>· 미션이 올라오면 그 특징에 맞는 사람을 찾아 연회장 앞으로 데리고 나와요.<br>· 제일 먼저 데리고 나온 사람의 조가 코인을 받아요. 운영진이 직접 확인하고 줘요.<br>· <b>우리 조원은 특징이 맞아도 데려올 수 없어요.</b></p>',
  rec:()=>'<p>· 종목이 끝날 때마다 운영진이 1~3등 조와 코인을 기록해요.<br>· 종목별 순위와 전체 누적 순위를 여기서 볼 수 있어요.</p>',
  bet:()=>'<p>· 한 사람당 답 1개, 마감 전까지 몇 번이든 고칠 수 있어요.<br>· 정답에 가장 가까운 사람의 조가 이겨요. 같은 차이면 나눠 가져요.<br>· 다른 사람 답은 결과 공개 때 한꺼번에 보여요.<br>· 💰 판돈형은 지면 우리 조 코인에서 판돈이 빠져 이긴 조로 가요. (1인당 또는 조당)</p>'
@@ -1594,7 +1594,8 @@ function thLock(id){ const s=thSpot(id); if(!s||s.found){ TH.busy=false; return;
 function thClaim(id){
   const s=thSpot(id), m=me(); if(!s||s.found||!thLive()){ TH.busy=false; return; }
   const my=m.team, bst=!!(S.th.boost||{})[my]&&s.kind!=='trap'&&s.kind!=='card'; let got=s.coin*(bst?2:1);
-  if(got>0){ const b=balances(); if(b.bank<got){ TH.busy=false; SFX.error(); return toast('남은 코인이 부족해요'); }
+  if(got>0){ const b=balances(); if(b.bank<got){ got=Math.max(0,b.bank); toast('은행 코인이 모자라 '+got+'코인만 받았어요'); } }
+  if(got>0){
     S.logs.push({id:'l'+(S.n++),ts:Date.now(),from:'bank',to:my,amount:got,reason:'보물찾기 · '+(s.gold?'황금 보물':s.kind==='jack'?'대박 보물':'보물')+(bst?' (부스터 2배)':''),by:m.name,undone:false,game:'treasure',pid:m.id}); }
   const lead0=thLeader();
   s.found={team:my,pid:m.id,ts:Date.now(),lid:got>0?S.logs[S.logs.length-1].id:null,got,boost:bst}; if(bst) S.th.boost[my]=0;
@@ -1913,7 +1914,9 @@ function bgZoom(id){ const p=S.bingo.photos.find(x=>x.id===id); if(!p) return; c
 
 /* ---------- 투표·결과 ---------- */
 function bgStartVote(){ S.bingo.state='vote'; S.bingo.photos.forEach(p=>p.vl=[]); ensureGames(); S.games.photo.status='live'; save(); SFX.fanfare(); toast('🗳️ 최종 투표를 시작했어요'); render(); openGame('photo',true); }
-function bgClose(){ const win={}, b=balances(); let need=0;
+function bgClose(force){ if(!force){ const has=BG_CELLS.map((c,i)=>bgFinals(i)).filter(f=>f.length), nov=has.filter(f=>!f.some(p=>p.vl.length)).length;
+    if(has.length&&nov&&!confirm('사진은 있는데 표가 하나도 없는 칸이 '+nov+'개 있어요. 이 칸들은 우승 조 없이 끝나요.\n그래도 결과를 확정할까요?')) return; }
+  const win={}, b=balances(); let need=0;
   BG_CELLS.forEach((c,i)=>{ const f=bgFinals(i).filter(p=>p.vl.length>0).sort((a,b)=>b.vl.length-a.vl.length||a.ts-b.ts); if(f[0]){ win[i]=f[0].team; need+=bgCoin(i); } });
   const bonus=[]; TEAMS.forEach(t=>BG_LINES.forEach(L=>{ if(L.c.every(i=>win[i]===t.id)) bonus.push({team:t.id,n:L.n,coin:L.sp?BG_BONUS[L.sp]:BG_BONUS.line}); })); need+=bonus.reduce((a,x)=>a+x.coin,0);
   if(b.bank<need){ SFX.error(); return toast('남은 코인이 부족해요 (필요 '+need+')'); }
@@ -2206,7 +2209,7 @@ function wdSeen(){ if(!WD.seen){ try{ WD.seen=JSON.parse(localStorage.getItem('s
 function wdSlam(){ const L=wdOrder(), x=L[WD.idx]; if(!x||x.state!=='done') return; const seen=wdSeen(); if(seen.includes(x.id+':'+x.dts)) return; seen.push(x.id+':'+x.dts); try{ localStorage.setItem('sisa-wd-seen',JSON.stringify(seen)); }catch(e){}
   const st=document.querySelectorAll('.wdslide')[WD.idx]; const stp=st&&st.querySelector('.wdstamp'); if(!stp) return; const st2=stp; st2.classList.remove('slam'); void st2.offsetWidth; st2.classList.add('slam'); setTimeout(()=>{ thud(); buzz([80]); },230); }
 function wdRefresh(){ if($('#wdx')){ WD.keepY=1; wdDraw(); } else openGame('wanted',true); }
-function wdGive(id){ const x=S.wanted.ms.find(m=>m.id===id), pid=$('#wd_p').value, tg=$('#wd_t').value, c=Math.max(0,Math.round(+$('#wd_c').value||0)), p=person(pid);
+function wdGive(id){ if(gStatus('wanted')==='done'){ SFX.error(); return toast('끝난 게임이에요. 운영진 메뉴에서 [게임 다시 열기] 후 진행해 주세요'); } const x=S.wanted.ms.find(m=>m.id===id), pid=$('#wd_p').value, tg=$('#wd_t').value, c=Math.max(0,Math.round(+$('#wd_c').value||0)), p=person(pid);
   if(!p){ SFX.error(); return toast('데리고 나온 사람을 골라주세요'); }
   if(!tg){ SFX.error(); return toast('잡혀 온 사람을 골라주세요'); }
   if(tg===pid){ SFX.error(); return toast('자기 자신은 데려올 수 없어요'); }
@@ -2216,7 +2219,7 @@ function wdGive(id){ const x=S.wanted.ms.find(m=>m.id===id), pid=$('#wd_p').valu
   x.state='done'; x.coin=c; x.win={pid,target:tg}; x.lid=lid; x.dts=Date.now(); WD.open=null; ensureGames(); if(S.games.wanted.status==='soon') S.games.wanted.status='live';
   save(); SFX.fanfare(); buzz([30,40,60]); ui.flash={}; ui.flash[p.team]=c; toast('🚔 <b>'+esc(p.name)+'</b> 검거 성공! '+esc(team(p.team).name)+' +'+c); render();
   if($('#wdx')){ WD.idx=wdOrder().findIndex(m=>m.id===id); wdDraw(); } else openGame('wanted',true); }
-function wdUndo(id){ const x=S.wanted.ms.find(m=>m.id===id), l=S.logs.find(y=>y.id===x.lid); if(l) l.undone=true; x.state='open'; x.win=null; x.lid=null; x.dts=null; save(); SFX.undo(); toast('검거를 취소하고 수배지를 다시 붙였어요'); render(); wdRefresh(); }
+function wdUndo(id){ if(gStatus('wanted')==='done'){ SFX.error(); return toast('끝난 게임이에요. 운영진 메뉴에서 [게임 다시 열기] 후 진행해 주세요'); } const x=S.wanted.ms.find(m=>m.id===id), l=S.logs.find(y=>y.id===x.lid); if(l) l.undone=true; x.state='open'; x.win=null; x.lid=null; x.dts=null; save(); SFX.undo(); toast('검거를 취소하고 수배지를 다시 붙였어요'); render(); wdRefresh(); }
 function wdDel(id){ S.wanted.ms=S.wanted.ms.filter(m=>m.id!==id); save(); SFX.undo(); toast('수배지를 뗐어요'); wdRefresh(); }
 function wdCtrl(){ ensureWD(); const M=S.wanted.ms, o=M.filter(x=>x.state==='open').length;
   return '<section class="card flat thctl"><div class="tch"><h3>'+ic('tool','sm')+' 운영진 · 진행 관리</h3><button class="mini" onclick="gSet(\'wanted\')">⚙️ 설정</button></div>'
@@ -2227,7 +2230,7 @@ function wdNewBody(){ const d=WD.d=WD.d||{q:'',coin:30};
    +'<div class="wdex">'+WD_EX.map(e=>'<button onclick="WD.d.q=\''+e+'\';sheetRedraw()">'+esc(e)+'</button>').join('')+'</div>'
    +'<div class="tcf card flat"><span>1등 코인<small>제일 먼저 데려온 사람의 조가 받아요</small></span><input id="wd_coin" type="number" inputmode="numeric" value="'+d.coin+'" oninput="WD.d.coin=this.value"><em>코인</em></div>'
    +'<button class="btn primary full" onclick="wdAdd()">🚨 수배령 내리기</button>'; }
-function wdAdd(){ const d=WD.d, q=(d.q||'').trim(), c=Math.max(0,Math.round(+d.coin||0)); if(!q){ SFX.error(); return toast('미션을 입력해주세요'); }
+function wdAdd(){ if(gStatus('wanted')==='done'){ SFX.error(); return toast('끝난 게임이에요. 운영진 메뉴에서 [게임 다시 열기] 후 진행해 주세요'); } const d=WD.d, q=(d.q||'').trim(), c=Math.max(0,Math.round(+d.coin||0)); if(!q){ SFX.error(); return toast('미션을 입력해주세요'); }
   ensureWD().ms.push({id:'w'+Date.now(),q,coin:c,ts:Date.now(),state:'open'}); WD.idx=0; ensureGames(); if(S.games.wanted.status==='soon') S.games.wanted.status='live';
   WD.d=null; save(); SFX.select(); toast('🚨 수배령을 내렸어요'); const e=$('#thset'); if(e) e.remove(); render(); if($('#wdx')) wdDraw(); else openGame('wanted',true); }
 function wdTodo(){ if(!S.wanted) return []; return S.wanted.ms.filter(x=>x.state==='open'); }
@@ -2255,7 +2258,7 @@ function rcNewBody(){ const d=RC.d=RC.d||{name:'',r:[{t:'',c:100},{t:'',c:60},{t
    +'<div class="wdex">'+RC_EX.map(e=>'<button onclick="RC.d.name=\''+e+'\';sheetRedraw()">'+esc(e)+'</button>').join('')+'</div>'
    +'<div id="gform">'+d.r.map((r,k)=>'<div class="gin"><span class="medal m'+(k+1)+'">'+(k+1)+'</span><select onchange="RC.d.r['+k+'].t=this.value">'+teamOpts(r.t,'조 고르기')+'</select><input type="number" inputmode="numeric" value="'+r.c+'" oninput="RC.d.r['+k+'].c=this.value"></div>').join('')+'</div>'
    +'<button class="btn primary full" onclick="rcAdd()">🏆 결과 기록하고 코인 주기</button><p class="sub" style="margin-top:6px">3등까지 없으면 비워두세요. 기록하면 남은 코인에서 지급돼요.</p>'; }
-function rcAdd(){ const d=RC.d, name=(d.name||'').trim(), R=d.r.filter(r=>r.t).map(r=>({team:r.t,coin:Math.max(0,Math.round(+r.c||0))}));
+function rcAdd(){ if(gStatus('rec')==='done'){ SFX.error(); return toast('끝난 게임이에요. 운영진 메뉴에서 [게임 다시 열기] 후 진행해 주세요'); } const d=RC.d, name=(d.name||'').trim(), R=d.r.filter(r=>r.t).map(r=>({team:r.t,coin:Math.max(0,Math.round(+r.c||0))}));
   if(!name){ SFX.error(); return toast('종목 이름을 입력해주세요'); }
   if(!R.length){ SFX.error(); return toast('1등 조를 골라주세요'); }
   if(new Set(R.map(r=>r.team)).size<R.length){ SFX.error(); return toast('같은 조가 두 번 들어갔어요'); }
@@ -2263,7 +2266,7 @@ function rcAdd(){ const d=RC.d, name=(d.name||'').trim(), R=d.r.filter(r=>r.t).m
   ui.flash={}; R.forEach((r,k)=>{ if(!r.coin) return; const lid='l'+(S.n++); r.lid=lid; S.logs.push({id:lid,ts:Date.now(),from:'bank',to:r.team,amount:r.coin,reason:'레크레이션 · '+name+' '+(k+1)+'등',by:me().name,undone:false,game:'rec'}); ui.flash[r.team]=r.coin; });
   ensureRC().ev.push({id:'e'+Date.now(),name,ts:Date.now(),ranks:R}); ensureGames(); if(S.games.rec.status==='soon') S.games.rec.status='live';
   RC.d=null; save(); SFX.fanfare(); buzz([30,40,60]); toast('<b>'+esc(name)+'</b> 1등 '+esc(team(R[0].team).name)+'!'); const e=$('#thset'); if(e) e.remove(); render(); rcRefresh(); }
-function rcUndo(id){ const e=S.rec.ev.find(x=>x.id===id); if(!e) return; e.ranks.forEach(r=>{ const l=r.lid&&S.logs.find(y=>y.id===r.lid); if(l) l.undone=true; }); S.rec.ev=S.rec.ev.filter(x=>x.id!==id); save(); SFX.undo(); toast('기록을 취소하고 코인을 되돌렸어요'); render(); rcRefresh(); }
+function rcUndo(id){ if(gStatus('rec')==='done'){ SFX.error(); return toast('끝난 게임이에요. 운영진 메뉴에서 [게임 다시 열기] 후 진행해 주세요'); } const e=S.rec.ev.find(x=>x.id===id); if(!e) return; e.ranks.forEach(r=>{ const l=r.lid&&S.logs.find(y=>y.id===r.lid); if(l) l.undone=true; }); S.rec.ev=S.rec.ev.filter(x=>x.id!==id); save(); SFX.undo(); toast('기록을 취소하고 코인을 되돌렸어요'); render(); rcRefresh(); }
 
 /* ================= 코인 예산 (운영진) ================= */
 const BUD0={won:1000000,rounds:2,wpc:50,start:500,mode:'weight',w:{treasure:3,photo:3,bet:2,wanted:1,rec:2},reserve:15,ratio:[5,3,2],plan:{bet:10,wanted:10,rec:5,guer:3}};
@@ -2291,12 +2294,14 @@ function budPlan(){ const B=ensureBud(), C=budCalc(), P=C.per, o={};
   return o; }
 /* 저장된 적용값을 게임 상수에 반영 */
 function applyCoinCfg(){ const c=S.coinCfg; if(!c) return; if(c.photo){ Object.keys(c.photo.lv).forEach(k=>BG_LV[k].c=c.photo.lv[k]); Object.assign(BG_BONUS,c.photo.bonus); Object.assign(BG_PB,c.photo.pb); } }
-function budApply(){ const o=budPlan(), B=ensureBud();
+function budApply(){ const o=budPlan(), B=ensureBud(), C=budCalc(), bal=balances(), given=TOTAL-bal.bank-START*TEAMS.length;
+  if(C.total-B.start*TEAMS.length<given){ SFX.error(); return toast('이미 나간 코인('+fmt(given)+')보다 발행량이 적어져요. 예산을 늘리거나 기록을 먼저 정리해 주세요'); }
+  if(B.start!==START&&S.logs.some(l=>!l.undone)) { if(!confirm('조별 시작 코인이 '+START+' → '+B.start+'로 바뀌어요. 모든 조 코인이 그만큼 같이 바뀌어요. 계속할까요?')) return; }
   if(!confirm('예산 계획대로 게임 상금을 바꿀까요?\n(이미 지급된 코인은 그대로예요)')) return;
   S.coinCfg={photo:o.photo,bet:o.bet.prize,wanted:o.wanted.coin,rec:o.rec.r,guer:o.guer.r,at:Date.now()};
   if(typeof ensureTH==='function'){ ensureTH(); S.th.cfg.coin=o.treasure.coin; S.th.cfg.goldCoin=o.treasure.gold; }
   S.budget.applied=Date.now(); syncTotal(); applyCoinCfg(); save(); SFX.fanfare(); toast('예산을 게임 상금에 적용했어요'); render(); }
-function syncTotal(){ const B=S.budget; if(B&&B.applied){ TOTAL=Math.floor(B.won/B.rounds/B.wpc); START=B.start; } }
+function syncTotal(){ const B=S.budget; if(B&&B.applied){ TOTAL=Math.floor(B.won/B.rounds/B.wpc); START=B.start; } else { TOTAL=10000; START=500; } }
 function budUsed(){ const u={}; BUD_GAMES.forEach(id=>u[id]=0); u.guer=0; const cust=new Set((S.custom||[]).map(g=>g.id));
   S.logs.forEach(l=>{ if(l.undone||l.from!=='bank') return; if(u[l.game]!=null) u[l.game]+=l.amount; else if(cust.has(l.game)) u.guer+=l.amount; }); return u; }
 function budSet(k,v,sub){ const B=ensureBud(); v=+v; if(!isFinite(v)) return; if(sub) B[k][sub]=v; else B[k]=v; save(); keepY(render); }
@@ -2371,7 +2376,7 @@ function midDemo(btn){
   try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
   save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
 
-const APP_VER='11-25 11:12';
+const APP_VER='11-25 11:22';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2553,6 +2558,7 @@ function logIcon(l){ const k=l.from==='bank'?'gift':l.to==='bank'?'down':'sword'
 /* ================= 렌더 ================= */
 function render(){
   const app=$('#app'); if(typeof syncTotal==='function'){ syncTotal(); applyCoinCfg(); }
+  if(S.th&&S.th.state==='live'&&S.th.endAt&&Date.now()>=S.th.endAt&&typeof thArchive==='function'){ S.th.state='done'; ensureGames(); S.games.treasure.status='done'; thArchive(); save(); }
   if(!S.me||!me()){ app.innerHTML=loginView(); return; }
   let body='';
   if(ui.tab==='home') body=homeView();
