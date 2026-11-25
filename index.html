@@ -452,11 +452,11 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .bdu{font-size:11px;color:var(--sub)}
 .bdplan{background:#F7F5F0;border-radius:12px;padding:8px 12px;margin:10px 0 12px}.bdplan div{display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:12.5px}.bdplan b{flex:none}.bdplan span{text-align:right;color:#4A463E}
 .card.jack{background:#1E1E1C;color:#fff}.card.jack h3{color:#FFD43B}.jkn{font-size:28px;font-weight:900;display:flex;align-items:center;gap:6px;margin:4px 0}.jkn img{width:26px;height:26px}.card.jack .sub{color:#B8B1A3}
-.wdx{background:#F3EFE6;padding-left:0;padding-right:0}
+.wdx{background:#F3EFE6;padding-left:0;padding-right:0;overflow-x:hidden}
 .wdx .bgtop{padding:0 12px}
 .wdvw{display:flex;background:#E9E5DC;border-radius:99px;padding:3px;margin-left:auto}.wdvw button{padding:6px 13px;border-radius:99px;font-size:12.5px;font-weight:800;color:#7A766C}.wdvw button.on{background:#1E1E1C;color:#fff}
-.wdcar{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.wdcar::-webkit-scrollbar{display:none}
-.wdslide{flex:0 0 100%;scroll-snap-align:center;padding:18px 22px 4px;box-sizing:border-box}
+.wdcar{overflow:hidden;touch-action:pan-y}.wdtrack{display:flex;align-items:flex-start;will-change:transform}
+.wdslide{flex:0 0 100%;min-width:0;padding:18px 22px 4px;box-sizing:border-box;transition:opacity .3s}.wdslide:not(.cur){opacity:.4}
 .wdp{position:relative;min-height:calc((100vw - 44px)*1.53);max-width:440px;margin:0 auto;filter:drop-shadow(0 6px 10px rgba(60,40,10,.18))}
 .wdfr{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
 .wdpin{position:relative;padding:19% 13% 21%;text-align:center;color:#1E1E1C}
@@ -2184,15 +2184,26 @@ function wdDraw(){ const el=$('#wdx'); if(!el) return; const L=wdOrder(), sy=el.
    +'<div class="wdvw">'+[['card','전단'],['list','목록']].map(v=>'<button class="'+(WD.view===v[0]?'on':'')+'" onclick="WD.view=\''+v[0]+'\';wdDraw()">'+v[1]+'</button>').join('')+'</div></div>';
   if(!L.length) h+='<div class="wdempty">'+WD_SIL+'<p>아직 수배령이 없어요<br><small>운영진이 미션을 올리면 수배지가 붙어요</small></p></div>';
   else if(WD.view==='list') h+='<div class="wdlist">'+L.map((x,k)=>{ const done=x.state==='done', t=done&&team(person(x.win.pid).team), tg=done&&x.win.target&&person(x.win.target); return '<button class="wdli'+(done?' done':'')+'" onclick="WD.view=\'card\';WD.idx='+k+';wdDraw()"'+(done?' style="--ink:'+t.color+'"':'')+'><span class="wdlic"'+(tg?' style="background:'+team(tg.team).color+'44"':'')+'>'+(tg?charHTML(chO(tg)):'<img src="'+WD_IMG.sil+'" alt="">')+'</span><span class="wdlq"><small><b class="wdlst">'+(done?'CAUGHT':'WANTED')+'</b>No.'+String(wdNo(x)).padStart(2,'0')+(done?' · '+esc(t.name):'')+'</small>'+esc(x.q)+'</span><em>'+coinIc+x.coin+'</em></button>'; }).join('')+'</div>';
-  else h+='<div class="wdcar" id="wdcar">'+L.map(x=>'<div class="wdslide">'+wdPoster(x)+'</div>').join('')+'</div><div class="wddots">'+L.map((x,k)=>'<i class="'+(k===WD.idx?'on':'')+(x.state==='done'?' d':'')+'"></i>').join('')+'</div>'+(L.length>1?'<p class="wdhint">← 옆으로 넘겨서 다른 수배지 보기</p>':'');
+  else h+='<div class="wdcar" id="wdcar"><div class="wdtrack" id="wdtrack">'+L.map(x=>'<div class="wdslide">'+wdPoster(x)+'</div>').join('')+'</div></div><div class="wddots">'+L.map((x,k)=>'<i class="'+(k===WD.idx?'on':'')+(x.state==='done'?' d':'')+'"></i>').join('')+'</div>'+(L.length>1?'<p class="wdhint">← 옆으로 넘겨서 다른 수배지 보기</p>':'');
   if(me().admin) h+='<button class="btn wdnew" onclick="gSet(\'wanted\',\'wm\')">＋ 새 수배령 내리기</button>';
   if(0) h+='<svg width="0" height="0" style="position:absolute"><filter id="wdgr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -.9 1.25"/><feComposite in="SourceGraphic" operator="in"/></filter></svg>';
   el.innerHTML=h; el.scrollTop=WD.keepY?sy:0; WD.keepY=0;
-  const car=$('#wdcar'); if(car){ car.scrollLeft=WD.idx*car.clientWidth; car.onscroll=()=>{ const k=Math.round(car.scrollLeft/car.clientWidth); if(k!==WD.idx){ WD.idx=k; document.querySelectorAll('.wddots i').forEach((d,j)=>d.classList.toggle('on',j===k)); wdSlam(); } }; wdSlam(); } }
+  if($('#wdcar')) wdSwipeInit(L.length); }
+/* 가로 스와이프: 브라우저 가로 스크롤 대신 직접 처리 (모바일에서 세로 스크롤할 때 옆으로 밀리지 않게) */
+function wdGo(k,n){ n=n||wdOrder().length; WD.idx=Math.max(0,Math.min(n-1,k)); const tr=$('#wdtrack'); if(tr){ tr.style.transition='transform .32s cubic-bezier(.2,.8,.3,1)'; tr.style.transform='translateX('+(-WD.idx*100)+'%)'; }
+  document.querySelectorAll('.wddots i').forEach((d,j)=>d.classList.toggle('on',j===WD.idx)); document.querySelectorAll('.wdslide').forEach((s,j)=>s.classList.toggle('cur',j===WD.idx)); wdSlam(); }
+function wdSwipeInit(n){ const car=$('#wdcar'), tr=$('#wdtrack'); if(!car||!tr) return; tr.style.transition='none'; tr.style.transform='translateX('+(-WD.idx*100)+'%)'; document.querySelectorAll('.wdslide').forEach((s,j)=>s.classList.toggle('cur',j===WD.idx)); wdSlam();
+  let x0=0,y0=0,dx=0,mode=null; const W=()=>car.clientWidth;
+  car.addEventListener('touchstart',e=>{ if(e.target.closest('select,input,button,.wdf')){ mode='skip'; return; } x0=e.touches[0].clientX; y0=e.touches[0].clientY; dx=0; mode=null; },{passive:true});
+  car.addEventListener('touchmove',e=>{ if(mode==='skip') return; const mx=e.touches[0].clientX-x0, my=e.touches[0].clientY-y0;
+    if(!mode){ if(Math.abs(mx)<8&&Math.abs(my)<8) return; mode=Math.abs(mx)>Math.abs(my)*1.2?'h':'v'; }
+    if(mode!=='h') return; e.preventDefault(); dx=mx; const edge=(WD.idx===0&&dx>0)||(WD.idx===n-1&&dx<0); tr.style.transition='none'; tr.style.transform='translateX(calc('+(-WD.idx*100)+'% + '+(edge?dx/3:dx)+'px))'; },{passive:false});
+  car.addEventListener('touchend',()=>{ if(mode==='h'){ const th=Math.min(70,W()*.18); wdGo(WD.idx+(dx<-th?1:dx>th?-1:0),n); } mode=null; });
+  car.onkeydown=null; }
 /* 처음 보는 검거 도장은 쾅! 찍히는 연출 */
 function wdSeen(){ if(!WD.seen){ try{ WD.seen=JSON.parse(localStorage.getItem('sisa-wd-seen')||'[]'); }catch(e){ WD.seen=[]; } } return WD.seen; }
 function wdSlam(){ const L=wdOrder(), x=L[WD.idx]; if(!x||x.state!=='done') return; const seen=wdSeen(); if(seen.includes(x.id+':'+x.dts)) return; seen.push(x.id+':'+x.dts); try{ localStorage.setItem('sisa-wd-seen',JSON.stringify(seen)); }catch(e){}
-  const st=document.querySelector('.wdslide:nth-child('+(WD.idx+1)+') .wdstamp'); if(!st) return; st.classList.remove('slam'); void st.offsetWidth; st.classList.add('slam'); setTimeout(()=>{ thud(); buzz([80]); },230); }
+  const st=document.querySelectorAll('.wdslide')[WD.idx]; const stp=st&&st.querySelector('.wdstamp'); if(!stp) return; const st2=stp; st2.classList.remove('slam'); void st2.offsetWidth; st2.classList.add('slam'); setTimeout(()=>{ thud(); buzz([80]); },230); }
 function wdRefresh(){ if($('#wdx')){ WD.keepY=1; wdDraw(); } else openGame('wanted',true); }
 function wdGive(id){ const x=S.wanted.ms.find(m=>m.id===id), pid=$('#wd_p').value, tg=$('#wd_t').value, c=Math.max(0,Math.round(+$('#wd_c').value||0)), p=person(pid);
   if(!p){ SFX.error(); return toast('데리고 나온 사람을 골라주세요'); }
@@ -2359,7 +2370,7 @@ function midDemo(btn){
   try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
   save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
 
-const APP_VER='11-25 11:07';
+const APP_VER='11-25 11:09';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
