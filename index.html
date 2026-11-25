@@ -510,6 +510,7 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.3px}
 .plist .prow .pi b{font-size:14.5px}.plist .prow .pi small{font-size:11.5px}
 .plist .prow .pr{flex-direction:row-reverse;align-items:center;gap:6px}
 .plist .pbs{gap:1px}
+.toast.inplay{z-index:95;font-size:13px;padding:9px 14px;border-radius:12px;left:12px;right:70px;transform:none;width:auto;max-width:none;animation:none;word-break:keep-all;background:#fff;color:#1E1E1C;border:2px solid #1E1E1C;box-shadow:0 3px 0 #1E1E1C}
 #ptr{position:fixed;left:50%;top:0;z-index:60;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-50%,-56px);pointer-events:none}#ptr img{width:26px;height:26px}#ptr.spin img{animation:spin .6s linear infinite}
 .morerow{display:flex;gap:8px;margin-top:10px}.morerow .more{flex:1;margin-top:0}
 .tgl{flex:none;width:48px;height:28px;border-radius:99px;background:#D9D5CB;position:relative;transition:.2s}.tgl i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.tgl.on{background:#2E9E6A}.tgl.on i{left:23px}
@@ -2370,7 +2371,7 @@ function midDemo(btn){
   try{ localStorage.removeItem('sisa-wd-seen'); }catch(e){} WD.seen=null; stSeenSet(stampCount());
   save(); closeModal(); render(); SFX.fanfare(); toast('모든 게임이 한창 진행 중인 상태로 만들었어요'); }
 
-const APP_VER='11-25 11:09';
+const APP_VER='11-25 11:12';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2519,7 +2520,7 @@ function fullChar(o,teamId,cls){ return '<div class="fullc '+(cls||'')+'">'+stic
 function balances(){ const b={bank:TOTAL-START*TEAMS.length}; TEAMS.forEach(t=>b[t.id]=START); S.logs.forEach(l=>{ if(!l.undone){ b[l.from]-=l.amount; b[l.to]+=l.amount; } }); return b; }
 const label=id=>id==='bank'?'운영진':team(id).name;
 let ui={tab:'home',filter:'all',q:'',reg:null,adminTab:'coin',act:'grant',flash:{}};
-function toast(msg){ document.querySelectorAll('.toast').forEach(t=>t.remove()); const el=document.createElement('div'); el.className='toast'; el.innerHTML=msg; document.body.appendChild(el); setTimeout(()=>el.classList.add('out'),2400); setTimeout(()=>el.remove(),2800); }
+function toast(msg){ document.querySelectorAll('.toast').forEach(t=>t.remove()); const el=document.createElement('div'); el.className='toast'; el.innerHTML=msg; const pt=document.querySelector('#play .ptop'); if(pt){ el.style.top=(pt.getBoundingClientRect().bottom+8)+'px'; el.classList.add('inplay'); } document.body.appendChild(el); setTimeout(()=>el.classList.add('out'),2400); setTimeout(()=>el.remove(),2800); }
 const keepY=fn=>{ const y=window.scrollY; fn(); window.scrollTo(0,y); };
 
 /* ================= 코인 ================= */
