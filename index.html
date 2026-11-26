@@ -946,6 +946,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .nrow b em.pn{background:#1E1E1C}.nrr{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.nrr button{font-size:11px;color:#A8A397;font-weight:700}
 .hntc{width:100%;text-align:left;color:inherit}.hntc.un{box-shadow:0 3px 0 #1E1E1C}
 .npop .cx{margin-top:6px}
+.tll{display:inline-flex;align-items:center;gap:4px;margin:6px 6px 0 0;font-size:12px;font-weight:800;color:#2F6BD8;background:#EAF1FD;border-radius:10px;padding:5px 10px;text-decoration:none}.tll .i{width:13px;height:13px}
 </style>
 </head>
 <body>
@@ -2462,12 +2463,12 @@ function midDemo(btn){
 
 /* ================= 일정 · 공지 ================= */
 const SCH_SEED=()=>({start:'2027-03-21',days:[
- {title:'출발 · 도쿠시마',items:[['06:40','인천공항 집합','제1터미널 3층 · H카운터 앞','여권 · 항공권 꼭 챙기기','',1],['09:10','인천 출발 → 도쿠시마','','','',0],['12:30','점심','도쿠시마 시내','','',0],['14:00','오츠카 국제미술관','','','',0],['15:40','우즈노미치 전망대','나루토 해협','','',0],['16:30','리조트 체크인','','방 배정은 조장에게','',0],['18:30','저녁 식사','리조트 연회장','','wanted',0]]},
+ {title:'출발 · 도쿠시마',items:[['06:40','인천공항 집합','제1터미널 3층 · H카운터 앞','여권 · 항공권 꼭 챙기기','',1],['09:10','인천 출발 → 도쿠시마','','','',0],['12:30','점심','도쿠시마 시내','','',0],['14:00','오츠카 국제미술관','','','',0,'https://o-museum.or.jp/','홈페이지'],['15:40','우즈노미치 전망대','나루토 해협','','',0],['16:30','리조트 체크인','','방 배정은 조장에게','',0],['18:30','저녁 식사','리조트 연회장','','wanted',0]]},
  {title:'도쿠시마',items:[['08:00','아침 식사','리조트 1층','','',0],['09:30','버스 집합','리조트 정문','','',1],['10:00','보물찾기','도쿠시마 시내','','treasure',0],['12:30','점심','','','',0],['18:30','저녁 · 레크레이션','리조트 연회장','','rec',0]]},
  {title:'고베',items:[['09:00','버스 집합 · 고베 이동','리조트 정문','','',1],['18:30','포토 빙고 투표','','','photo',0]]},
  {title:'귀국',items:[['10:00','공항 이동','','','',0]]}
-].map(d=>({title:d.title,items:d.items.map(x=>({id:'s'+Math.random().toString(36).slice(2,8),t:x[0],title:x[1],place:x[2],memo:x[3],game:x[4],meet:!!x[5],old:''}))}))});
-function ensureSched(){ if(!S.sched) S.sched=SCH_SEED(); if(!S.notices) S.notices=[]; }
+].map(d=>({title:d.title,items:d.items.map(x=>({id:'s'+Math.random().toString(36).slice(2,8),t:x[0],title:x[1],place:x[2],memo:x[3],game:x[4],meet:!!x[5],old:'',link:x[6]||'',linkName:x[7]||''}))}))});
+function ensureSched(){ if(!S.sched) S.sched=SCH_SEED(); if(!S.notices) S.notices=[]; S.sched.days.forEach(d=>d.items.forEach(it=>{ if(it.link===undefined){ it.link=it.title==='오츠카 국제미술관'?'https://o-museum.or.jp/':''; it.linkName=it.link?'홈페이지':''; } })); }
 const SCH_W='일월화수목금토';
 function schDate(i){ const d=new Date(S.sched.start+'T00:00:00'); d.setDate(d.getDate()+i); return d; }
 function schToday(){ const d0=new Date(S.sched.start+'T00:00:00'), n=new Date(); const i=Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-d0)/864e5); return i>=0&&i<S.sched.days.length?i:-1; }
@@ -2493,19 +2494,21 @@ function schedView(){ ensureSched(); const N=S.sched.days.length, T=schToday(), 
   D.items.forEach(it=>{ const past=nowM>=0&&hm2m(it.t)<nowM;
     if(!nowDone&&hm2m(it.t)>=nowM){ nowDone=true; h+='<div class="nowln"><span>지금 '+String(Math.floor(nowM/60)).padStart(2,'0')+':'+String(nowM%60).padStart(2,'0')+'</span><i></i></div>'; }
     const g=it.game&&GAME_DEFS.find(x=>x.id===it.game);
-    h+='<div class="tli'+(past?' past':'')+(it.meet?' meet':'')+(ed?' ed':'')+'"'+(ed?' onclick="schItemForm(\''+it.id+'\')"':'')+'><div class="tlt">'+it.t+(it.old?'<s>'+it.old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(it.meet?'<em>집합</em>':'')+esc(it.title)+(it.old?'<em class="chg">변경</em>':'')+'</b>'+(it.place?'<small>'+ic('pin','xs')+esc(it.place)+'</small>':'')+(it.memo?'<p>'+esc(it.memo)+'</p>':'')+(g&&!ed?'<button class="tlg" onclick="openGame(\''+g.id+'\')"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</button>':(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+'</span>':''))+'</div>'+(ed?'<span class="tlpen">'+ic('next','xs')+'</span>':'')+'</div>'; });
+    h+='<div class="tli'+(past?' past':'')+(it.meet?' meet':'')+(ed?' ed':'')+'"'+(ed?' onclick="schItemForm(\''+it.id+'\')"':'')+'><div class="tlt">'+it.t+(it.old?'<s>'+it.old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(it.meet?'<em>집합</em>':'')+esc(it.title)+(it.old?'<em class="chg">변경</em>':'')+'</b>'+(it.place?'<small>'+ic('pin','xs')+esc(it.place)+'</small>':'')+(it.memo?'<p>'+esc(it.memo)+'</p>':'')+(it.link?'<a class="tll" href="'+esc(it.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+ic('link','xs')+esc(it.linkName||'홈페이지')+' ↗</a>':'')+(g&&!ed?'<button class="tlg" onclick="openGame(\''+g.id+'\')"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</button>':(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+'</span>':''))+'</div>'+(ed?'<span class="tlpen">'+ic('next','xs')+'</span>':'')+'</div>'; });
   if(!nowDone&&nowM>=0) h+='<div class="nowln"><span>지금</span><i></i></div>';
   if(ed) h+='<button class="schadd" onclick="schItemForm(null)">+ 일정 추가</button>';
   return h+'</div>';
 }
 function schFind(id){ for(const d of S.sched.days){ const it=d.items.find(x=>x.id===id); if(it) return [d,it]; } return [null,null]; }
-function schItemForm(id){ const [,it0]=id?schFind(id):[null,null], it=it0||{t:'',title:'',place:'',memo:'',game:'',meet:false};
+function schItemForm(id){ const [,it0]=id?schFind(id):[null,null], it=it0||{t:'',title:'',place:'',memo:'',game:'',meet:false,link:'',linkName:''};
   const gs='<option value="">없음</option>'+GAME_DEFS.map(g=>'<option value="'+g.id+'"'+(it.game===g.id?' selected':'')+'>'+esc(g.name)+'</option>').join('');
   modal('<h2>'+(id?'일정 고치기':'일정 추가')+'</h2><p class="sub">'+(ui.schDay+1)+'일차</p>'
    +field('시간','<input id="sc_t" type="time" value="'+it.t+'">',id&&it.old?'원래 시간 '+it.old+' (지금 시간을 '+it.old+'로 되돌리면 변경 표시가 사라져요)':'')
    +field('제목','<input id="sc_ti" maxlength="30" value="'+esc(it.title)+'">')
    +field('장소','<input id="sc_pl" maxlength="40" value="'+esc(it.place)+'" placeholder="선택">')
    +field('메모','<input id="sc_me" maxlength="60" value="'+esc(it.memo)+'" placeholder="선택 · 준비물이나 주의사항">')
+   +field('링크','<input id="sc_ln" type="url" inputmode="url" value="'+esc(it.link||'')+'" placeholder="선택 · 예: https://o-museum.or.jp">','관광지 홈페이지나 지도 링크를 넣으면 일정에 버튼으로 보여요')
+   +field('링크 버튼 이름','<input id="sc_lnn" maxlength="12" value="'+esc(it.linkName||'')+'" placeholder="홈페이지">')
    +field('연결 게임','<select id="sc_g">'+gs+'</select>')
    +'<label class="chk"><input id="sc_meet" type="checkbox"'+(it.meet?' checked':'')+'> 집합 일정으로 강조</label>'
    +(id?'<label class="chk"><input id="sc_nt" type="checkbox" checked> 시간이 바뀌면 변경 공지도 함께 올리기</label>':'')
@@ -2515,7 +2518,8 @@ function schSave(id){ const v=k=>($('#'+k).value||'').trim(), t=v('sc_t'), ti=v(
   const D=S.sched.days[ui.schDay]; let it, chg=false, from='';
   if(id){ const r=schFind(id); it=r[1]; if(it.t!==t){ from=it.t; if(!it.old) it.old=it.t; if(it.old===t) it.old=''; chg=true; } }
   else { it={id:'s'+Date.now().toString(36),old:''}; D.items.push(it); }
-  Object.assign(it,{t,title:ti,place:v('sc_pl'),memo:v('sc_me'),game:$('#sc_g').value,meet:$('#sc_meet').checked});
+  let ln=v('sc_ln'); if(ln&&!/^https?:\/\//i.test(ln)) ln='https://'+ln; if(ln&&!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(ln)){ SFX.error(); return toast('링크 주소를 다시 확인해 주세요'); }
+  Object.assign(it,{link:ln,linkName:v('sc_lnn'),t,title:ti,place:v('sc_pl'),memo:v('sc_me'),game:$('#sc_g').value,meet:$('#sc_meet').checked});
   D.items.sort((a,b)=>hm2m(a.t)-hm2m(b.t));
   if(chg&&$('#sc_nt')&&$('#sc_nt').checked) noticePush({title:(ui.schDay+1)+'일차 '+ti+' '+from+' → '+t+'로 변경',body:(it.place?'장소: '+it.place+'\n':'')+'시간이 바뀌었어요. 늦지 않게 모여 주세요.',urgent:!!it.meet,pin:true,target:'all'});
   save(); closeModal(); render(); SFX.select(); toast(chg?'시간을 바꿨어요':'일정을 저장했어요'); }
@@ -2548,7 +2552,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 09:39';
+const APP_VER='11-26 09:48';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2583,6 +2587,7 @@ const IC={
  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
  back:'<path d="M15 6l-6 6 6 6"/>',
  next:'<path d="M9 6l6 6-6 6"/>',
+ link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
  x:'<path d="M6 6l12 12M18 6L6 18"/>',
  sound:'<path d="M4 9v6h4l5 4V5L8 9H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
