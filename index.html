@@ -987,6 +987,13 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .sfwrap .sfdel{margin:12px auto 2px}
 .sfwrap .sffoot{margin-top:8px;padding-top:10px}
 .sfin{position:relative}.sfwrap .sfin input{padding-right:76px}.sfin .sftg{position:absolute;right:8px;top:50%;transform:translateY(-50%)}.sfwrap .sfin input#sc_me{padding-right:76px}
+
+.sfwrap .f{display:grid;grid-template-columns:58px minmax(0,1fr);column-gap:10px;align-items:center;margin-bottom:8px}
+.sfwrap .f>span{grid-column:1;margin:0;font-size:13px;font-weight:700;color:#55514A;line-height:1.25;display:flex!important;flex-direction:column;justify-content:center}
+.sfwrap .f>span em{font-size:10.5px;margin-top:1px}
+.sfwrap .f>input,.sfwrap .f>select,.sfwrap .f>.sfin,.sfwrap .f>.sfln{grid-column:2}
+.sfwrap .f>small{grid-column:2}
+.sfwrap .f span em.sforig{font-size:10.5px;margin-top:1px}
 </style>
 </head>
 <body>
@@ -2513,6 +2520,7 @@ const SCH_W='일월화수목금토';
 function schDate(i){ const d=new Date(S.sched.start+'T00:00:00'); d.setDate(d.getDate()+i); return d; }
 function schToday(){ const d0=new Date(S.sched.start+'T00:00:00'), n=new Date(); const i=Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-d0)/864e5); return i>=0&&i<S.sched.days.length?i:-1; }
 const hm2m=t=>{ const [h,m]=(t||'0:0').split(':').map(Number); return h*60+m; };
+function schEditTog(){ if(!pinOK()){ ui.pinNext=()=>{ ui.schEdit=true; render(); }; return pinAsk(); } ui.schEdit=!ui.schEdit; SFX.select(); render(); }
 function canEditSched(){ return me().admin&&pinOK(); }
 function visNotices(){ const m=me(); return (S.notices||[]).filter(n=>n.target==='all'||n.target===m.team).sort((a,b)=>b.ts-a.ts); }
 function unreadNotices(){ const id=me().id; return visNotices().filter(n=>!(n.reads||[]).includes(id)); }
@@ -2522,7 +2530,7 @@ function noticeCard(n){ const read=(n.reads||[]).includes(me().id);
   +'<div class="ntf"><span>'+esc(n.by||'운영진')+'</span>'+(read?'<span class="nokd">'+ic('check','xs')+' 확인함</span>':'<button class="nok" onclick="noticeAck(\''+n.id+'\')">확인했어요</button>')+'</div></section>'; }
 function schedView(){ ensureSched(); const N=S.sched.days.length, T=schToday(), ed=ui.schEdit&&canEditSched();
   if(ui.schDay==null||ui.schDay>=N) ui.schDay=T>=0?T:0; const di=ui.schDay, D=S.sched.days[di], d0=schDate(0), dN=schDate(N-1);
-  let h='<div class="schhd"><p class="schsub">'+(d0.getMonth()+1)+'월 '+d0.getDate()+'일('+SCH_W[d0.getDay()]+') ~ '+(dN.getMonth()+1)+'월 '+dN.getDate()+'일('+SCH_W[dN.getDay()]+')</p>'+(canEditSched()?'<button class="schedit'+(ed?' on':'')+'" onclick="ui.schEdit=!ui.schEdit;SFX.select();render()">'+(ed?'편집 끝내기':ic('tool','xs')+' 일정 편집')+'</button>':'')+'</div>';
+  let h='<div class="schhd"><p class="schsub">'+(d0.getMonth()+1)+'월 '+d0.getDate()+'일('+SCH_W[d0.getDay()]+') ~ '+(dN.getMonth()+1)+'월 '+dN.getDate()+'일('+SCH_W[dN.getDay()]+')</p>'+(me().admin?'<button class="schedit'+(ed?' on':'')+'" onclick="schEditTog()">'+(ed?'편집 끝내기':ic('tool','xs')+' 일정 편집')+'</button>':'')+'</div>';
   const V=visNotices(), pin=V.find(n=>n.pin)||null;
   if(pin) h+=noticeCard(pin);
   if(V.length>(pin?1:0)) h+='<button class="nmore" onclick="noticeList()">'+(pin?'지난 ':'')+'공지 '+(V.length-(pin?1:0))+'개 보기 ›</button>';
@@ -2547,12 +2555,12 @@ function schItemForm(id){ const [,it0]=id?schFind(id):[null,null];
   const tg=(k,lab)=>'<button type="button" class="sftg'+(f[k]?' on':'')+'" id="sf_'+k+'" onclick="sfTog(\''+k+'\')">'+lab+'</button>';
   modal('<div class="sfwrap"><h2>'+(id?'일정 고치기':'일정 추가')+' <small class="sfday">'+(f.day+1)+'일차 · '+d(f.day)+'</small></h2>'
    +'<p class="sflab">미리보기</p><div class="tlx sfpv" id="sf_pv"></div>'
-   +'<div class="f"><span class="sfrow"><b class="sfl">시간</b><em class="sforig" id="sf_orig"></em></span><input id="sc_t" type="time" value="'+f.t+'" oninput="sfIn(\'t\',this.value)"></div>'
+   +'<div class="f"><span>시간<em class="sforig" id="sf_orig"></em></span><input id="sc_t" type="time" value="'+f.t+'" oninput="sfIn(\'t\',this.value)"></div>'
    +'<div class="f"><span>제목</span><div class="sfin"><input id="sc_ti" maxlength="30" value="'+esc(f.title)+'" placeholder="예: 버스 집합" oninput="sfIn(\'title\',this.value)">'+tg('meet','집합')+'</div></div>'
    +'<div class="f"><span>장소 <em>(선택)</em></span><input id="sc_pl" maxlength="40" value="'+esc(f.place)+'" placeholder="예: 리조트 정문" oninput="sfIn(\'place\',this.value)"></div>'
    +'<div class="f"><span>메모 <em>(선택)</em></span><div class="sfin"><input id="sc_me" maxlength="60" value="'+esc(f.memo)+'" placeholder="예: 여권 · 항공권 꼭 챙기기" oninput="sfIn(\'memo\',this.value)">'+tg('memoHot','강조')+'</div></div>'
    +'<div class="f"><span>링크 <em>(선택)</em></span><div class="sfln"><input id="sc_ln" type="url" inputmode="url" value="'+esc(f.link||'')+'" placeholder="예: o-museum.or.jp" oninput="sfIn(\'link\',this.value)"><button type="button" onclick="sfOpen()">열어 보기</button></div><small>넣으면 일정 제목 옆에 링크 아이콘이 생겨요</small></div>'
-   +'<div class="f"><span>연결 게임 <em>(선택)</em></span><select id="sc_g" onchange="sfIn(\'game\',this.value)"><option value="">없음</option>'+GAME_DEFS.map(g=>'<option value="'+g.id+'"'+(f.game===g.id?' selected':'')+'>'+esc(g.name)+'</option>').join('')+'</select></div>'
+   +'<div class="f"><span>게임 <em>(선택)</em></span><select id="sc_g" onchange="sfIn(\'game\',this.value)"><option value="">없음</option>'+GAME_DEFS.map(g=>'<option value="'+g.id+'"'+(f.game===g.id?' selected':'')+'>'+esc(g.name)+'</option>').join('')+'</select></div>'
    +'<div id="sf_nt"></div>'
    +(id?'<button type="button" class="sfdel" onclick="schDel(\''+id+'\')">이 일정 지우기</button>':'')
    +'<div class="sffoot"><button class="btn primary full" onclick="schSave()">'+(id?'저장':'추가하기')+'</button></div></div>');
@@ -2607,7 +2615,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:42';
+const APP_VER='11-26 10:47';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3180,9 +3188,9 @@ document.addEventListener('click',e=>{ if(ui.sortOpen&&!e.target.closest('.psort
 
 /* --- 운영진 PIN --- */
 function pinOK(){ try{ return localStorage.getItem('sisa_pin_ok')===(S.adminPin||'0000'); }catch(e){ return !!ui.pinOk; } }
-function pinAsk(){ ui.pin=''; const el=document.createElement('div'); el.className='zpop pinpop'; el.innerHTML='<div><b>'+ic('tool')+'</b><h2>운영진 확인</h2><p>운영진 PIN 4자리를 입력해 주세요</p><div class="pindots"><i></i><i></i><i></i><i></i></div><div class="pinpad">'+[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':'<button onclick="pinKey(\''+k+'\')">'+k+'</button>').join('')+'</div><button class="cx" onclick="this.closest(\'.zpop\').remove()">취소</button></div>'; document.body.appendChild(el); }
+function pinAsk(){ ui.pin=''; const el=document.createElement('div'); el.className='zpop pinpop'; el.innerHTML='<div><b>'+ic('tool')+'</b><h2>운영진 확인</h2><p>운영진 PIN 4자리를 입력해 주세요</p><div class="pindots"><i></i><i></i><i></i><i></i></div><div class="pinpad">'+[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':'<button onclick="pinKey(\''+k+'\')">'+k+'</button>').join('')+'</div><button class="cx" onclick="ui.pinNext=null;this.closest(\'.zpop\').remove()">취소</button></div>'; document.body.appendChild(el); }
 function pinKey(k){ ui.pin=k==='⌫'?ui.pin.slice(0,-1):(ui.pin+k).slice(0,4); document.querySelectorAll('.pindots i').forEach((d,i)=>d.classList.toggle('on',i<ui.pin.length));
-  if(ui.pin.length===4){ if(ui.pin===(S.adminPin||'0000')){ try{localStorage.setItem('sisa_pin_ok',ui.pin);}catch(e){ ui.pinOk=1; } document.querySelector('.pinpop').remove(); go('admin'); } else { SFX.error(); const d=document.querySelector('.pindots'); d.classList.add('bad'); setTimeout(()=>{ d.classList.remove('bad'); ui.pin=''; d.querySelectorAll('i').forEach(x=>x.classList.remove('on')); },450); } } }
+  if(ui.pin.length===4){ if(ui.pin===(S.adminPin||'0000')){ try{localStorage.setItem('sisa_pin_ok',ui.pin);}catch(e){ ui.pinOk=1; } document.querySelector('.pinpop').remove(); const nx=ui.pinNext; ui.pinNext=null; if(nx) nx(); else go('admin'); } else { SFX.error(); const d=document.querySelector('.pindots'); d.classList.add('bad'); setTimeout(()=>{ d.classList.remove('bad'); ui.pin=''; d.querySelectorAll('i').forEach(x=>x.classList.remove('on')); },450); } } }
 /* --- 글자 크기 --- */
 function fontSet(v){ try{ localStorage.setItem('sisa_font',v); }catch(e){} document.documentElement.classList.toggle('bigtxt',v==='big'); render(); }
 (function(){ try{ if(localStorage.getItem('sisa_font')==='big') document.documentElement.classList.add('bigtxt'); }catch(e){} })();
