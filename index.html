@@ -1047,6 +1047,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .pf2log{margin-top:10px;border-top:1px solid var(--div);padding-top:8px}.pf2log summary{font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;list-style:none}.pf2log summary em{font-style:normal;color:#8A8477}.pf2log summary::after{content:'▾';margin-left:auto;color:#A8A397}
 .pf2hrt{display:inline-flex;font-style:normal;align-self:center}.pf2hrt .i{width:13px;height:13px;fill:#F06A8A;stroke:#F06A8A}
 .pf2top>:first-child{width:112px!important}.pf2l{margin-top:8px!important;gap:4px!important}.pf2l span{padding:2px 8px!important;font-size:12px!important;gap:3px!important;border-width:1px!important}.pf2l small{font-size:10px!important}.pf2top>:first-child{width:104px!important}.pf2top{gap:10px!important}
+.feed:has(.lgbtn)>div:nth-child(2){flex:1;min-width:0}.feed>.lgbtn{flex:none;gap:4px;margin-left:auto}.lgbtn .mini{padding:6px 9px;font-size:12px}
 </style>
 </head>
 <body>
@@ -2693,7 +2694,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:35';
+const APP_VER='11-26 14:41';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
