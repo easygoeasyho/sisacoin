@@ -946,7 +946,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .nrow b em.pn{background:#1E1E1C}.nrr{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.nrr button{font-size:11px;color:#A8A397;font-weight:700}
 .hntc{width:100%;text-align:left;color:inherit}.hntc.un{box-shadow:0 3px 0 #1E1E1C}
 .npop .cx{margin-top:6px}
-.tll{display:inline-flex;align-items:center;gap:4px;margin:6px 6px 0 0;font-size:12px;font-weight:800;color:#2F6BD8;background:#EAF1FD;border-radius:10px;padding:5px 10px;text-decoration:none}.tll .i{width:13px;height:13px}
+.tll{display:inline-flex;align-items:center;justify-content:center;width:22px;height:20px;margin:-2px 0 -2px 5px;vertical-align:-3px;color:#2F6BD8;background:#EAF1FD;border-radius:7px;text-decoration:none}.tll .i{width:14px;height:14px;stroke-width:2.3}
 .tlc small.tlm{color:#6A655A}.tlm i{font-style:normal;font-weight:900;color:#E8505B;width:13px;text-align:center;flex:none}
 </style>
 </head>
@@ -2495,7 +2495,7 @@ function schedView(){ ensureSched(); const N=S.sched.days.length, T=schToday(), 
   D.items.forEach(it=>{ const past=nowM>=0&&hm2m(it.t)<nowM;
     if(!nowDone&&hm2m(it.t)>=nowM){ nowDone=true; h+='<div class="nowln"><span>지금 '+String(Math.floor(nowM/60)).padStart(2,'0')+':'+String(nowM%60).padStart(2,'0')+'</span><i></i></div>'; }
     const g=it.game&&GAME_DEFS.find(x=>x.id===it.game);
-    h+='<div class="tli'+(past?' past':'')+(it.meet?' meet':'')+(ed?' ed':'')+'"'+(ed?' onclick="schItemForm(\''+it.id+'\')"':'')+'><div class="tlt">'+it.t+(it.old?'<s>'+it.old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(it.meet?'<em>집합</em>':'')+esc(it.title)+(it.old?'<em class="chg">변경</em>':'')+'</b>'+(it.place?'<small>'+ic('pin','xs')+esc(it.place)+'</small>':'')+(it.memo?'<small class="tlm"><i>※</i>'+esc(it.memo)+'</small>':'')+(it.link?'<a class="tll" href="'+esc(it.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+ic('link','xs')+esc(it.linkName||'홈페이지')+' ↗</a>':'')+(g&&!ed?'<button class="tlg" onclick="openGame(\''+g.id+'\')"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</button>':(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+'</span>':''))+'</div>'+(ed?'<span class="tlpen">'+ic('next','xs')+'</span>':'')+'</div>'; });
+    h+='<div class="tli'+(past?' past':'')+(it.meet?' meet':'')+(ed?' ed':'')+'"'+(ed?' onclick="schItemForm(\''+it.id+'\')"':'')+'><div class="tlt">'+it.t+(it.old?'<s>'+it.old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(it.meet?'<em>집합</em>':'')+esc(it.title)+(it.old?'<em class="chg">변경</em>':'')+(it.link?'<a class="tll" href="'+esc(it.link)+'" target="_blank" rel="noopener" aria-label="'+esc(it.title)+' 링크 열기" onclick="event.stopPropagation()">'+ic('link')+'</a>':'')+'</b>'+(it.place?'<small>'+ic('pin','xs')+esc(it.place)+'</small>':'')+(it.memo?'<small class="tlm"><i>※</i>'+esc(it.memo)+'</small>':'')+(g&&!ed?'<button class="tlg" onclick="openGame(\''+g.id+'\')"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</button>':(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+'</span>':''))+'</div>'+(ed?'<span class="tlpen">'+ic('next','xs')+'</span>':'')+'</div>'; });
   if(!nowDone&&nowM>=0) h+='<div class="nowln"><span>지금</span><i></i></div>';
   if(ed) h+='<button class="schadd" onclick="schItemForm(null)">+ 일정 추가</button>';
   return h+'</div>';
@@ -2508,8 +2508,7 @@ function schItemForm(id){ const [,it0]=id?schFind(id):[null,null], it=it0||{t:''
    +field('제목','<input id="sc_ti" maxlength="30" value="'+esc(it.title)+'">')
    +field('장소','<input id="sc_pl" maxlength="40" value="'+esc(it.place)+'" placeholder="선택">')
    +field('메모','<input id="sc_me" maxlength="60" value="'+esc(it.memo)+'" placeholder="선택 · 준비물이나 주의사항">')
-   +field('링크','<input id="sc_ln" type="url" inputmode="url" value="'+esc(it.link||'')+'" placeholder="선택 · 예: https://o-museum.or.jp">','관광지 홈페이지나 지도 링크를 넣으면 일정에 버튼으로 보여요')
-   +field('링크 버튼 이름','<input id="sc_lnn" maxlength="12" value="'+esc(it.linkName||'')+'" placeholder="홈페이지">')
+   +field('링크','<input id="sc_ln" type="url" inputmode="url" value="'+esc(it.link||'')+'" placeholder="선택 · 예: https://o-museum.or.jp">','넣으면 일정 제목 옆에 링크 아이콘이 생겨요')
    +field('연결 게임','<select id="sc_g">'+gs+'</select>')
    +'<label class="chk"><input id="sc_meet" type="checkbox"'+(it.meet?' checked':'')+'> 집합 일정으로 강조</label>'
    +(id?'<label class="chk"><input id="sc_nt" type="checkbox" checked> 시간이 바뀌면 변경 공지도 함께 올리기</label>':'')
@@ -2520,7 +2519,7 @@ function schSave(id){ const v=k=>($('#'+k).value||'').trim(), t=v('sc_t'), ti=v(
   if(id){ const r=schFind(id); it=r[1]; if(it.t!==t){ from=it.t; if(!it.old) it.old=it.t; if(it.old===t) it.old=''; chg=true; } }
   else { it={id:'s'+Date.now().toString(36),old:''}; D.items.push(it); }
   let ln=v('sc_ln'); if(ln&&!/^https?:\/\//i.test(ln)) ln='https://'+ln; if(ln&&!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(ln)){ SFX.error(); return toast('링크 주소를 다시 확인해 주세요'); }
-  Object.assign(it,{link:ln,linkName:v('sc_lnn'),t,title:ti,place:v('sc_pl'),memo:v('sc_me'),game:$('#sc_g').value,meet:$('#sc_meet').checked});
+  Object.assign(it,{link:ln,t,title:ti,place:v('sc_pl'),memo:v('sc_me'),game:$('#sc_g').value,meet:$('#sc_meet').checked});
   D.items.sort((a,b)=>hm2m(a.t)-hm2m(b.t));
   if(chg&&$('#sc_nt')&&$('#sc_nt').checked) noticePush({title:(ui.schDay+1)+'일차 '+ti+' '+from+' → '+t+'로 변경',body:(it.place?'장소: '+it.place+'\n':'')+'시간이 바뀌었어요. 늦지 않게 모여 주세요.',urgent:!!it.meet,pin:true,target:'all'});
   save(); closeModal(); render(); SFX.select(); toast(chg?'시간을 바꿨어요':'일정을 저장했어요'); }
@@ -2553,7 +2552,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:05';
+const APP_VER='11-26 10:06';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
