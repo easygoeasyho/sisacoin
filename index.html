@@ -986,7 +986,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .sfwrap .sfnt{margin-top:4px;padding:0 12px 10px}.sfwrap .sfnt .ntog{padding:8px 0}
 .sfwrap .sfdel{margin:12px auto 2px}
 .sfwrap .sffoot{margin-top:8px;padding-top:10px}
-.sfin{position:relative}.sfwrap .sfin input{padding-right:104px}.sfin .sftg{position:absolute;right:8px;top:50%;transform:translateY(-50%)}.sfwrap .sfin input#sc_me{padding-right:76px}
+.sfin{position:relative}.sfwrap .sfin input{padding-right:76px}.sfin .sftg{position:absolute;right:8px;top:50%;transform:translateY(-50%)}.sfwrap .sfin input#sc_me{padding-right:76px}
 </style>
 </head>
 <body>
@@ -2548,7 +2548,7 @@ function schItemForm(id){ const [,it0]=id?schFind(id):[null,null];
   modal('<div class="sfwrap"><h2>'+(id?'일정 고치기':'일정 추가')+' <small class="sfday">'+(f.day+1)+'일차 · '+d(f.day)+'</small></h2>'
    +'<p class="sflab">미리보기</p><div class="tlx sfpv" id="sf_pv"></div>'
    +'<div class="f"><span class="sfrow"><b class="sfl">시간</b><em class="sforig" id="sf_orig"></em></span><input id="sc_t" type="time" value="'+f.t+'" oninput="sfIn(\'t\',this.value)"></div>'
-   +'<div class="f"><span>제목</span><div class="sfin"><input id="sc_ti" maxlength="30" value="'+esc(f.title)+'" placeholder="예: 버스 집합" oninput="sfIn(\'title\',this.value)">'+tg('meet','집합 일정')+'</div></div>'
+   +'<div class="f"><span>제목</span><div class="sfin"><input id="sc_ti" maxlength="30" value="'+esc(f.title)+'" placeholder="예: 버스 집합" oninput="sfIn(\'title\',this.value)">'+tg('meet','집합')+'</div></div>'
    +'<div class="f"><span>장소 <em>(선택)</em></span><input id="sc_pl" maxlength="40" value="'+esc(f.place)+'" placeholder="예: 리조트 정문" oninput="sfIn(\'place\',this.value)"></div>'
    +'<div class="f"><span>메모 <em>(선택)</em></span><div class="sfin"><input id="sc_me" maxlength="60" value="'+esc(f.memo)+'" placeholder="예: 여권 · 항공권 꼭 챙기기" oninput="sfIn(\'memo\',this.value)">'+tg('memoHot','강조')+'</div></div>'
    +'<div class="f"><span>링크 <em>(선택)</em></span><div class="sfln"><input id="sc_ln" type="url" inputmode="url" value="'+esc(f.link||'')+'" placeholder="예: o-museum.or.jp" oninput="sfIn(\'link\',this.value)"><button type="button" onclick="sfOpen()">열어 보기</button></div><small>넣으면 일정 제목 옆에 링크 아이콘이 생겨요</small></div>'
@@ -2607,7 +2607,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:39';
+const APP_VER='11-26 10:42';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
