@@ -947,6 +947,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .hntc{width:100%;text-align:left;color:inherit}.hntc.un{box-shadow:0 3px 0 #1E1E1C}
 .npop .cx{margin-top:6px}
 .tll{display:inline-flex;align-items:center;gap:4px;margin:6px 6px 0 0;font-size:12px;font-weight:800;color:#2F6BD8;background:#EAF1FD;border-radius:10px;padding:5px 10px;text-decoration:none}.tll .i{width:13px;height:13px}
+.tlc small.tlm{color:#6A655A}.tlm i{font-style:normal;font-weight:900;color:#E8505B;width:13px;text-align:center;flex:none}
 </style>
 </head>
 <body>
@@ -2494,7 +2495,7 @@ function schedView(){ ensureSched(); const N=S.sched.days.length, T=schToday(), 
   D.items.forEach(it=>{ const past=nowM>=0&&hm2m(it.t)<nowM;
     if(!nowDone&&hm2m(it.t)>=nowM){ nowDone=true; h+='<div class="nowln"><span>지금 '+String(Math.floor(nowM/60)).padStart(2,'0')+':'+String(nowM%60).padStart(2,'0')+'</span><i></i></div>'; }
     const g=it.game&&GAME_DEFS.find(x=>x.id===it.game);
-    h+='<div class="tli'+(past?' past':'')+(it.meet?' meet':'')+(ed?' ed':'')+'"'+(ed?' onclick="schItemForm(\''+it.id+'\')"':'')+'><div class="tlt">'+it.t+(it.old?'<s>'+it.old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(it.meet?'<em>집합</em>':'')+esc(it.title)+(it.old?'<em class="chg">변경</em>':'')+'</b>'+(it.place?'<small>'+ic('pin','xs')+esc(it.place)+'</small>':'')+(it.memo?'<p>'+esc(it.memo)+'</p>':'')+(it.link?'<a class="tll" href="'+esc(it.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+ic('link','xs')+esc(it.linkName||'홈페이지')+' ↗</a>':'')+(g&&!ed?'<button class="tlg" onclick="openGame(\''+g.id+'\')"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</button>':(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+'</span>':''))+'</div>'+(ed?'<span class="tlpen">'+ic('next','xs')+'</span>':'')+'</div>'; });
+    h+='<div class="tli'+(past?' past':'')+(it.meet?' meet':'')+(ed?' ed':'')+'"'+(ed?' onclick="schItemForm(\''+it.id+'\')"':'')+'><div class="tlt">'+it.t+(it.old?'<s>'+it.old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(it.meet?'<em>집합</em>':'')+esc(it.title)+(it.old?'<em class="chg">변경</em>':'')+'</b>'+(it.place?'<small>'+ic('pin','xs')+esc(it.place)+'</small>':'')+(it.memo?'<small class="tlm"><i>※</i>'+esc(it.memo)+'</small>':'')+(it.link?'<a class="tll" href="'+esc(it.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+ic('link','xs')+esc(it.linkName||'홈페이지')+' ↗</a>':'')+(g&&!ed?'<button class="tlg" onclick="openGame(\''+g.id+'\')"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</button>':(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+'</span>':''))+'</div>'+(ed?'<span class="tlpen">'+ic('next','xs')+'</span>':'')+'</div>'; });
   if(!nowDone&&nowM>=0) h+='<div class="nowln"><span>지금</span><i></i></div>';
   if(ed) h+='<button class="schadd" onclick="schItemForm(null)">+ 일정 추가</button>';
   return h+'</div>';
@@ -2552,7 +2553,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 09:48';
+const APP_VER='11-26 10:05';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
