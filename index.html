@@ -1053,6 +1053,9 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .lsave{margin-top:12px}section:not(.dirty)>.lsave{background:#E6E1D6;color:#A8A397;box-shadow:none;pointer-events:none}
 .intro-card .row3{border-bottom:0!important}.intro-card .row3 .f{padding-bottom:0!important}
 .tpill small{font-size:12px;font-weight:600;color:#8A8477}.tpill.on small{color:#55514A}
+.reg.adm section>.f:last-child,.reg.adm section>.f:has(+.note){border-bottom:0!important;padding-bottom:0!important}
+.reg.adm .f>span .opt{background:none!important;padding:0!important;margin:1px 0 0!important;font-size:10.5px!important;color:#A8A397!important}
+.reg.adm .f:has(.tpills){align-items:start}.reg.adm .f:has(.tpills)>span{padding-top:8px}
 </style>
 </head>
 <body>
@@ -2699,7 +2702,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:53';
+const APP_VER='11-26 14:57';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v4';
@@ -2938,7 +2941,7 @@ let CUR=null;
 function loginView(){
   const R=ui.reg||(ui.reg=newReg()); CUR=R;
   if(R.step===0) return startView();
-  let h='<div class="reg">';
+  let h='<div class="reg adm">';
   if(R.step==='re') h+=reloginView();
   else{
     h+='<div class="steps">'+['정보 입력','캐릭터 꾸미기','자기소개'].map((n,i)=>{ const k=i+1, st=k<R.step?'done':k===R.step?'now':''; return '<button class="st '+st+'" '+(k<R.step?'onclick="regGo('+k+')"':'')+'><b>'+k+'</b>'+n+'</button>'; }).join('')+'</div>';
@@ -2999,7 +3002,7 @@ function regNext(n){
   R.step=n; SFX.open(); render(); window.scrollTo(0,0);
 }
 function regMaker(R){ CUR=R; return makerUI(R)+'<div class="actions"><button class="btn ghost" onclick="regBack()">'+ic('back')+'이전</button><button class="btn primary" onclick="regNext(3)">다음</button></div>'; }
-function regIntro(R){ return '<section class="card"><h3>자기소개</h3><p class="sub">지금 안 써도 돼요. 나중에 [내 정보]에서 쓸 수 있어요.</p>'+introFields(R)+'</section><div class="actions"><button class="btn ghost" onclick="regBack()">'+ic('back')+'이전</button><button class="btn primary" onclick="regDone()">게임 시작!</button></div>'; }
+function regIntro(R){ return '<section class="card intro-card"><h3>자기소개</h3><p class="sub">지금 안 써도 돼요. 나중에 [내 정보]에서 쓸 수 있어요.</p>'+introFields(R)+'</section><div class="actions"><button class="btn ghost" onclick="regBack()">'+ic('back')+'이전</button><button class="btn primary" onclick="regDone()">게임 시작!</button></div>'; }
 function regDone(){
   const R=ui.reg; keepIntro(R);
   const p={id:'u'+Date.now(),dept:R.dept,mascot:R.mascot||mascotFor(R.dept),name:R.name.trim(),title:R.title.trim().replace(/\s*님$/,''),role:R.role||'',team:R.team,pin:R.pin,
