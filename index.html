@@ -1014,6 +1014,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .adm .seg2+.f,.adm .f:first-of-type{}
 .adm .f:not(:has(.thumbpick,.ggtype))+.btn,.sfwrap .f+.btn{margin-top:14px}
 .adm .f:not(:has(.thumbpick,.ggtype))+.ntog{border-top:0}
+.lgbtn{display:flex;gap:5px;flex:none}.mini.ghost{background:transparent;border:1.5px solid #E5DCCD;color:#8A8477}.edtag{font-style:normal;font-weight:800;color:#2F6BD8}.tpill[disabled]{opacity:.35}
 </style>
 </head>
 <body>
@@ -2640,7 +2641,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 11:10';
+const APP_VER='11-26 11:14';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3112,8 +3113,8 @@ function submitCoin(){
 }
 function logList(){
   const ls=S.logs.slice().reverse();
-  return '<section class="card"><h3>코인 기록</h3><p class="sub">누가, 언제, 왜 줬는지 모두 남아요. 실수했으면 되돌리세요.</p>'
-   +(ls.length?ls.map(l=>'<div class="feed">'+logIcon(l)+'<div class="'+(l.undone?'undone':'')+'"><p>'+logText(l)+'</p><small>'+ago(l.ts)+' · '+esc(l.by)+'</small></div><button class="mini" onclick="undo(\''+l.id+'\')">'+(l.undone?'다시 적용':'되돌리기')+'</button></div>').join(''):'<p class="sub">기록이 없어요</p>')+'</section>'
+  return '<section class="card"><h3>코인 기록</h3><p class="sub">누가, 언제, 왜 줬는지 모두 남아요. 잘못 넣었으면 수정하고, 아예 없던 일로 하려면 되돌리세요.</p>'
+   +(ls.length?ls.map(l=>'<div class="feed">'+logIcon(l)+'<div class="'+(l.undone?'undone':'')+'"><p>'+logText(l)+'</p><small>'+ago(l.ts)+' · '+esc(l.by)+(l.edited?' · <em class="edtag">수정됨</em>':'')+'</small></div><div class="lgbtn">'+(!l.undone&&!l.card?'<button class="mini" onclick="logEdit(\''+l.id+'\')">수정</button>':'')+'<button class="mini ghost" onclick="undo(\''+l.id+'\')">'+(l.undone?'다시 적용':'되돌리기')+'</button></div></div>').join(''):'<p class="sub">기록이 없어요</p>')+'</section>'
    +'<section class="card"><h3>카드 기록</h3><p class="sub">카드를 받고, 막고, 회수한 기록이에요. 뺏기 카드로 코인을 가져간 건 위 코인 기록에 있어요.</p>'+((S.cardLogs||[]).length?S.cardLogs.slice().reverse().map(cardFeed).join(''):'<p class="sub">기록이 없어요</p>')+'</section>';
 }
 function teamAssign(){
@@ -3227,6 +3228,30 @@ function fontToggle(){ const b=!BIG(); fontSet(b?'big':'n'); toast(b?'글자를 
 function BIG(){ return document.documentElement.classList.contains('bigtxt'); }
 
 function pinChange(){ const v=($('#pinNew').value||'').trim(); if(!/^\d{4}$/.test(v)){ SFX.error(); return toast('숫자 4자리로 입력해 주세요'); } S.adminPin=v; try{ localStorage.setItem('sisa_pin_ok',v); }catch(e){} save(); render(); toast('운영진 PIN을 바꿨어요'); }
+
+/* --- 코인 기록 수정 --- */
+function logEdit(id){ const l=S.logs.find(x=>x.id===id); if(!l) return; ui.le={id,from:l.from,to:l.to,amount:l.amount,reason:l.reason||'',pid:l.pid||''}; logEditDraw(); }
+function logEditDraw(quiet){ const e=ui.le, kind=e.from==='bank'?'grant':e.to==='bank'?'deduct':'steal';
+  const pills=(k,dis)=>'<div class="tpills">'+TEAMS.map(g=>'<button type="button" class="tpill'+(e[k]===g.id?' on':'')+'" style="--tc:'+g.color+'"'+(dis===g.id?' disabled':'')+' onclick="leKeep();ui.le.'+k+'=\''+g.id+'\';logEditDraw(1)"><i></i>'+esc(g.title||g.no+'조')+'</button>').join('')+'</div>';
+  let h='<h2>코인 기록 수정</h2><p class="sub">'+({grant:'지급',deduct:'차감',steal:'뺏기'})[kind]+' 기록을 고쳐요. 고친 내용으로 조 코인이 바로 다시 계산돼요.</p>';
+  if(kind==='grant') h+=field('받을 조',pills('to'));
+  if(kind==='deduct') h+=field('차감할 조',pills('from'));
+  if(kind==='steal') h+=field('빼앗기는 조',pills('from',e.to))+field('가져가는 조',pills('to',e.from));
+  h+=field('코인 수','<input id="le_a" type="text" inputmode="numeric" value="'+cmFmt(e.amount)+'" oninput="cmIn(this)">');
+  if(kind==='grant'){ const tid=e.to, ps=S.people.filter(p=>p.team===tid); h+=field('딴 사람 <em>(선택)</em>','<select id="le_p"><option value="">조 전체 (개인 기록 없음)</option>'+ps.map(p=>'<option value="'+p.id+'"'+(e.pid===p.id?' selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select>'); }
+  h+=field('사유','<input id="le_r" maxlength="40" value="'+esc(e.reason)+'">');
+  h+='<button class="btn primary full" style="margin-top:14px" onclick="logEditSave()">수정 저장</button>';
+  modal(h,quiet); }
+function leKeep(){ const e=ui.le; if(!e) return; const a=$('#le_a'), r=$('#le_r'), p=$('#le_p'); if(a) e.amount=cmNum(a.value); if(r) e.reason=r.value; if(p) e.pid=p.value; }
+function logEditSave(){ leKeep(); const e=ui.le, l=S.logs.find(x=>x.id===e.id); if(!l) return; const amt=Math.floor(e.amount);
+  if(!(amt>0)){ SFX.error(); return toast('코인 수를 입력해 주세요'); } if(e.from===e.to){ SFX.error(); return toast('같은 조끼리는 옮길 수 없어요'); }
+  if(l.from!=='bank'&&l.to!=='bank'&&e.pid) e.pid='';
+  const old={from:l.from,to:l.to,amount:l.amount,reason:l.reason,pid:l.pid};
+  if(e.pid&&(person(e.pid)||{}).team!==e.to) e.pid='';
+  Object.assign(l,{from:e.from,to:e.to,amount:amt,reason:e.reason.trim()||old.reason,pid:e.pid||undefined});
+  const b=balances(), bad=Object.keys(b).find(k=>b[k]<0);
+  if(bad){ Object.assign(l,old); SFX.error(); return toast(bad==='bank'?'남은 코인이 부족해서 이만큼 줄 수 없어요':'이렇게 고치면 '+label(bad)+' 코인이 마이너스가 돼요'); }
+  l.edited={ts:Date.now(),by:me()?me().name:'운영진',before:old}; ui.le=null; save(); closeModal(); keepY(render); SFX.select(); toast('기록을 수정했어요'); }
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
