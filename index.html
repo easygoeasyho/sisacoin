@@ -994,6 +994,16 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .sfwrap .f>input,.sfwrap .f>select,.sfwrap .f>.sfin,.sfwrap .f>.sfln{grid-column:2}
 .sfwrap .f>small{grid-column:2}
 .sfwrap .f span em.sforig{font-size:10.5px;margin-top:1px}
+
+/* 운영진 화면: 칸 이름 옆에 입력란 (조 선택판·썸네일·게임 유형처럼 넓은 선택판은 예외) */
+.adm .f:not(:has(.tgrid,.thumbpick,.ggtype)){display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:10px;align-items:center;margin:0 0 10px}
+.adm .f:not(:has(.tgrid,.thumbpick,.ggtype)):has(>textarea,.gg3){align-items:start}.adm .f:has(>textarea)>span{padding-top:11px}.adm .f:has(.gg3)>span{padding-top:26px}
+.adm .f:not(:has(.tgrid,.thumbpick,.ggtype))>span{grid-column:1;margin:0;font-size:13px;font-weight:700;color:#55514A;line-height:1.25;word-break:keep-all}
+.adm .f:not(:has(.tgrid,.thumbpick,.ggtype))>*:not(span){grid-column:2;min-width:0}
+.adm .f>input:not([type=checkbox]):not([type=radio]),.adm .f>select{min-height:44px;padding:9px 12px}
+.adm .f>small{margin-top:3px;font-size:11.5px}
+.adm .f>span em,.adm .f>span .opt{display:block;font-size:10.5px;font-weight:500;color:#A8A397}
+.ntsel{border:1.5px solid #E5DCCD;min-height:38px;padding:0 10px;color:#1E1E1C}
 </style>
 </head>
 <body>
@@ -1513,7 +1523,7 @@ function gSetDraw(){ const id=GS.id, g=gdef(id), T=GSET_TABS[kindOf(id)]||[['inf
   else if(GS.tab==='new') body=betNewBody();
   else if(GS.tab==='wm') body=wdNewBody();
   else if(GS.tab==='re') body=rcNewBody();
-  let el=$('#thset'); if(!el){ el=document.createElement('div'); el.id='thset'; el.className='thset'; document.body.appendChild(el); } el.dataset.g=id;
+  let el=$('#thset'); if(!el){ el=document.createElement('div'); el.id='thset'; el.className='thset adm'; document.body.appendChild(el); } el.dataset.g=id;
   const prevH=(el.querySelector('.tsb')||{}).offsetHeight||0; el.innerHTML='<div class="tsb"><div class="tsh"><b>⚙️ '+esc(g.name)+' 설정</b><button onclick="gSetClose()" aria-label="닫기">'+ic('x')+'</button></div>'+(T.length>1?'<div class="ttab">'+T.map(t=>'<button class="'+(GS.tab===t[0]?'on':'')+'" onclick="GS.tab=\''+t[0]+'\';gSetDraw()">'+t[1]+'</button>').join('')+'</div>':'')+'<div class="tsc">'+body+'</div></div>'; sheetKeep(el,prevH); }
 
 function gStatus(id){ const st=S.games[id].status; if(kindOf(id)==='bet'){ const T=withSlot(id,()=>(S.bet&&S.bet.topics)||[]); if(T.some(t=>betStat(t)!=='done')) return 'live'; if(T.length&&st==='soon') return 'done'; } return st; }
@@ -2594,7 +2604,7 @@ function noticeAdmin(){ ensureSched(); const d=ui.ntd||(ui.ntd={title:'',body:''
   const sw=(k,lab,sub)=>'<div class="ntog" onclick="ui.ntd.'+k+'=!ui.ntd.'+k+';ntKeep();render()"><div><b>'+lab+'</b><small>'+sub+'</small></div><i class="sw'+(d[k]?' on':'')+'"></i></div>';
   let h='<section class="card"><h3>'+ic('mega','sm')+' 공지 보내기</h3><div class="ntpl">'+Object.keys(NT_TPL).map(t=>'<button onclick="ntTpl(\''+t+'\')">'+t+'</button>').join('')+'</div>'
    +field('제목','<input id="nt_t" maxlength="40" value="'+esc(d.title)+'" placeholder="예: 버스 집합 09:15 리조트 정문">')
-   +field('내용','<textarea id="nt_b" rows="3" maxlength="200" placeholder="선택">'+esc(d.body)+'</textarea>')
+   +field('내용 <em>(선택)</em>','<textarea id="nt_b" rows="3" maxlength="200" placeholder="예: 조별로 모여서 조장이 인원 확인해 주세요.">'+esc(d.body)+'</textarea>')
    +sw('urgent','긴급 알림','모든 사람 화면에 바로 팝업으로 떠요')+sw('pin','일정 탭 맨 위에 고정','새로 고정한 공지가 올라오기 전까지 보여요')
    +'<div class="ntog"><div><b>보낼 대상</b><small>특정 조에게만 보낼 수도 있어요</small></div><select class="ntsel" id="nt_to" onchange="ui.ntd.target=this.value">'+'<option value="all">전체</option>'+TEAMS.map(t=>'<option value="'+t.id+'"'+(d.target===t.id?' selected':'')+'>'+esc(t.title?t.title+' 팀':t.no+'조')+'</option>').join('')+'</select></div>'
    +'<button class="btn primary full" style="margin-top:12px" onclick="noticeSend()">'+ic('mega')+' 공지 올리기</button></section>';
@@ -2615,7 +2625,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:47';
+const APP_VER='11-26 11:00';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2810,7 +2820,7 @@ function render(){
   if(ui.tab==='sched') body=schedView();
   if(ui.tab==='mine') body=mineView();
   if(ui.tab==='admin'&&me().admin) body=adminView();
-  app.innerHTML=topView()+'<main class="wrap">'+body+'</main>'+navView();
+  app.innerHTML=topView()+'<main class="wrap'+(ui.tab==='admin'?' adm':'')+'">'+body+'</main>'+navView();
   ui.flash={}; checkStamp(); rankFlip(); setTimeout(noticePopCheck,400);
 }
 let rankPos={};
@@ -3116,7 +3126,7 @@ function resetAll(btn){
 }
 
 /* --- 모달 --- */
-function modal(html,quiet){ const keep=quiet&&$('.sheet')?$('.sheet').scrollTop:0; $('#layer').innerHTML='<div class="sheet-bg" onclick="if(event.target===this)closeModal()"><div class="sheet"><div class="grab"></div><button class="close" onclick="closeModal()" aria-label="닫기">'+ic('x')+'</button>'+html+'</div></div>'; if(quiet){ $('.sheet').scrollTop=keep; $('.sheet-bg').style.animation='none'; $('.sheet').style.animation='none'; } else SFX.open(); }
+function modal(html,quiet){ const keep=quiet&&$('.sheet')?$('.sheet').scrollTop:0; $('#layer').innerHTML='<div class="sheet-bg" onclick="if(event.target===this)closeModal()"><div class="sheet'+(ui.tab==='admin'||$('#thset')?' adm':'')+'"><div class="grab"></div><button class="close" onclick="closeModal()" aria-label="닫기">'+ic('x')+'</button>'+html+'</div></div>'; if(quiet){ $('.sheet').scrollTop=keep; $('.sheet-bg').style.animation='none'; $('.sheet').style.animation='none'; } else SFX.open(); }
 function closeModal(){ if(ui.sf&&ui.sf.dirty&&!confirm('고친 내용을 저장하지 않고 닫을까요?')) return; ui.sf=null; const bt=ui.backTeam; ui.backTeam=null; if(bt&&$('.pcardx')){ return openTeam(bt); } if(ui.makerModal){ ui.makerModal=false; const m=me(); if(m&&draft) ['expr','accHead','accFace','accBody','accEtc'].forEach(k=>draft[k]=m[k]); draft.adj=JSON.parse(JSON.stringify(m.adj||{})); } $('#layer').innerHTML=''; }
 function openProfile(id,refresh){
   const p=person(id), t=team(p.team);
