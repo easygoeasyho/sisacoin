@@ -1052,6 +1052,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .intro-card h3{display:flex;align-items:center}.svd{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;color:#3A7D5C;opacity:0;transition:opacity .25s}.svd.on{opacity:1}.svd .i{width:13px;height:13px}
 .lsave{margin-top:12px}section:not(.dirty)>.lsave{background:#E6E1D6;color:#A8A397;box-shadow:none;pointer-events:none}
 .intro-card .row3{border-bottom:0!important}.intro-card .row3 .f{padding-bottom:0!important}
+.tpill small{font-size:12px;font-weight:600;color:#8A8477}.tpill.on small{color:#55514A}
 </style>
 </head>
 <body>
@@ -2698,7 +2699,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:48';
+const APP_VER='11-26 14:51';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2964,7 +2965,7 @@ function regInfo(R){
    +field('이름','<input id="r_name" maxlength="10" placeholder="홍길동" value="'+esc(R.name)+'" oninput="ui.reg.name=this.value">')
    +'</section><section class="card"><h3>워크샵 조</h3>'
    +field('역할','<div class="seg2"><button class="'+(R.pos==='member'?'on':'')+'" onclick="setPos(\'member\')">조원</button><button class="'+(R.pos==='leader'?'on':'')+'" onclick="setPos(\'leader\')">조장</button><button class="'+(R.pos==='admin'?'on':'')+'" onclick="setPos(\'admin\')">운영진</button></div>',R.pos==='admin'?'운영진 메뉴(코인 지급·공지·일정 편집 등)가 열려요. 운영진도 소속 조를 골라 주세요.':'')
-   +field('소속 조','<div class="tgrid">'+TEAMS.map(g=>'<button class="tchip '+(R.team===g.id?'on':'')+'" style="--tc:'+g.color+'" onclick="setTeamReg(\''+g.id+'\')"><b>'+g.no+'</b>'+(g.title?'<small>'+esc(g.title)+' 팀</small>':'')+'</button>').join('')+'</div>');
+   +field('소속 조','<div class="tpills">'+TEAMS.map(g=>'<button class="tpill'+(R.team===g.id?' on':'')+'" style="--tc:'+g.color+'" onclick="setTeamReg(\''+g.id+'\')"><i></i>'+g.no+'조'+(g.title?' <small>'+esc(g.title)+'</small>':'')+'</button>').join('')+'</div>');
   if(R.pos==='leader'){
     h+= ld?'<p class="note warn">'+t.no+'조에는 이미 조장('+dn(ld)+')이 있어요. 다른 조를 골라주세요.</p>'
       :field('조 이름','<input id="r_gtitle" maxlength="10" placeholder="나루토" value="'+esc(R.gtitle)+'" oninput="ui.reg.gtitle=this.value">',"'팀'은 빼고 써주세요. '나루토'라고 쓰면 앱에서 '나루토 팀'으로 보여요.")+field('조 구호','<input id="r_gmotto" maxlength="30" placeholder="소용돌이처럼 다 쓸어간다!" value="'+esc(R.gmotto)+'" oninput="ui.reg.gmotto=this.value">')+'<div class="f"><span>조 색깔</span>'+colorPicker(R.team,R.gcolor&&!colorOwner(R.gcolor,R.team)?R.gcolor:t.color,'reg')+'<small>다른 조장이 먼저 고른 색은 고를 수 없어요.</small></div>';
