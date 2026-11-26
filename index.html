@@ -1028,6 +1028,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .hmR .tdr i{width:24px;height:24px;border-radius:7px;background:#F1EEE6 center/cover;flex:none;font-style:normal;display:flex;align-items:center;justify-content:center;font-size:13px}.hmR .tdr i.emo{background:#FFE1E6}
 .hmR .tdr span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hmR .tdr em{font-style:normal;font-size:11px;font-weight:800;color:#8A8477;flex:none}.hmR .tdr.urg em{color:#E8505B}
 .ggtag{font-style:normal;font-size:10.5px;font-weight:900;color:#fff;background:#E8505B;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.intro-card .row3{display:block}.intro-card .f:not(:has(.tgrid,.thumbpick,.ggtype)){grid-template-columns:78px minmax(0,1fr)}.intro-card textarea{min-height:0}
 </style>
 </head>
 <body>
@@ -2674,7 +2675,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:13';
+const APP_VER='11-26 14:18';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3095,11 +3096,11 @@ let draft=null;
 function mineView(){
   const m=me(); if(!draft||draft.id!==m.id) draft={...m}; CUR=draft; const b=balances(), t=team(m.team);
   return '<section class="card mehead"><button class="meav" onclick="keepIntro(draft);openMaker()" aria-label="캐릭터 꾸미기">'+avatar(m,'l')+'<i>'+ic('edit')+'</i></button><div><p class="nm">'+dn(m)+' <small>'+(SPECIAL[m.dept]?'':esc(m.dept))+(m.admin?(SPECIAL[m.dept]?'':' · ')+'운영진':'')+'</small></p><span class="pill" style="background:'+t.color+'33">'+esc(t.name)+' · '+coinIc+fmt(b[m.team])+'</span></div></section>'
+   +'<section class="card adm intro-card"><h3>자기소개</h3>'+introFields(draft)+'<button class="btn primary full" style="margin-top:12px" onclick="saveProfile()">저장하기</button></section>'
    +'<section class="card"><h3>'+ic('trophy','sm')+' 내 기록</h3><div class="mystat"><div><b>'+fmt(earned(m.id))+'</b><small>딴 코인</small></div><div><b>'+fmt(heartsRecv(m.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(m.id))+'</b><small>준 하트</small></div><div><b>'+fmt(commentsBy(m.id))+'</b><small>쓴 댓글</small></div></div>'
    +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')
-   +'<section class="card"><h3>자기소개</h3>'+introFields(draft)+'</section>'
-   +(m.gleader?'<section class="card"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'</section>':'')
-   +'<div class="actions col"><button class="btn primary" onclick="saveProfile()">저장하기</button><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
+   +(m.gleader?'<section class="card adm"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'</section>':'')
+   +(m.gleader?'<div class="actions col"><button class="btn primary" onclick="saveProfile()">조 정보 저장하기</button></div>':'')+'<div class="actions col"><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
 }
 function saveProfile(){
   keepIntro(draft); const m=me();
