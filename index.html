@@ -2698,7 +2698,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:46';
+const APP_VER='11-26 14:48';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2963,7 +2963,7 @@ function regInfo(R){
    +field('직급 <em class="opt">선택</em>','<input id="r_title" maxlength="10" placeholder="대리" value="'+esc(R.title)+'" oninput="ui.reg.title=this.value">',"'님'은 빼고 써주세요. 예: 대리, 팀장, 실장, 사원. 직급이 없으면 비워두세요.")
    +field('이름','<input id="r_name" maxlength="10" placeholder="홍길동" value="'+esc(R.name)+'" oninput="ui.reg.name=this.value">')
    +'</section><section class="card"><h3>워크샵 조</h3>'
-   +field('역할','<div class="seg2"><button class="'+(R.pos==='member'?'on':'')+'" onclick="setPos(\'member\')">조원</button><button class="'+(R.pos==='leader'?'on':'')+'" onclick="setPos(\'leader\')">조장</button></div>')
+   +field('역할','<div class="seg2"><button class="'+(R.pos==='member'?'on':'')+'" onclick="setPos(\'member\')">조원</button><button class="'+(R.pos==='leader'?'on':'')+'" onclick="setPos(\'leader\')">조장</button><button class="'+(R.pos==='admin'?'on':'')+'" onclick="setPos(\'admin\')">운영진</button></div>',R.pos==='admin'?'운영진 메뉴(코인 지급·공지·일정 편집 등)가 열려요. 운영진도 소속 조를 골라 주세요.':'')
    +field('소속 조','<div class="tgrid">'+TEAMS.map(g=>'<button class="tchip '+(R.team===g.id?'on':'')+'" style="--tc:'+g.color+'" onclick="setTeamReg(\''+g.id+'\')"><b>'+g.no+'</b>'+(g.title?'<small>'+esc(g.title)+' 팀</small>':'')+'</button>').join('')+'</div>');
   if(R.pos==='leader'){
     h+= ld?'<p class="note warn">'+t.no+'조에는 이미 조장('+dn(ld)+')이 있어요. 다른 조를 골라주세요.</p>'
@@ -3002,7 +3002,7 @@ function regIntro(R){ return '<section class="card"><h3>자기소개</h3><p clas
 function regDone(){
   const R=ui.reg; keepIntro(R);
   const p={id:'u'+Date.now(),dept:R.dept,mascot:R.mascot||mascotFor(R.dept),name:R.name.trim(),title:R.title.trim().replace(/\s*님$/,''),role:R.role||'',team:R.team,pin:R.pin,
-    expr:R.expr,accHead:R.accHead,accFace:R.accFace,accBody:R.accBody,accEtc:R.accEtc||'none',adj:R.adj||{},intro:R.intro.trim(),like:R.like.trim(),food:R.food.trim(),color:R.color.trim(),admin:false,done:true};
+    expr:R.expr,accHead:R.accHead,accFace:R.accFace,accBody:R.accBody,accEtc:R.accEtc||'none',adj:R.adj||{},intro:R.intro.trim(),like:R.like.trim(),food:R.food.trim(),color:R.color.trim(),admin:R.pos==='admin',done:true};
   if(R.pos==='leader'){ p.gleader=true; const g=team(R.team); g.title=cleanTeam(R.gtitle); g.motto=R.gmotto.trim(); applyGroupColor(R.team,R.gcolor); refreshGroups(); }
   S.people.push(p); S.me=p.id; ui.reg=null; ui.tab='home'; save(); render(); window.scrollTo(0,0); SFX.fanfare(); toast('입장 완료! <b>'+esc(team(p.team).name)+'</b> 화이팅!');
 }
@@ -3142,7 +3142,6 @@ function adminView(){
   if(ui.adminTab==='log') h+=logList();
   if(ui.adminTab==='team') h+=teamAssign();
   if(ui.adminTab==='tool') h+=toolView();
-  if(ui.adminTab==='tool') h+='<section class="card"><h3>'+ic('tool','sm')+' 운영진 PIN</h3><p class="sub" style="margin-bottom:8px">운영진 탭을 열 때 묻는 4자리 숫자예요. 바꾸면 다른 운영진도 새 PIN으로 다시 들어와야 해요.</p><div class="pinrow"><input id="pinNew" inputmode="numeric" maxlength="4" placeholder="'+(S.adminPin||'0000')+'"><button class="btn primary" onclick="pinChange()">바꾸기</button></div></section>';
   return h;
 }
 let pickTo='t1', pickFrom='t2', pickPid='';
@@ -3272,7 +3271,7 @@ function pullLatest(){ try{ const s=localStorage.getItem(KEY); if(s){ const keep
 document.addEventListener('click',e=>{ if(ui.sortOpen&&!e.target.closest('.psort')){ ui.sortOpen=0; render(); } });
 
 /* --- 운영진 PIN --- */
-function pinOK(){ try{ return localStorage.getItem('sisa_pin_ok')===(S.adminPin||'0000'); }catch(e){ return !!ui.pinOk; } }
+function pinOK(){ return !!(me()&&me().admin); try{ return localStorage.getItem('sisa_pin_ok')===(S.adminPin||'0000'); }catch(e){ return !!ui.pinOk; } }
 function pinAsk(){ ui.pin=''; const el=document.createElement('div'); el.className='zpop pinpop'; el.innerHTML='<div><b>'+ic('tool')+'</b><h2>운영진 확인</h2><p>운영진 PIN 4자리를 입력해 주세요</p><div class="pindots"><i></i><i></i><i></i><i></i></div><div class="pinpad">'+[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<span></span>':'<button onclick="pinKey(\''+k+'\')">'+k+'</button>').join('')+'</div><button class="cx" onclick="ui.pinNext=null;this.closest(\'.zpop\').remove()">취소</button></div>'; document.body.appendChild(el); }
 function pinKey(k){ ui.pin=k==='⌫'?ui.pin.slice(0,-1):(ui.pin+k).slice(0,4); document.querySelectorAll('.pindots i').forEach((d,i)=>d.classList.toggle('on',i<ui.pin.length));
   if(ui.pin.length===4){ if(ui.pin===(S.adminPin||'0000')){ try{localStorage.setItem('sisa_pin_ok',ui.pin);}catch(e){ ui.pinOk=1; } document.querySelector('.pinpop').remove(); const nx=ui.pinNext; ui.pinNext=null; if(nx) nx(); else go('admin'); } else { SFX.error(); const d=document.querySelector('.pindots'); d.classList.add('bad'); setTimeout(()=>{ d.classList.remove('bad'); ui.pin=''; d.querySelectorAll('i').forEach(x=>x.classList.remove('on')); },450); } } }
