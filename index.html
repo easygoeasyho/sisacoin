@@ -1048,6 +1048,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .pf2hrt{display:inline-flex;font-style:normal;align-self:center}.pf2hrt .i{width:13px;height:13px;fill:#F06A8A;stroke:#F06A8A}
 .pf2top>:first-child{width:112px!important}.pf2l{margin-top:8px!important;gap:4px!important}.pf2l span{padding:2px 8px!important;font-size:12px!important;gap:3px!important;border-width:1px!important}.pf2l small{font-size:10px!important}.pf2top>:first-child{width:104px!important}.pf2top{gap:10px!important}
 .feed:has(.lgbtn)>div:nth-child(2){flex:1;min-width:0}.feed>.lgbtn{flex:none;gap:4px;margin-left:auto}.lgbtn .mini{padding:6px 9px;font-size:12px}
+.dsave{display:none;gap:8px;margin-top:12px}.dirty .dsave{display:flex;animation:dsin .18s ease-out}.dsave .btn{flex:1}.dsave .btn.ghost{flex:0 0 30%}@keyframes dsin{from{opacity:0;transform:translateY(-4px)}}
 </style>
 </head>
 <body>
@@ -2694,7 +2695,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:41';
+const APP_VER='11-26 14:42';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -2704,7 +2705,7 @@ const PALETTE=GROUP_COLORS.concat(['#FF9EC4','#8EA2FF','#D4E157','#C9A27E','#A9B
 const colorOwner=(c,tid)=>TEAMS.find(g=>g.color===c&&g.id!==tid&&leaderOf(g.id));
 function applyGroupColor(tid,c){ const g=team(tid); if(!c||g.color===c) return true; if(colorOwner(c,tid)) return false; const o=TEAMS.find(x=>x.id!==tid&&x.color===c); if(o) o.color=g.color; g.color=c; return true; }
 function colorPicker(tid,sel,target){ return '<div class="cgrid">'+PALETTE.map(c=>{ const o=colorOwner(c,tid); return '<button type="button" class="csw '+(sel===c?'on':'')+'" '+(o?'disabled':'')+' style="--c:'+c+'" onclick="pickColor(this,\''+c+'\',\''+target+'\')" aria-label="색깔">'+(o?'<small>'+o.no+'조</small>':'')+'</button>'; }).join('')+'</div>'; }
-function pickColor(btn,c,target){ if(target==='reg') ui.reg.gcolor=c; else ui.mcolor=c; btn.parentNode.querySelectorAll('.csw').forEach(x=>x.classList.remove('on')); btn.classList.add('on'); SFX.select(); }
+function pickColor(btn,c,target){ if(target==='reg') ui.reg.gcolor=c; else { ui.mcolor=c; dirtyShow(btn.closest('section')); } btn.parentNode.querySelectorAll('.csw').forEach(x=>x.classList.remove('on')); btn.classList.add('on'); SFX.select(); }
 function defaultGroups(){ return GROUP_COLORS.map((c,i)=>({id:'t'+(i+1),no:i+1,color:c,title:'',motto:'',name:(i+1)+'조'})); }
 let TEAMS=defaultGroups();
 const gName=g=>g.title?g.title+' 팀':g.no+'조';
@@ -3115,17 +3116,17 @@ let draft=null;
 function mineView(){
   const m=me(); if(!draft||draft.id!==m.id) draft={...m}; CUR=draft; const b=balances(), t=team(m.team);
   return '<section class="card mehead"><button class="meav" onclick="keepIntro(draft);openMaker()" aria-label="캐릭터 꾸미기">'+avatar(m,'l')+'<i>'+ic('edit')+'</i></button><div><p class="nm">'+dn(m)+' <small>'+(SPECIAL[m.dept]?'':esc(m.dept))+(m.admin?(SPECIAL[m.dept]?'':' · ')+'운영진':'')+'</small></p><span class="pill" style="background:'+t.color+'33">'+esc(t.name)+' · '+coinIc+fmt(b[m.team])+'</span></div></section>'
-   +'<section class="card adm intro-card"><h3>자기소개</h3>'+introFields(draft)+'<button class="btn primary full" style="margin-top:12px" onclick="saveProfile()">저장하기</button></section>'
+   +'<section class="card adm intro-card" oninput="dirtyShow(this)"><h3>자기소개</h3>'+introFields(draft)+'<div class="dsave"><button class="btn ghost" onclick="draft=null;keepY(render)">취소</button><button class="btn primary" onclick="saveProfile()">저장하기</button></div></section>'
    +'<section class="card"><h3>'+ic('trophy','sm')+' 내 기록</h3><div class="mystat"><div><b>'+fmt(earned(m.id))+'</b><small>딴 코인</small></div><div><b>'+fmt(heartsRecv(m.id))+'</b><small>받은 하트</small></div><div><b>'+fmt(heartsGiven(m.id))+'</b><small>준 하트</small></div><div><b>'+fmt(commentsBy(m.id))+'</b><small>쓴 댓글</small></div></div>'
    +'</section><section class="card"><h3>'+ic('star','sm')+' 내 배지 <small class="hhint">누르면 얻는 방법이 보여요</small><span class="bcount">'+badgesOf(m).length+'/'+Object.keys(BADGES).length+'</span></h3>'+myBadgeShelf(m)+'</section>'+myLogHTML(m.id,'내 개인 기록')
-   +(m.gleader?'<section class="card adm"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'</section>':'')
-   +(m.gleader?'<div class="actions col"><button class="btn primary" onclick="saveProfile()">조 정보 저장하기</button></div>':'')+'<div class="actions col"><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
+   +(m.gleader?'<section class="card adm'+(ui.mcolor&&ui.mcolor!==t.color?' dirty':'')+'" oninput="dirtyShow(this)"><h3>'+ic('flag','sm')+' 우리 조 (조장 메뉴)</h3>'+field('조 이름','<input id="m_gtitle" maxlength="10" value="'+esc(t.title)+'">',"'팀'은 빼고 써주세요. 앱에서는 '"+esc(t.title||'나루토')+" 팀'처럼 보여요.")+field('조 구호','<input id="m_gmotto" maxlength="30" value="'+esc(t.motto)+'">')+'<div class="f"><span>조 색깔</span>'+colorPicker(t.id,ui.mcolor&&!colorOwner(ui.mcolor,t.id)?ui.mcolor:t.color,'mine')+'<small>다른 조장이 고른 색은 고를 수 없어요. 저장하면 바뀌어요.</small></div>'+'<div class="dsave"><button class="btn ghost" onclick="ui.mcolor=\'\';draft=null;keepY(render)">취소</button><button class="btn primary" onclick="saveProfile()">조 정보 저장하기</button></div></section>':'')
+   +'<div class="actions col"><button class="btn ghost" onclick="logout()">로그아웃 (다른 사람으로 체험)</button></div>';
 }
 function saveProfile(){
   keepIntro(draft); const m=me();
   if(m.gleader&&$('#m_gtitle')){ const gt=cleanTeam($('#m_gtitle').value); if(!gt){ SFX.error(); return toast('조 이름을 입력해주세요'); } if(TEAMS.some(g=>g.id!==m.team&&g.title===gt)){ SFX.error(); return toast('다른 조가 이미 쓰는 이름이에요'); } if(ui.mcolor&&!applyGroupColor(m.team,ui.mcolor)){ ui.mcolor=''; SFX.error(); render(); return toast('그 색은 다른 조가 먼저 골랐어요'); } ui.mcolor=''; const g=team(m.team); g.title=gt; g.motto=$('#m_gmotto').value.trim(); refreshGroups(); }
   Object.assign(m,{expr:draft.expr,accHead:draft.accHead,accFace:draft.accFace,accBody:draft.accBody,accEtc:draft.accEtc,intro:draft.intro.trim(),like:draft.like.trim(),food:draft.food.trim(),color:draft.color.trim()});
-  draft=null; save(); render(); window.scrollTo(0,0); SFX.fanfare(); toast('프로필을 저장했어요');
+  draft=null; ui.mcolor=''; save(); keepY(render); SFX.fanfare(); toast('저장했어요');
 }
 
 /* --- 운영진 --- */
@@ -3307,6 +3308,8 @@ function logEditSave(){ leKeep(); const e=ui.le, l=S.logs.find(x=>x.id===e.id); 
   const b=balances(), bad=Object.keys(b).find(k=>b[k]<0);
   if(bad){ Object.assign(l,old); SFX.error(); return toast(bad==='bank'?'남은 코인이 부족해서 이만큼 줄 수 없어요':'이렇게 고치면 '+label(bad)+' 코인이 마이너스가 돼요'); }
   l.edited={ts:Date.now(),by:me()?me().name:'운영진',before:old}; ui.le=null; save(); closeModal(); keepY(render); SFX.select(); toast('기록을 수정했어요'); }
+
+function dirtyShow(sec){ if(sec&&!sec.classList.contains('dirty')){ sec.classList.add('dirty'); } }
 
 /* ================= 개인 코인 · 하트 · 댓글 · 배지 ================= */
 const BADGE_RULE={champ:300,ace:100,warm:30,cmt:10,star:30};
