@@ -1035,6 +1035,16 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .pst .ps-h .i{color:#F08A93;fill:#F08A93}.pst .ps-c .i{color:#A9A398}
 .pst .on{color:#1E1E1C;font-weight:900}.pst .ps-h.on .i{color:#E5484D;fill:#E5484D}
 .plist .pr{flex-direction:column!important;align-items:flex-end!important;gap:3px!important}.plist .pbs .bdmini{width:20px}
+.pf2{background:#fff;border-radius:var(--r);padding:14px 14px 12px;margin-bottom:12px}
+.pf2top{display:flex;gap:12px;align-items:center}.pf2top>:first-child{flex:none;width:96px}
+.pf2i{min-width:0;flex:1}.pf2i h2{margin:0;font-size:21px}.pf2d{margin:3px 0 0;font-size:12.5px;color:#8A8477;display:flex;flex-wrap:wrap;gap:0 4px;align-items:center}.pf2t{display:inline-flex;align-items:center;gap:4px;color:#3E3A33;font-weight:700}.pf2t i{width:8px;height:8px;border-radius:50%}.pf2d .gold{color:#B07A00}
+.pf2q{margin:8px 0 0;font-size:14px;line-height:1.45;color:#1E1E1C;background:#F6F3EC;border-radius:4px 12px 12px 12px;padding:7px 10px}
+.pf2l{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.pf2l span{display:inline-flex;align-items:baseline;gap:5px;font-size:13px;font-weight:700;border:1.5px solid var(--div);border-radius:99px;padding:4px 10px}.pf2l small{font-size:11px;color:#A8A397;font-weight:600}
+.pf2s{display:grid;grid-template-columns:repeat(4,1fr);margin-top:12px;border-top:1px solid var(--div);padding-top:10px;text-align:center}
+.pf2s>*{display:flex;flex-direction:column;align-items:center;gap:1px}.pf2s b{font-size:17px;font-weight:900;display:inline-flex;align-items:center;gap:3px}.pf2s b img,.pf2s b .coin{width:16px;height:16px}.pf2s small{font-size:11px;color:#8A8477}
+.pf2h{background:#FFE8EC;border-radius:12px;padding:4px 0;color:#E5484D}.pf2h b .i{width:16px;height:16px;fill:currentColor}.pf2h small{color:#E5484D;font-weight:800}button.pf2h:active{transform:scale(.95)}
+.pf2b{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px;border-top:1px solid var(--div);padding-top:10px}.pf2b .bdm{width:52px}.pf2b .bdm small{font-size:10px}
+.pf2log{margin-top:10px;border-top:1px solid var(--div);padding-top:8px}.pf2log summary{font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;list-style:none}.pf2log summary em{font-style:normal;color:#8A8477}.pf2log summary::after{content:'▾';margin-left:auto;color:#A8A397}
 </style>
 </head>
 <body>
@@ -2681,7 +2691,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:26';
+const APP_VER='11-26 14:31';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3185,16 +3195,18 @@ function resetAll(btn){
 function modal(html,quiet){ const keep=quiet&&$('.sheet')?$('.sheet').scrollTop:0; $('#layer').innerHTML='<div class="sheet-bg" onclick="if(event.target===this)closeModal()"><div class="sheet'+(ui.tab==='admin'||$('#thset')?' adm':'')+'"><div class="grab"></div><button class="close" onclick="closeModal()" aria-label="닫기">'+ic('x')+'</button>'+html+'</div></div>'; if(quiet){ $('.sheet').scrollTop=keep; $('.sheet-bg').style.animation='none'; $('.sheet').style.animation='none'; } else SFX.open(); }
 function closeModal(){ if(ui.sf&&ui.sf.dirty&&!confirm('고친 내용을 저장하지 않고 닫을까요?')) return; ui.sf=null; const bt=ui.backTeam; ui.backTeam=null; if(bt&&$('.pcardx')){ return openTeam(bt); } if(ui.makerModal){ ui.makerModal=false; const m=me(); if(m&&draft) ['expr','accHead','accFace','accBody','accEtc'].forEach(k=>draft[k]=m[k]); draft.adj=JSON.parse(JSON.stringify(m.adj||{})); } $('#layer').innerHTML=''; }
 function openProfile(id,refresh){
-  const p=person(id), t=team(p.team);
-  const bs=badgesOf(p);
-  modal('<section class="pcardx"><div class="pftop">'+fullChar(chO(p),p.team,'sm')
-   +'<div class="pinfo"><h2>'+dn(p)+'</h2>'+(SPECIAL[p.dept]?'':'<p class="sub">'+esc(p.dept)+(MASCOT_KEYS.includes(p.mascot)?' · '+esc(MASCOTS[p.mascot].name):'')+'</p>')
-   +'<div class="tags left"><span class="pill" style="background:'+t.color+'40">'+esc(t.name)+'</span>'+(p.role?'<span class="pill gold">'+ROLE_LABEL[p.role]+'</span>':'')+(p.admin&&!p.role?'<span class="pill">운영진</span>':'')+'</div></div></div>'
-   +'<div class="pstats"><div><b>'+coinIc+fmt(earned(p.id))+'</b><small>딴 코인</small></div>'+(me()&&me().id!==p.id?'<button class="hstat" onclick="giveHeart(\''+p.id+'\',event)" aria-label="하트 누르기"><b>'+ic('heart')+'<span id="hcount">'+fmt(heartsRecv(p.id))+'</span></b><small>받은 하트 · 탭!</small></button>':'<div><b class="hst0">'+ic('heart')+'<span id="hcount">'+fmt(heartsRecv(p.id))+'</span></b><small>받은 하트</small></div>')+'<div><b>'+fmt(heartsGiven(p.id))+'</b><small>준 하트</small></div></div>'
-   +'<div class="pbadge"><small>배지</small><div class="tags left">'+(bs.length?badgeChips(p):'<span class="sub">아직 없어요</span>')+'</div></div></section>'
-   +'<section class="card flat"><p class="intro">'+(esc(p.intro)||'<span class="sub">아직 자기소개가 없어요</span>')+'</p>'
-   +'<div class="likes"><div><small>좋아하는 것</small>'+(esc(p.like)||'-')+'</div><div><small>좋아하는 음식</small>'+(esc(p.food)||'-')+'</div><div><small>좋아하는 색</small>'+(esc(p.color)||'-')+'</div></div></section>'
-   +myLogHTML(p.id,'개인 기록')+socialHTML(p),refresh);
+  const p=person(id), t=team(p.team), bs=badgesOf(p), mine=me()&&me().id===p.id, cm=(S.comments||[]).filter(c=>c.to===p.id).length;
+  const likes=[['heart','좋아하는 것',p.like],['food','좋아하는 음식',p.food],['palette','좋아하는 색',p.color]].filter(x=>x[2]);
+  const ls=myLogs(p.id);
+  modal('<section class="pf2"><div class="pf2top">'+fullChar(chO(p),p.team,'sm')
+   +'<div class="pf2i"><h2>'+dn(p)+'</h2><p class="pf2d">'+(SPECIAL[p.dept]?'':esc(p.dept)+' · ')+'<span class="pf2t"><i style="background:'+t.color+'"></i>'+esc(t.name)+'</span>'+(p.role?' · <b class="gold">'+ROLE_LABEL[p.role]+'</b>':'')+(p.admin&&!p.role?' · 운영진':'')+'</p>'
+   +(p.intro?'<p class="pf2q">'+esc(p.intro)+'</p>':'')+'</div></div>'
+   +(likes.length?'<div class="pf2l">'+likes.map(x=>'<span title="'+x[1]+'"><small>'+({heart:'♡',food:'🍴',palette:'🎨'}[x[0]])+'</small>'+esc(x[2])+'</span>').join('')+'</div>':'')
+   +'<div class="pf2s"><div><b>'+coinIc+fmt(earned(p.id))+'</b><small>딴 코인</small></div><div><b>'+fmt(heartsGiven(p.id))+'</b><small>준 하트</small></div><div><b>'+fmt(cm)+'</b><small>받은 댓글</small></div>'
+   +(mine?'<div class="pf2h"><b>'+ic('heart')+'<span id="hcount">'+fmt(heartsRecv(p.id))+'</span></b><small>받은 하트</small></div>':'<button class="pf2h" onclick="giveHeart(\''+p.id+'\',event)" aria-label="하트 누르기"><b>'+ic('heart')+'<span id="hcount">'+fmt(heartsRecv(p.id))+'</span></b><small>탭해서 하트</small></button>')+'</div>'
+   +(bs.length?'<div class="pf2b">'+badgeChips(p)+'</div>':'')
+   +(ls.length?'<details class="pf2log"><summary>'+ic('trophy','sm')+' 개인 기록 <em>'+ls.length+'</em></summary>'+ls.map(l=>'<div class="feed">'+logIcon(l)+'<div><p>'+esc(l.reason)+'</p><small>'+ago(l.ts)+'</small></div><b class="plus">+'+fmt(l.amount)+'</b></div>').join('')+'</details>':'')
+   +'</section>'+socialHTML(p),refresh);
 }
 const RANKS=['대표','그룹장','사장','부사장','전무','상무','이사','본부장','실장','국장','부장','팀장','차장','과장','책임','대리','선임','주임','사원','인턴'];
 const rankOf=p=>{ const s=(SPECIAL[p.dept]?p.dept:'')+(p.title||''); const i=RANKS.findIndex(r=>s.includes(r)); return i<0?14.5:i; };
