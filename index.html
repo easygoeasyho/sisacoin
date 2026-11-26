@@ -1030,6 +1030,11 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .ggtag{font-style:normal;font-size:10.5px;font-weight:900;color:#fff;background:#E8505B;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px}
 .intro-card .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:9px;border-bottom:1px solid var(--div)}.intro-card .row3 .f{display:block!important;border:0!important;padding:0 0 9px!important}.intro-card .row3 .f>span{display:block;margin:0 0 4px;font-size:12.5px;font-weight:700;color:#55514A}.intro-card .row3 .f>input{width:100%;min-height:42px;padding:8px 10px}.intro-card .f:not(:has(.tgrid,.thumbpick,.ggtype)){grid-template-columns:78px minmax(0,1fr)}.intro-card textarea{min-height:0}
 .intro-card>.f:first-of-type{display:block!important;padding-top:0!important}.intro-card>.f:first-of-type>span{display:none!important}.intro-card>.f:first-of-type>textarea{width:100%}
+.pst{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;color:#9A948A;font-variant-numeric:tabular-nums}
+.pst>span{display:inline-flex;align-items:center;gap:3px}.pst .i{width:13px;height:13px}.pst img{width:13px;height:13px}
+.pst .ps-h .i{color:#F08A93;fill:#F08A93}.pst .ps-c .i{color:#A9A398}
+.pst .on{color:#1E1E1C;font-weight:900}.pst .ps-h.on .i{color:#E5484D;fill:#E5484D}
+.plist .pr{flex-direction:column!important;align-items:flex-end!important;gap:3px!important}.plist .pbs .bdmini{width:20px}
 </style>
 </head>
 <body>
@@ -2676,7 +2681,7 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:22';
+const APP_VER='11-26 14:26';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3086,7 +3091,7 @@ function peopleView(){
   h=h.replace('<div class="search">','<div class="srow"><div class="search">').replace('reSearch()"></div>','reSearch()"></div><div class="psort"><button class="pso'+(met?' on':'')+'" onclick="event.stopPropagation();ui.sortOpen=!ui.sortOpen;render()">'+SL[SO][1]+'<b>'+SL[SO][0]+'</b>▾</button>'+(ui.sortOpen?'<div class="psm">'+Object.keys(SL).map(k=>'<button class="'+(SO===k?'on':'')+'" onclick="ui.sort=\''+k+'\';ui.sortOpen=0;SFX.select();render()">'+SL[k][1]+SL[k][0]+'</button>').join('')+'</div>':'')+'</div></div>');
   h+='<div class="plist'+(met?' ranked s-'+SO:'')+'">'+ps.map(p=>{ const bs=badgesOf(p), MAXB=3, e=earned(p.id), hr=heartsRecv(p.id);
     return '<button class="prow'+(p._rk&&p._rk<=3?' top'+p._rk:'')+'" onclick="openProfile(\''+p.id+'\')">'+(met?'<span class="prk">'+(p._rk||'-')+'</span>':'')+avatar(p,'m')+'<span class="pi"><b>'+esc(p.name)+(p.title?' <i>'+esc(p.title)+'</i>':'')+'</b><small>'+(SPECIAL[p.dept]?'':esc(p.dept)+' · ')+esc(team(p.team).name)+'</small></span>'
-     +'<span class="pr">'+(e>0||hr>0?'<span class="ptg">'+(hr>0?'<span class="htag">'+ic('heart','sm')+fmt(hr)+'</span>':'')+(e>0?'<span class="ctg2">'+coinIc+fmt(e)+'</span>':'')+'</span>':'')+(bs.length?'<span class="pbs">'+bs.slice(0,MAXB).map(k=>'<span class="bdmini" title="'+BADGES[k].name+'">'+medal(k,'on tiny')+'</span>').join('')+(bs.length>MAXB?'<em>+'+(bs.length-MAXB)+'</em>':'')+'</span>':'')+'</span></button>'; }).join('')+'</div>';
+     +'<span class="pr">'+((()=>{ const cm=(S.comments||[]).filter(c=>c.to===p.id).length, it=[]; if(hr>0) it.push('<span class="ps-h'+(SO==='heart'?' on':'')+'">'+ic('heart','xs')+fmt(hr)+'</span>'); if(cm>0) it.push('<span class="ps-c">'+ic('chat','xs')+fmt(cm)+'</span>'); if(e>0) it.push('<span class="ps-k'+(SO==='coin'?' on':'')+'"><img src="'+COIN3D+'" alt="">'+fmt(e)+'</span>'); return it.length?'<span class="pst">'+it.join('')+'</span>':''; })())+(bs.length?'<span class="pbs">'+bs.slice(0,MAXB).map(k=>'<span class="bdmini" title="'+BADGES[k].name+'">'+medal(k,'on tiny')+'</span>').join('')+(bs.length>MAXB?'<em>+'+(bs.length-MAXB)+'</em>':'')+'</span>':'')+'</span></button>'; }).join('')+'</div>';
   if(!ps.length) h+='<p class="sub center">찾는 사람이 없어요</p>';
   return h;
 }
