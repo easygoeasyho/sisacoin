@@ -947,7 +947,7 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .hntc{width:100%;text-align:left;color:inherit}.hntc.un{box-shadow:0 3px 0 #1E1E1C}
 .npop .cx{margin-top:6px}
 .tll{display:inline-flex;align-items:center;justify-content:center;width:22px;height:20px;margin:-2px 0 -2px 5px;vertical-align:-3px;color:#2F6BD8;background:#EAF1FD;border-radius:7px;text-decoration:none}.tll .i{width:14px;height:14px;stroke-width:2.3}
-.tlc small.tlm{color:#6A655A}.tlm i{font-style:normal;font-weight:900;color:#E8505B;width:13px;text-align:center;flex:none}
+.tlc small.tlm{color:#E8505B;font-weight:700}.tlm i{font-style:normal;font-weight:900;color:#E8505B;width:13px;text-align:center;flex:none}
 </style>
 </head>
 <body>
@@ -2552,7 +2552,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:06';
+const APP_VER='11-26 10:07';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
