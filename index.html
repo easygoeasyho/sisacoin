@@ -1056,6 +1056,10 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .reg.adm section>.f:last-child,.reg.adm section>.f:has(+.note){border-bottom:0!important;padding-bottom:0!important}
 .reg.adm .f>span .opt{background:none!important;padding:0!important;margin:1px 0 0!important;font-size:10.5px!important;color:#A8A397!important}
 .reg.adm .f:has(.tpills){align-items:start}.reg.adm .f:has(.tpills)>span{padding-top:8px}
+.cnt2{font-size:12px;font-weight:800;color:#8A8477;margin-left:4px}
+.pmrow{width:100%;text-align:left;color:inherit}.admtag{font-style:normal;font-size:10.5px;font-weight:800;color:#2F6BD8;background:#EAF1FD;border-radius:6px;padding:1px 5px;margin-left:2px;vertical-align:1px}.admtag.ld{color:#A33A12;background:#FFE3D6}
+button.nread{border:0;cursor:pointer}
+.nurow{padding:9px 0;border-top:1px solid var(--div)}.nurow b{display:flex;align-items:center;gap:6px;font-size:14px}.nurow b i{width:9px;height:9px;border-radius:50%}.nurow b em{font-style:normal;color:#E8505B;font-size:12px}.nurow small{font-size:11.5px;color:#8A8477;margin-left:15px}.nurow p{margin:3px 0 0 15px;font-size:13px;color:#3E3A33;line-height:1.5}
 </style>
 </head>
 <body>
@@ -2672,7 +2676,7 @@ function noticeAdmin(){ ensureSched(); const d=ui.ntd||(ui.ntd={title:'',body:''
    +'<button class="btn primary full" style="margin-top:12px" onclick="noticeSend()">'+ic('mega')+' 공지 올리기</button></section>';
   const L=(S.notices||[]).slice().sort((a,b)=>b.ts-a.ts);
   h+='<section class="card"><h3>보낸 공지</h3>'+(L.length?L.map(n=>{ const tot=n.target==='all'?S.people.length:S.people.filter(p=>p.team===n.target).length;
-    return '<div class="nrow"><div><b>'+(n.urgent?'<em>긴급</em>':'')+(n.pin?'<em class="pn">고정</em>':'')+esc(n.title)+'</b><small>'+ntTime(n.ts)+' · '+(n.target==='all'?'전체':esc(gName(n.target)))+'</small></div><div class="nrr"><span class="nread">확인 '+(n.reads||[]).length+'/'+tot+'</span><button onclick="noticeDel(\''+n.id+'\')">삭제</button></div></div>'; }).join(''):'<p class="schempty">아직 보낸 공지가 없어요</p>')+'</section>';
+    return '<div class="nrow"><div><b>'+(n.urgent?'<em>긴급</em>':'')+(n.pin?'<em class="pn">고정</em>':'')+esc(n.title)+'</b><small>'+ntTime(n.ts)+' · '+(n.target==='all'?'전체':esc(gName(n.target)))+'</small></div><div class="nrr"><button class="nread" onclick="noticeUnread(\''+n.id+'\')">확인 '+(n.reads||[]).length+'/'+tot+' ›</button><button onclick="noticeDel(\''+n.id+'\')">삭제</button></div></div>'; }).join(''):'<p class="schempty">아직 보낸 공지가 없어요</p>')+'</section>';
   return h; }
 function ntKeep(){ if(!ui.ntd) return; const t=$('#nt_t'), b=$('#nt_b'); if(t) ui.ntd.title=t.value; if(b) ui.ntd.body=b.value; }
 function ntTpl(k){ ntKeep(); ui.ntd.title=NT_TPL[k][0]; ui.ntd.body=NT_TPL[k][1]; if(k==='집합 안내') ui.ntd.urgent=true; SFX.select(); render(); }
@@ -2682,7 +2686,7 @@ function noticeSend(){ ntKeep(); const d=ui.ntd; if(!d.title.trim()){ SFX.error(
 function noticeDel(id){ if(!confirm('이 공지를 지울까요?')) return; S.notices=S.notices.filter(n=>n.id!==id); save(); render(); }
 function noticeAck(id){ const n=S.notices.find(x=>x.id===id); if(!n) return; n.reads=n.reads||[]; if(!n.reads.includes(me().id)){ n.reads.push(me().id); n.ack=n.ack||{}; n.ack[me().id]=Date.now(); } save(); document.querySelectorAll('.npop').forEach(e=>e.remove()); SFX.select(); render(); }
 function noticeList(){ modal('<h2>공지</h2>'+visNotices().map(noticeCard).join('')); }
-function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui.npShown=ui.npShown||{}; const n=unreadNotices().find(x=>x.urgent&&!ui.npShown[x.id]); if(!n) return; ui.npShown[n.id]=1;
+function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui.npShown=ui.npShown||{}; const n=unreadNotices().find(x=>x.urgent&&ui.npShown[x.id]!==(x.remind||1)); if(!n) return; ui.npShown[n.id]=n.remind||1;
   const el=document.createElement('div'); el.className='zpop npop'; el.innerHTML='<div><div class="npic">'+ic('mega')+'</div><p class="nlab">긴급 공지 · '+esc(n.by||'운영진')+'</p><h2>'+esc(n.title)+'</h2>'+(n.body?'<p>'+esc(n.body).replace(/\n/g,'<br>')+'</p>':'')+'<button class="btn primary full" onclick="noticeAck(\''+n.id+'\')">확인했어요</button><button class="cx" onclick="this.closest(\'.npop\').remove()">나중에 볼게요</button></div>'; document.body.appendChild(el); try{ SFX.error&&SFX.select(); navigator.vibrate&&navigator.vibrate([120,60,120]); }catch(e){} }
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
@@ -2702,7 +2706,16 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:57';
+function noticeUnread(id){ const n=S.notices.find(x=>x.id===id); if(!n) return; const tg=n.target==='all'?S.people:S.people.filter(p=>p.team===n.target), un=tg.filter(p=>!(n.reads||[]).includes(p.id));
+  let h='<h2>안 읽은 사람 <span class="cnt2">'+un.length+'명</span></h2><p class="sub">'+esc(n.title)+'</p>';
+  if(!un.length) h+='<p class="schempty">모두 확인했어요 🎉</p>';
+  else { TEAMS.forEach(t=>{ const L=un.filter(p=>p.team===t.id); if(!L.length) return; const ld=S.people.find(p=>p.team===t.id&&p.gleader);
+      h+='<div class="nurow"><b><i style="background:'+t.color+'"></i>'+esc(t.name)+' <em>'+L.length+'명</em></b>'+(ld?'<small>조장 '+esc(ld.name)+'</small>':'')+'<p>'+L.map(p=>esc(p.name)).join(', ')+'</p></div>'; });
+    h+='<button class="btn primary full" style="margin-top:12px" onclick="noticeRemind(\''+id+'\')">'+ic('mega')+' 안 읽은 사람에게 다시 알리기</button><p class="sub" style="text-align:center;margin-top:6px">안 읽은 사람 화면에 긴급 팝업으로 다시 떠요</p>'; }
+  modal(h); }
+function noticeRemind(id){ const n=S.notices.find(x=>x.id===id); n.remind=Date.now(); n.urgent=true; save(); closeModal(); SFX.select(); toast('안 읽은 사람에게 다시 알렸어요'); }
+
+const APP_VER='11-26 15:03';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v4';
@@ -3138,7 +3151,7 @@ function saveProfile(){
 
 /* --- 운영진 --- */
 function adminView(){
-  let h='<div class="tabs">'+[['ntc','공지'],['coin','코인'],['bud','예산'],['guer','돌발 게임'],['log','기록'],['team','조 배정'],['tool','체험']].map(t=>'<button class="'+(ui.adminTab===t[0]?'on':'')+'" onclick="ui.adminTab=\''+t[0]+'\';render()">'+t[1]+'</button>').join('')+'</div>';
+  let h='<div class="tabs">'+[['ntc','공지'],['coin','코인'],['bud','예산'],['guer','돌발 게임'],['log','기록'],['team','사람'],['tool','체험']].map(t=>'<button class="'+(ui.adminTab===t[0]?'on':'')+'" onclick="ui.adminTab=\''+t[0]+'\';render()">'+t[1]+'</button>').join('')+'</div>';
   if(ui.adminTab==='ntc') h+=noticeAdmin();
   if(ui.adminTab==='coin') h+=auditLine()+coinForm();
   if(ui.adminTab==='bud') h+=budView();
@@ -3178,10 +3191,22 @@ function logList(){
    +'<section class="card"><h3>카드 기록</h3><p class="sub">카드를 받고, 막고, 회수한 기록이에요. 뺏기 카드로 코인을 가져간 건 위 코인 기록에 있어요.</p>'+((S.cardLogs||[]).length?S.cardLogs.slice().reverse().map(cardFeed).join(''):'<p class="sub">기록이 없어요</p>')+'</section>';
 }
 function teamAssign(){
-  const ps=S.people.slice().sort((a,b)=>a.team.localeCompare(b.team)||a.name.localeCompare(b.name,'ko'));
-  return '<section class="card"><h3>조 배정 · 전용 캐릭터</h3><p class="sub">조는 운영진만 바꿀 수 있어요.</p>'
-   +ps.map(p=>'<div class="arow">'+avatar(p,'s')+'<div class="an"><p>'+dn(p)+'</p><small>'+esc(p.dept)+(p.admin?' · 운영진':'')+'</small></div><select onchange="setTeam(\''+p.id+'\',this.value)">'+TEAMS.map(t=>'<option value="'+t.id+'" '+(t.id===p.team?'selected':'')+'>'+esc(t.name)+'</option>').join('')+'</select></div>').join('')+'</section>';
+  const ad=S.people.filter(p=>p.admin), q=(ui.pq||'').trim();
+  let h='<section class="card"><h3>'+ic('tool','sm')+' 운영진 <span class="cnt2">'+ad.length+'명</span></h3><p class="sub">등록할 때 [운영진]을 고른 사람이에요. 잘못 고른 사람은 해제하세요.</p>'
+   +ad.map(p=>'<div class="arow">'+avatar(p,'s')+'<div class="an"><p>'+dn(p)+'</p><small>'+esc(team(p.team).name)+'</small></div>'+(p.id===S.me?'<span class="mini ghost">나</span>':'<button class="mini ghost" onclick="setAdmin(\''+p.id+'\',false)">해제</button>')+'</div>').join('')+'</section>';
+  const ps=S.people.filter(p=>!q||(p.name+p.dept+(p.title||'')).includes(q)).sort((a,b)=>a.team.localeCompare(b.team)||a.name.localeCompare(b.name,'ko'));
+  h+='<section class="card"><h3>사람 관리</h3><p class="sub">이름을 누르면 조 변경 · 운영진 지정 · 확인번호 초기화를 할 수 있어요.</p>'
+   +'<div class="search" style="margin-bottom:6px">'+ic('search')+'<input placeholder="이름·부서로 찾기" value="'+esc(q)+'" oninput="ui.pq=this.value;clearTimeout(ui.pqT);ui.pqT=setTimeout(()=>{keepY(render);const e=document.querySelector(\'.search input[placeholder^=이름·부서로]\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}},250)"></div>'
+   +ps.map(p=>'<button class="arow pmrow" onclick="personAdmin(\''+p.id+'\')">'+avatar(p,'s')+'<div class="an"><p>'+dn(p)+(p.admin?' <em class="admtag">운영진</em>':'')+(p.gleader?' <em class="admtag ld">조장</em>':'')+'</p><small>'+esc(p.dept)+' · '+esc(team(p.team).name)+'</small></div><span class="hmgo">›</span></button>').join('')+(ps.length?'':'<p class="sub">찾는 사람이 없어요</p>')+'</section>';
+  return h;
 }
+function personAdmin(pid){ const p=person(pid);
+  modal('<div class="sfwrap adm"><h2>'+dn(p)+'</h2><p class="sub" style="margin-top:-6px">'+esc(p.dept)+'</p>'
+   +field('조','<select onchange="setTeam(\''+p.id+'\',this.value);personAdmin(\''+p.id+'\')">'+TEAMS.map(t=>'<option value="'+t.id+'" '+(t.id===p.team?'selected':'')+'>'+esc(t.name)+'</option>').join('')+'</select>')
+   +'<div class="ntog" onclick="'+(p.id===S.me?'toast(\'내 운영진 권한은 여기서 해제할 수 없어요\')':'setAdmin(\''+p.id+'\','+(!p.admin)+');personAdmin(\''+p.id+'\')')+'"><div><b>운영진</b><small>운영진 탭과 일정 편집을 쓸 수 있어요</small></div><i class="sw'+(p.admin?' on':'')+'"></i></div>'
+   +'<div class="ntog"><div><b>확인번호</b><small>'+(p.pin?'설정돼 있어요. 잊어버렸으면 초기화하세요.':'초기화됐어요. 다음에 들어올 때 새 번호를 정해요.')+'</small></div>'+(p.pin?'<button class="mini" onclick="pinReset(\''+p.id+'\')">초기화</button>':'<span class="mini ghost">대기 중</span>')+'</div></div>',true); }
+function setAdmin(pid,v){ const p=person(pid); if(p.id===S.me&&!v) return toast('내 운영진 권한은 해제할 수 없어요'); p.admin=!!v; save(); SFX.select(); toast(dn(p)+(v?' 님을 운영진으로 지정했어요':' 님의 운영진 권한을 해제했어요')); if(!$('.sheet')) keepY(render); else render(); }
+function pinReset(pid){ const p=person(pid); if(!confirm(dn(p)+' 님의 확인번호를 초기화할까요?\n다음에 들어올 때 새 번호 4자리를 정하게 돼요.')) return; delete p.pin; save(); SFX.select(); toast('확인번호를 초기화했어요'); personAdmin(pid); }
 function setTeam(pid,t){ const pp=person(pid); if(pp.gleader){ pp.gleader=false; toast(dn(pp)+' 님은 조를 옮겨서 조장에서 해제됐어요'); } pp.team=t; save(); keepY(render); SFX.open(); }
 function toolView(){
   return '<section class="card"><h3>실시간 느낌 체험</h3><p class="sub">다른 운영진이 코인을 준 것처럼 랜덤 이벤트를 일으켜요. 이 페이지를 창 두 개로 띄우면 한쪽에서 바꾼 게 다른 쪽에도 바로 반영돼요.</p><button class="btn primary full" onclick="randomEvent()">'+ic('dice')+'랜덤 이벤트 발생</button></section>'
