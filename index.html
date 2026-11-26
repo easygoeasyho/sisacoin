@@ -2641,7 +2641,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 12:36';
+const APP_VER='11-26 12:39';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3268,12 +3268,13 @@ const BADGES={
   duo:{hidden:1,name:'단짝',desc:'한 사람과 서로 하트를 10번 이상 주고받음',hint:'혼자서는 못 따요',ic:'duo',bg:'#FFE0EA',fg:'#B0244F',sh:'heart',c1:'#FFB3C8',c2:'#FFF0F4',rb:'#E0457A'},
   fashion:{hidden:1,name:'패셔니스타',desc:'머리 · 얼굴 · 몸 액세서리를 모두 착용',hint:'머리부터 발끝까지',ic:'shades',bg:'#FFEBC2',fg:'#8A4A00',sh:'star',c1:'#FFD166',c2:'#FFF6DC',rb:'#F08A24'},
   brave:{hidden:1,name:'용감한 자',desc:'대표님 프로필에 댓글을 남김',hint:'제일 높은 곳에 한마디',ic:'flame',bg:'#FFE0D6',fg:'#A32A12',sh:'burst',c1:'#FF8A65',c2:'#FFEDE6',rb:'#D6402B'},
-  thief:{hidden:1,name:'괴도',desc:'뺏기 카드로 코인을 뺏어옴',hint:'남의 것이 더 커 보이는 사람',ic:'mask',bg:'#E4E3EC',fg:'#3B3A46',sh:'diamond',c1:'#A9A5C4',c2:'#F0EFF6',rb:'#3B3A46'},
-  wall:{hidden:1,name:'철벽',desc:'우리 조가 방어 카드로 뺏기를 막아냄',hint:'뚫리지 않는 조',ic:'shield',bg:'#DCEFFF',fg:'#1D4F91',sh:'shield',c1:'#8FD3FF',c2:'#EAF6FF',rb:'#2F6FD0'},
+  prophet:{hidden:1,name:'예언자',desc:'예측 베팅에서 정답에 가장 가까운 답을 맞힘',hint:'숫자 감이 남다른 사람',ic:'orb',bg:'#EDE3FF',fg:'#4B2A99',sh:'diamond',c1:'#B79CFF',c2:'#F3ECFF',rb:'#5B35C9'},
+  photo:{hidden:1,name:'포토그래퍼',desc:'포토 빙고에 사진을 5장 이상 올림',hint:'남는 건 사진뿐',ic:'camera',bg:'#DDF0FF',fg:'#1D4F91',sh:'shield',c1:'#8FD3FF',c2:'#EAF6FF',rb:'#2F6FD0'},
   bolt:{hidden:1,name:'번개',desc:'긴급 공지가 뜨고 1분 안에 확인',hint:'공지가 뜨자마자',ic:'bolt',bg:'#FFF1B8',fg:'#8A5A00',sh:'diamond',c1:'#FFD23F',c2:'#FFF7D1',rb:'#E0A800'},
   owl:{hidden:1,name:'올빼미',desc:'새벽(0시~5시)에 댓글을 남김',hint:'남들이 잘 때 깨어 있는 사람',ic:'moon',bg:'#E4E6FF',fg:'#2C3170',sh:'circle',c1:'#7C85DB',c2:'#E4E6FF',rb:'#2C3170'}
 };
 const HB_VISITS=30, HB_NET=15, HB_DUO=10;
+IC.orb='<circle cx="12" cy="10.5" r="6.5"/><path d="M7 19.5h10M8.5 16.5l-1 3M15.5 16.5l1 3M9.5 8.5a3 3 0 0 1 2.5-1.6"/>';
 IC.ghost='<path d="M6 20V10a6 6 0 0 1 12 0v10l-2-1.500L14 20l-2-1.500L10 20l-2-1.500z"/><path d="M9.5 10.500v1M14.5 10.500v1"/>';
 IC.net='<circle cx="12" cy="6.5" r="2.5"/><circle cx="5.5" cy="17" r="2.5"/><circle cx="18.5" cy="17" r="2.5"/><path d="M10.7 8.700L6.9 14.900M13.3 8.700l3.8 6.200M8 17h8"/>';
 IC.duo='<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>';
@@ -3309,8 +3310,9 @@ function badgesOf(p){
   if([p.accHead,p.accFace,p.accBody].every(a=>a&&a!=='none')) out.push('fashion');
   const mine=S.comments.filter(c=>c.from===id);
   if(mine.some(c=>{ const t=person(c.to); return t&&t.id!==id&&t.dept==='대표님'; })) out.push('brave');
-  if(S.logs.some(l=>l.card==='steal'&&!l.undone&&l.actor===id)) out.push('thief');
-  if((S.cardLogs||[]).some(c=>c.kind==='block'&&c.target===p.team)) out.push('wall');
+  const SL=Object.values(S.slots||{}).filter(Boolean);
+  if([S.bet,...SL].some(b=>b&&b.topics&&b.topics.some(t=>t.res&&(t.res.win||[]).includes(id)))) out.push('prophet');
+  if([S.bingo,...SL].reduce((n,b)=>n+(b&&b.photos?b.photos.filter(x=>x.pid===id).length:0),0)>=5) out.push('photo');
   if(mine.some(c=>new Date(c.ts).getHours()<5)) out.push('owl');
   return out;
 }
