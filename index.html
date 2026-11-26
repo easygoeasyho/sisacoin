@@ -2699,12 +2699,12 @@ function homeSplit(){ ensureSched(); const L=todoItems(), T=schToday();
   const right=L.length?L.map(x=>'<button class="tdr'+(x.urg?' urg':'')+'" onclick="event.stopPropagation();'+x.go+'">'+(x.art?'<i style="background-image:url('+x.art+')"></i>':'<i class="emo">'+x.emo+'</i>')+'<span>'+esc(x.g)+'</span><em>'+esc(String(x.s).replace(/ 남음$/,''))+'</em></button>').join(''):'<p class="hsx">지금은 할 일이 없어요</p>';
   return '<section class="card hmB"><div class="hmL" role="button" onclick="go(\'sched\')"><h4>'+(T>=0?'지금 일정':'일정')+' <span class="hmgo">›</span></h4>'+left+'</div><i class="vl"></i><div class="hmR"><h4>지금 할 일'+(L.length?' <span class="cnt">'+L.length+'</span>':'')+'</h4>'+right+'</div></section>'; }
 
-const APP_VER='11-26 14:51';
+const APP_VER='11-26 14:53';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
-const KEY='sisa-ws-sticker-v3';
-const GROUP_COLORS=['#FFD25A','#7CC4F5','#FF8E7A','#9FD86B','#C3A6FF','#FFB067','#6FD6C3'];
-const PALETTE=GROUP_COLORS.concat(['#FF9EC4','#8EA2FF','#D4E157','#C9A27E','#A9B8C9']);
+const KEY='sisa-ws-sticker-v4';
+const GROUP_COLORS=['#FFD25A','#7CC4F5','#FF8E7A','#9FD86B','#C3A6FF'];
+const PALETTE=GROUP_COLORS.slice();
 /* 조 색깔: 조장이 있는 다른 조가 쓰는 색은 못 고름. 조장 없는 조의 기본색과 겹치면 서로 맞바꿈 */
 const colorOwner=(c,tid)=>TEAMS.find(g=>g.color===c&&g.id!==tid&&leaderOf(g.id));
 function applyGroupColor(tid,c){ const g=team(tid); if(!c||g.color===c) return true; if(colorOwner(c,tid)) return false; const o=TEAMS.find(x=>x.id!==tid&&x.color===c); if(o) o.color=g.color; g.color=c; return true; }
@@ -2819,7 +2819,7 @@ function seed(){
   const groups=defaultGroups();
   [['스다치','상큼하게 이긴다!'],['나루토','소용돌이처럼 다 쓸어간다'],['아와오도리','춤추듯 즐겁게, 코인은 진지하게'],['고베규','최고급만 모은다']].forEach(([t,m],k)=>{ groups[k].title=t; groups[k].motto=m; groups[k].name=t+' 팀';
     const ld=people.find(p=>p.team===groups[k].id&&!p.admin&&!p.role); if(ld) ld.gleader=true; });
-  const demo=[['bank','t2',120,'보물찾기 1등 (연습 라운드)'],['bank','t5',80,'보물찾기 2등 (연습 라운드)'],['t1','t3',50,'뺏기 카드'],['bank','t6',60,'현상수배 성공'],['t4','bank',30,'집합 시간 지각']];
+  const demo=[['bank','t2',120,'보물찾기 1등 (연습 라운드)'],['bank','t5',80,'보물찾기 2등 (연습 라운드)'],['t1','t3',50,'뺏기 카드'],['bank','t4',60,'현상수배 성공'],['t4','bank',30,'집합 시간 지각']];
   const ts=Date.now()-1000*60*90;
   const logs=demo.map((d,k)=>({id:'l'+k,ts:ts+k*900000,from:d[0],to:d[1],amount:d[2],reason:d[3],by:'운영진',undone:false}));
   logs.forEach(l=>{ if(l.to!=='bank'){ const mem=people.filter(p=>p.team===l.to&&!p.role); if(mem.length) l.pid=mem[Math.floor(r()*mem.length)].id; } });
