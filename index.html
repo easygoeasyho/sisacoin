@@ -950,16 +950,16 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .tlc small.tlm{color:#6A655A}.tlm i{font-style:normal;font-weight:900;color:#A8A397;width:13px;text-align:center;flex:none}.tlc small.tlm.hot{color:#E8505B;font-weight:700}.tlm.hot i{color:#E8505B}
 
 .schdays{gap:8px;margin-top:14px}
-.schdays button.cal{background:transparent;padding:0;border-radius:0;display:block;color:#5A3E2B}
-.calp{position:relative;border:2.5px solid #6B4A35;border-radius:14px;background:#fff}
-.calp .ring{position:absolute;top:-8px;width:7px;height:14px;border:2.5px solid #6B4A35;border-radius:6px;background:#fff}
+.schdays button.cal{background:transparent;padding:0;border-radius:0;display:block;color:#3E3A33}
+.calp{position:relative;border:2px solid #D9CDBB;border-radius:14px;background:#fff}
+.calp .ring{position:absolute;top:-8px;width:7px;height:14px;border:2px solid #D9CDBB;border-radius:6px;background:#fff}
 .calp .ring.l{left:22%}.calp .ring.r{right:22%}
-.calp .hd{border-bottom:2.5px solid #6B4A35;font-size:11.5px;font-weight:800;padding:7px 0 4px;text-align:center;border-radius:11px 11px 0 0}
+.calp .hd{border-bottom:2px solid #D9CDBB;color:#8A7A66;font-size:11.5px;font-weight:800;padding:7px 0 4px;text-align:center;border-radius:11px 11px 0 0}
 .calp .dt{font-size:22px;font-weight:900;line-height:1;padding:6px 0 0;text-align:center}
 .calp .dt span{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%}
 .calp .dt span.td{box-shadow:inset 0 0 0 2.5px #E8505B;color:#E8505B}
 .calp .wd{font-size:11px;font-weight:700;color:#9A8370;text-align:center;padding:1px 0 7px}
-.schdays button.cal.on .calp .hd{background:#6B4A35;color:#fff}.schdays button.cal.on .calp{box-shadow:0 3px 0 #6B4A35}
+.schdays button.cal.on .calp .hd{background:#EFE7D3;color:#5A4636}.schdays button.cal.on .calp{border-color:#C9B89E;box-shadow:0 3px 0 #D9CDBB}.schdays button.cal.on .calp .hd,.schdays button.cal.on .calp .ring{border-color:#C9B89E}
 </style>
 </head>
 <body>
@@ -2565,7 +2565,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:22';
+const APP_VER='11-26 10:26';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
