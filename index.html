@@ -2634,14 +2634,14 @@ function noticePush(o){ ensureSched(); const n={id:'n'+Date.now().toString(36),t
 function noticeSend(){ ntKeep(); const d=ui.ntd; if(!d.title.trim()){ SFX.error(); return toast('제목을 넣어 주세요'); } d.target=$('#nt_to').value;
   noticePush({title:d.title.trim(),body:d.body.trim(),urgent:d.urgent,pin:d.pin,target:d.target}); ui.ntd=null; save(); render(); SFX.fanfare(); toast('공지를 올렸어요'); }
 function noticeDel(id){ if(!confirm('이 공지를 지울까요?')) return; S.notices=S.notices.filter(n=>n.id!==id); save(); render(); }
-function noticeAck(id){ const n=S.notices.find(x=>x.id===id); if(!n) return; n.reads=n.reads||[]; if(!n.reads.includes(me().id)) n.reads.push(me().id); save(); document.querySelectorAll('.npop').forEach(e=>e.remove()); SFX.select(); render(); }
+function noticeAck(id){ const n=S.notices.find(x=>x.id===id); if(!n) return; n.reads=n.reads||[]; if(!n.reads.includes(me().id)){ n.reads.push(me().id); n.ack=n.ack||{}; n.ack[me().id]=Date.now(); } save(); document.querySelectorAll('.npop').forEach(e=>e.remove()); SFX.select(); render(); }
 function noticeList(){ modal('<h2>공지</h2>'+visNotices().map(noticeCard).join('')); }
 function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui.npShown=ui.npShown||{}; const n=unreadNotices().find(x=>x.urgent&&!ui.npShown[x.id]); if(!n) return; ui.npShown[n.id]=1;
   const el=document.createElement('div'); el.className='zpop npop'; el.innerHTML='<div><div class="npic">'+ic('mega')+'</div><p class="nlab">긴급 공지 · '+esc(n.by||'운영진')+'</p><h2>'+esc(n.title)+'</h2>'+(n.body?'<p>'+esc(n.body).replace(/\n/g,'<br>')+'</p>':'')+'<button class="btn primary full" onclick="noticeAck(\''+n.id+'\')">확인했어요</button><button class="cx" onclick="this.closest(\'.npop\').remove()">나중에 볼게요</button></div>'; document.body.appendChild(el); try{ SFX.error&&SFX.select(); navigator.vibrate&&navigator.vibrate([120,60,120]); }catch(e){} }
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 11:14';
+const APP_VER='11-26 12:36';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3270,6 +3270,7 @@ const BADGES={
   brave:{hidden:1,name:'용감한 자',desc:'대표님 프로필에 댓글을 남김',hint:'제일 높은 곳에 한마디',ic:'flame',bg:'#FFE0D6',fg:'#A32A12',sh:'burst',c1:'#FF8A65',c2:'#FFEDE6',rb:'#D6402B'},
   thief:{hidden:1,name:'괴도',desc:'뺏기 카드로 코인을 뺏어옴',hint:'남의 것이 더 커 보이는 사람',ic:'mask',bg:'#E4E3EC',fg:'#3B3A46',sh:'diamond',c1:'#A9A5C4',c2:'#F0EFF6',rb:'#3B3A46'},
   wall:{hidden:1,name:'철벽',desc:'우리 조가 방어 카드로 뺏기를 막아냄',hint:'뚫리지 않는 조',ic:'shield',bg:'#DCEFFF',fg:'#1D4F91',sh:'shield',c1:'#8FD3FF',c2:'#EAF6FF',rb:'#2F6FD0'},
+  bolt:{hidden:1,name:'번개',desc:'긴급 공지가 뜨고 1분 안에 확인',hint:'공지가 뜨자마자',ic:'bolt',bg:'#FFF1B8',fg:'#8A5A00',sh:'diamond',c1:'#FFD23F',c2:'#FFF7D1',rb:'#E0A800'},
   owl:{hidden:1,name:'올빼미',desc:'새벽(0시~5시)에 댓글을 남김',hint:'남들이 잘 때 깨어 있는 사람',ic:'moon',bg:'#E4E6FF',fg:'#2C3170',sh:'circle',c1:'#7C85DB',c2:'#E4E6FF',rb:'#2C3170'}
 };
 const HB_VISITS=30, HB_NET=15, HB_DUO=10;
@@ -3302,6 +3303,7 @@ function badgesOf(p){
   if(commentsBy(id)>=BADGE_RULE.cmt) out.push('cmt');
   /* 히든 */
   if(((S.visits||{})[id]||0)>=HB_VISITS) out.push('ghost');
+  if((S.notices||[]).some(n=>n.urgent&&n.ack&&n.ack[id]&&n.ack[id]-n.ts<=60000&&n.by!==(p.name?'운영진 '+p.name:''))) out.push('bolt');
   let n=0, duo=false; for(const k in S.hearts){ if(k.startsWith(id+'>')&&S.hearts[k]>0){ n++; if(S.hearts[k]>=HB_DUO&&(S.hearts[k.slice(id.length+1)+'>'+id]||0)>=HB_DUO) duo=true; } }
   if(n>=HB_NET) out.push('net'); if(duo) out.push('duo');
   if([p.accHead,p.accFace,p.accBody].every(a=>a&&a!=='none')) out.push('fashion');
