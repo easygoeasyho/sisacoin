@@ -960,6 +960,33 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .calp .dt span.td{box-shadow:inset 0 0 0 2.5px #E8505B;color:#E8505B}
 .calp .wd{font-size:11px;font-weight:700;color:#9A8370;text-align:center;padding:1px 0 7px}
 .schdays button.cal.on .calp .hd{background:#EFE7D3;color:#5A4636}.schdays button.cal.on .calp{border-color:#C9B89E;box-shadow:0 3px 0 #D9CDBB}.schdays button.cal.on .calp .hd,.schdays button.cal.on .calp .ring{border-color:#C9B89E}
+
+.sfwrap h2{margin:4px 0 10px}
+.sfdays{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}.sfdays button{background:#fff;border:2px solid #E5DCCD;border-radius:12px;padding:6px 0;display:flex;flex-direction:column;align-items:center}.sfdays b{font-size:13px}.sfdays small{font-size:11px;color:#9A8370}.sfdays button.on{background:#EFE7D3;border-color:#C9B89E}
+.sflab{font-size:12px;font-weight:800;color:#8A8477;margin:0 0 6px}
+.sfpv{margin-bottom:6px;padding:12px 12px 2px;border:2px dashed #E5DCCD}.sfpv .tld::before{display:none}.sfph{color:#C9C3B6}
+.f span em{font-style:normal;font-weight:500;color:#A8A397;font-size:12px}
+.sfrow{display:flex!important;align-items:center;justify-content:space-between;gap:8px}
+.sftg{font-size:12px;font-weight:800;border-radius:99px;padding:4px 10px;background:#EAE7E0;color:#8A8477;display:inline-flex;align-items:center;gap:5px}.sftg::before{content:'';width:8px;height:8px;border-radius:50%;background:#C9C3B6}.sftg.on{background:#FDE7E8;color:#D63E4A}.sftg.on::before{background:#E8505B}
+.sfq{display:flex;align-items:center;gap:6px;margin-top:7px}.sfq button{font-size:12.5px;font-weight:800;background:#fff;border:1.5px solid #E5DCCD;border-radius:10px;padding:5px 10px}.sfq span{margin-left:auto;font-size:12px;font-weight:800;color:#E8505B}
+.sfln{display:flex;gap:6px}.sfln input{flex:1;min-width:0}.sfln button{flex:none;font-size:13px;font-weight:800;background:#EAF1FD;color:#2F6BD8;border-radius:12px;padding:0 12px}
+.sfnt{background:#fff;border-radius:14px;padding:2px 14px 10px;margin-top:14px;border:2px solid #E5DCCD}.sfnt.on{border-color:#1E1E1C}.sfnt .ntog{border-top:0}
+.sfntpv{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;background:#FFF6D6;border-radius:10px;padding:8px 10px}.sfntpv span{flex:1;min-width:0}.sfntpv em{flex:none;font-style:normal;font-size:10.5px;font-weight:900;color:#fff;background:#E8505B;border-radius:6px;padding:2px 6px}
+.sfdel{display:block;margin:18px auto 4px;font-size:13px;font-weight:700;color:#B9A9A0;text-decoration:underline;text-underline-offset:3px}
+.sffoot{position:sticky;bottom:calc(-24px - env(safe-area-inset-bottom));margin:12px -16px calc(-24px - env(safe-area-inset-bottom));padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(rgba(245,244,240,0),var(--bg) 30%)}
+.sfl{font-weight:inherit}.sfl em{font-style:normal;font-weight:500;color:#A8A397;font-size:12px}
+
+.sfwrap h2{display:flex;align-items:baseline;gap:8px}.sfday{font-size:13px;font-weight:700;color:#9A8370}
+.f span em.sforig{font-style:normal;font-size:12px;font-weight:800;color:#E8505B}
+.sfwrap .f{margin-top:0;margin-bottom:10px}.sfwrap .f>span{margin-bottom:4px;font-size:13px}
+.sfwrap .f input,.sfwrap .f select{min-height:44px;padding:9px 12px}
+.sfwrap .f small{margin-top:3px;font-size:11.5px}
+.sfwrap .sflab{margin-bottom:4px}.sfwrap .sfpv{padding:10px 12px 0;margin-bottom:12px}.sfwrap .sfpv .tli{min-height:0}.sfwrap .sfpv .tlc{padding-bottom:10px}
+.sfwrap .sfln button{border-radius:12px}
+.sfwrap .sfnt{margin-top:4px;padding:0 12px 10px}.sfwrap .sfnt .ntog{padding:8px 0}
+.sfwrap .sfdel{margin:12px auto 2px}
+.sfwrap .sffoot{margin-top:8px;padding-top:10px}
+.sfin{position:relative}.sfwrap .sfin input{padding-right:104px}.sfin .sftg{position:absolute;right:8px;top:50%;transform:translateY(-50%)}.sfwrap .sfin input#sc_me{padding-right:76px}
 </style>
 </head>
 <body>
@@ -2513,30 +2540,45 @@ function schedView(){ ensureSched(); const N=S.sched.days.length, T=schToday(), 
   return h+'</div>';
 }
 function schFind(id){ for(const d of S.sched.days){ const it=d.items.find(x=>x.id===id); if(it) return [d,it]; } return [null,null]; }
-function schItemForm(id){ const [,it0]=id?schFind(id):[null,null], it=it0||{t:'',title:'',place:'',memo:'',game:'',meet:false,link:'',linkName:''};
-  const gs='<option value="">없음</option>'+GAME_DEFS.map(g=>'<option value="'+g.id+'"'+(it.game===g.id?' selected':'')+'>'+esc(g.name)+'</option>').join('');
-  modal('<h2>'+(id?'일정 고치기':'일정 추가')+'</h2><p class="sub">'+(ui.schDay+1)+'일차</p>'
-   +field('시간','<input id="sc_t" type="time" value="'+it.t+'">',id&&it.old?'원래 시간 '+it.old+' (지금 시간을 '+it.old+'로 되돌리면 변경 표시가 사라져요)':'')
-   +field('제목','<input id="sc_ti" maxlength="30" value="'+esc(it.title)+'">')
-   +field('장소','<input id="sc_pl" maxlength="40" value="'+esc(it.place)+'" placeholder="선택">')
-   +field('메모','<input id="sc_me" maxlength="60" value="'+esc(it.memo)+'" placeholder="선택 · 준비물이나 주의사항">')
-   +'<label class="chk" style="margin-top:-6px"><input id="sc_mh" type="checkbox"'+(it.memoHot?' checked':'')+'> 메모를 빨간 글씨로 강조</label>'
-   +field('링크','<input id="sc_ln" type="url" inputmode="url" value="'+esc(it.link||'')+'" placeholder="선택 · 예: https://o-museum.or.jp">','넣으면 일정 제목 옆에 링크 아이콘이 생겨요')
-   +field('연결 게임','<select id="sc_g">'+gs+'</select>')
-   +'<label class="chk"><input id="sc_meet" type="checkbox"'+(it.meet?' checked':'')+'> 집합 일정으로 강조</label>'
-   +(id?'<label class="chk"><input id="sc_nt" type="checkbox" checked> 시간이 바뀌면 변경 공지도 함께 올리기</label>':'')
-   +'<button class="btn primary full" onclick="schSave('+(id?'\''+id+'\'':'null')+')">저장</button>'+(id?'<button class="btn danger full" style="margin-top:8px" onclick="schDel(\''+id+'\')">이 일정 지우기</button>':''));
-}
-function schSave(id){ const v=k=>($('#'+k).value||'').trim(), t=v('sc_t'), ti=v('sc_ti'); if(!t||!ti){ SFX.error(); return toast('시간과 제목을 넣어 주세요'); }
-  const D=S.sched.days[ui.schDay]; let it, chg=false, from='';
-  if(id){ const r=schFind(id); it=r[1]; if(it.t!==t){ from=it.t; if(!it.old) it.old=it.t; if(it.old===t) it.old=''; chg=true; } }
-  else { it={id:'s'+Date.now().toString(36),old:''}; D.items.push(it); }
-  let ln=v('sc_ln'); if(ln&&!/^https?:\/\//i.test(ln)) ln='https://'+ln; if(ln&&!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(ln)){ SFX.error(); return toast('링크 주소를 다시 확인해 주세요'); }
-  Object.assign(it,{link:ln,memoHot:$('#sc_mh').checked,t,title:ti,place:v('sc_pl'),memo:v('sc_me'),game:$('#sc_g').value,meet:$('#sc_meet').checked});
-  D.items.sort((a,b)=>hm2m(a.t)-hm2m(b.t));
-  if(chg&&$('#sc_nt')&&$('#sc_nt').checked) noticePush({title:(ui.schDay+1)+'일차 '+ti+' '+from+' → '+t+'로 변경',body:(it.place?'장소: '+it.place+'\n':'')+'시간이 바뀌었어요. 늦지 않게 모여 주세요.',urgent:!!it.meet,pin:true,target:'all'});
-  save(); closeModal(); render(); SFX.select(); toast(chg?'시간을 바꿨어요':'일정을 저장했어요'); }
-function schDel(id){ if(!confirm('이 일정을 지울까요?')) return; S.sched.days.forEach(d=>d.items=d.items.filter(x=>x.id!==id)); save(); closeModal(); render(); toast('일정을 지웠어요'); }
+function schItemForm(id){ const [,it0]=id?schFind(id):[null,null];
+  const base=it0||{t:'',title:'',place:'',memo:'',game:'',meet:false,link:'',memoHot:false,old:''};
+  ui.sf={id,day:ui.schDay,day0:ui.schDay,t0:base.t,old0:base.old||'',dirty:false,nt:true,...JSON.parse(JSON.stringify(base))};
+  const f=ui.sf, d=i=>{ const x=schDate(i); return (x.getMonth()+1)+'.'+x.getDate(); };
+  const tg=(k,lab)=>'<button type="button" class="sftg'+(f[k]?' on':'')+'" id="sf_'+k+'" onclick="sfTog(\''+k+'\')">'+lab+'</button>';
+  modal('<div class="sfwrap"><h2>'+(id?'일정 고치기':'일정 추가')+' <small class="sfday">'+(f.day+1)+'일차 · '+d(f.day)+'</small></h2>'
+   +'<p class="sflab">미리보기</p><div class="tlx sfpv" id="sf_pv"></div>'
+   +'<div class="f"><span class="sfrow"><b class="sfl">시간</b><em class="sforig" id="sf_orig"></em></span><input id="sc_t" type="time" value="'+f.t+'" oninput="sfIn(\'t\',this.value)"></div>'
+   +'<div class="f"><span>제목</span><div class="sfin"><input id="sc_ti" maxlength="30" value="'+esc(f.title)+'" placeholder="예: 버스 집합" oninput="sfIn(\'title\',this.value)">'+tg('meet','집합 일정')+'</div></div>'
+   +'<div class="f"><span>장소 <em>(선택)</em></span><input id="sc_pl" maxlength="40" value="'+esc(f.place)+'" placeholder="예: 리조트 정문" oninput="sfIn(\'place\',this.value)"></div>'
+   +'<div class="f"><span>메모 <em>(선택)</em></span><div class="sfin"><input id="sc_me" maxlength="60" value="'+esc(f.memo)+'" placeholder="예: 여권 · 항공권 꼭 챙기기" oninput="sfIn(\'memo\',this.value)">'+tg('memoHot','강조')+'</div></div>'
+   +'<div class="f"><span>링크 <em>(선택)</em></span><div class="sfln"><input id="sc_ln" type="url" inputmode="url" value="'+esc(f.link||'')+'" placeholder="예: o-museum.or.jp" oninput="sfIn(\'link\',this.value)"><button type="button" onclick="sfOpen()">열어 보기</button></div><small>넣으면 일정 제목 옆에 링크 아이콘이 생겨요</small></div>'
+   +'<div class="f"><span>연결 게임 <em>(선택)</em></span><select id="sc_g" onchange="sfIn(\'game\',this.value)"><option value="">없음</option>'+GAME_DEFS.map(g=>'<option value="'+g.id+'"'+(f.game===g.id?' selected':'')+'>'+esc(g.name)+'</option>').join('')+'</select></div>'
+   +'<div id="sf_nt"></div>'
+   +(id?'<button type="button" class="sfdel" onclick="schDel(\''+id+'\')">이 일정 지우기</button>':'')
+   +'<div class="sffoot"><button class="btn primary full" onclick="schSave()">'+(id?'저장':'추가하기')+'</button></div></div>');
+  sfPv(); }
+function sfIn(k,v){ ui.sf[k]=v; ui.sf.dirty=true; sfPv(); }
+function sfTog(k){ ui.sf[k]=!ui.sf[k]; ui.sf.dirty=true; $('#sf_'+k).classList.toggle('on',ui.sf[k]); SFX.select(); sfPv(); }
+function sfDay(i,el){ ui.sf.day=i; ui.sf.dirty=true; el.parentNode.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',j===i)); SFX.select(); sfPv(); }
+function sfShift(m){ const f=ui.sf; let x=hm2m(f.t||'09:00')+m; x=(x+1440)%1440; f.t=String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0'); $('#sc_t').value=f.t; f.dirty=true; SFX.select(); sfPv(); }
+function sfLink(v){ v=(v||'').trim(); if(v&&!/^https?:\/\//i.test(v)) v='https://'+v; return v; }
+function sfOpen(){ const u=sfLink(ui.sf.link); if(!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(u)){ SFX.error(); return toast('링크 주소를 먼저 넣어 주세요'); } window.open(u,'_blank','noopener'); }
+function sfPv(){ const f=ui.sf, g=f.game&&GAME_DEFS.find(x=>x.id===f.game), chg=f.id&&f.t0&&f.t&&f.t!==f.t0, old=chg?(f.old0||f.t0):(f.old0&&f.t!==f.old0?f.old0:''), showOld=old&&old!==f.t;
+  $('#sf_pv').innerHTML='<div class="tli'+(f.meet?' meet':'')+'"><div class="tlt">'+(f.t||'--:--')+(showOld?'<s>'+old+'</s>':'')+'</div><div class="tld"><i></i></div><div class="tlc"><b>'+(f.meet?'<em>집합</em>':'')+(esc(f.title)||'<span class="sfph">제목</span>')+(showOld?'<em class="chg">변경</em>':'')+(f.link?'<span class="tll">'+ic('link')+'</span>':'')+'</b>'+(f.place?'<small>'+ic('pin','xs')+esc(f.place)+'</small>':'')+(f.memo?'<small class="tlm'+(f.memoHot?' hot':'')+'"><i>※</i>'+esc(f.memo)+'</small>':'')+(g?'<span class="tlg"><img src="'+g.art+'" alt="">'+esc(g.name)+' 게임 ›</span>':'')+'</div></div>';
+  $('#sf_orig').textContent=chg?'원래 '+f.t0:'';
+  const nt=$('#sf_nt'); if(!chg){ nt.innerHTML=''; return; }
+  const msg=(f.day+1)+'일차 '+(f.title||'일정')+' '+f.t0+' → '+f.t+'로 변경';
+  nt.innerHTML='<div class="sfnt'+(f.nt?' on':'')+'"><div class="ntog" onclick="ui.sf.nt=!ui.sf.nt;SFX.select();sfPv()"><div><b>변경 공지도 함께 올리기</b><small>시간이 바뀌어서 공지를 보낼 수 있어요</small></div><i class="sw'+(f.nt?' on':'')+'"></i></div>'+(f.nt?'<div class="sfntpv">'+ic('mega','xs')+'<span>'+esc(msg)+'</span>'+(f.meet?'<em>긴급 팝업</em>':'')+'</div>':'')+'</div>'; }
+function schSave(){ const f=ui.sf; f.title=(f.title||'').trim(); if(!f.t||!f.title){ SFX.error(); return toast('시간과 제목을 넣어 주세요'); }
+  const ln=sfLink(f.link); if(ln&&!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(ln)){ SFX.error(); return toast('링크 주소를 다시 확인해 주세요'); }
+  let it; const chg=f.id&&f.t!==f.t0;
+  if(f.id){ it=schFind(f.id)[1]; S.sched.days.forEach(d=>d.items=d.items.filter(x=>x.id!==f.id)); } else it={id:'s'+Date.now().toString(36)};
+  let old=f.old0||''; if(chg){ if(!old) old=f.t0; if(old===f.t) old=''; }
+  Object.assign(it,{t:f.t,title:f.title,place:(f.place||'').trim(),memo:(f.memo||'').trim(),memoHot:!!f.memoHot,game:f.game,meet:!!f.meet,link:ln,old});
+  const D=S.sched.days[f.day]; D.items.push(it); D.items.sort((a,b)=>hm2m(a.t)-hm2m(b.t));
+  if(chg&&f.nt) noticePush({title:(f.day+1)+'일차 '+f.title+' '+f.t0+' → '+f.t+'로 변경',body:(it.place?'장소: '+it.place+'\n':'')+'시간이 바뀌었어요. 늦지 않게 모여 주세요.',urgent:!!it.meet,pin:true,target:'all'});
+  ui.schDay=f.day; ui.sf=null; save(); closeModal(); render(); SFX.select(); toast(chg?'시간을 바꿨어요':(f.id?'일정을 저장했어요':'일정을 추가했어요')); }
+function schDel(id){ if(!confirm('이 일정을 지울까요? 지우면 되돌릴 수 없어요.')) return; S.sched.days.forEach(d=>d.items=d.items.filter(x=>x.id!==id)); ui.sf=null; save(); closeModal(); render(); toast('일정을 지웠어요'); }
 function schDayTitle(){ const D=S.sched.days[ui.schDay], t=prompt((ui.schDay+1)+'일차 제목',D.title||''); if(t==null) return; D.title=t.trim().slice(0,20); save(); render(); }
 /* --- 공지 --- */
 const NT_TPL={'집합 안내':['집합 안내: 00:00 · 장소','조별로 모여서 조장이 인원 확인해 주세요.'],'일정 변경':['일정 변경 안내','바뀐 일정은 일정 탭에서 확인해 주세요.'],'준비물':['준비물 안내','내일 일정에 필요한 준비물이에요.'],'분실물':['분실물 안내','주인을 찾고 있어요. 운영진에게 와 주세요.']};
@@ -2565,7 +2607,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:26';
+const APP_VER='11-26 10:39';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
@@ -3067,7 +3109,7 @@ function resetAll(btn){
 
 /* --- 모달 --- */
 function modal(html,quiet){ const keep=quiet&&$('.sheet')?$('.sheet').scrollTop:0; $('#layer').innerHTML='<div class="sheet-bg" onclick="if(event.target===this)closeModal()"><div class="sheet"><div class="grab"></div><button class="close" onclick="closeModal()" aria-label="닫기">'+ic('x')+'</button>'+html+'</div></div>'; if(quiet){ $('.sheet').scrollTop=keep; $('.sheet-bg').style.animation='none'; $('.sheet').style.animation='none'; } else SFX.open(); }
-function closeModal(){ const bt=ui.backTeam; ui.backTeam=null; if(bt&&$('.pcardx')){ return openTeam(bt); } if(ui.makerModal){ ui.makerModal=false; const m=me(); if(m&&draft) ['expr','accHead','accFace','accBody','accEtc'].forEach(k=>draft[k]=m[k]); draft.adj=JSON.parse(JSON.stringify(m.adj||{})); } $('#layer').innerHTML=''; }
+function closeModal(){ if(ui.sf&&ui.sf.dirty&&!confirm('고친 내용을 저장하지 않고 닫을까요?')) return; ui.sf=null; const bt=ui.backTeam; ui.backTeam=null; if(bt&&$('.pcardx')){ return openTeam(bt); } if(ui.makerModal){ ui.makerModal=false; const m=me(); if(m&&draft) ['expr','accHead','accFace','accBody','accEtc'].forEach(k=>draft[k]=m[k]); draft.adj=JSON.parse(JSON.stringify(m.adj||{})); } $('#layer').innerHTML=''; }
 function openProfile(id,refresh){
   const p=person(id), t=team(p.team);
   const bs=badgesOf(p);
