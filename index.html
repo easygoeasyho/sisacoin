@@ -948,6 +948,18 @@ button.tlg{border:0;cursor:pointer;color:inherit}
 .npop .cx{margin-top:6px}
 .tll{display:inline-flex;align-items:center;justify-content:center;width:22px;height:20px;margin:-2px 0 -2px 5px;vertical-align:-3px;color:#2F6BD8;background:#EAF1FD;border-radius:7px;text-decoration:none}.tll .i{width:14px;height:14px;stroke-width:2.3}
 .tlc small.tlm{color:#E8505B;font-weight:700}.tlm i{font-style:normal;font-weight:900;color:#E8505B;width:13px;text-align:center;flex:none}
+
+.schdays{gap:8px;margin-top:14px}
+.schdays button.cal{background:transparent;padding:0;border-radius:0;display:block;color:#5A3E2B}
+.calp{position:relative;border:2.5px solid #6B4A35;border-radius:14px;background:#fff}
+.calp .ring{position:absolute;top:-8px;width:7px;height:14px;border:2.5px solid #6B4A35;border-radius:6px;background:#fff}
+.calp .ring.l{left:22%}.calp .ring.r{right:22%}
+.calp .hd{border-bottom:2.5px solid #6B4A35;font-size:11.5px;font-weight:800;padding:7px 0 4px;text-align:center;border-radius:11px 11px 0 0}
+.calp .dt{font-size:22px;font-weight:900;line-height:1;padding:6px 0 0;text-align:center}
+.calp .dt span{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%}
+.calp .dt span.td{box-shadow:inset 0 0 0 2.5px #E8505B;color:#E8505B}
+.calp .wd{font-size:11px;font-weight:700;color:#9A8370;text-align:center;padding:1px 0 7px}
+.schdays button.cal.on .calp .hd{background:#6B4A35;color:#fff}.schdays button.cal.on .calp{box-shadow:0 3px 0 #6B4A35}
 </style>
 </head>
 <body>
@@ -2488,7 +2500,7 @@ function schedView(){ ensureSched(); const N=S.sched.days.length, T=schToday(), 
   if(pin) h+=noticeCard(pin);
   if(V.length>(pin?1:0)) h+='<button class="nmore" onclick="noticeList()">'+(pin?'지난 ':'')+'공지 '+(V.length-(pin?1:0))+'개 보기 ›</button>';
   if(ed) h+='<section class="card schset"><div class="fsrow2"><span>1일차 날짜</span><input type="date" value="'+S.sched.start+'" onchange="S.sched.start=this.value;save();render()"></div></section>';
-  h+='<div class="schdays" style="grid-template-columns:repeat('+N+',1fr)">'+S.sched.days.map((x,i)=>{ const d=schDate(i); return '<button class="'+(i===di?'on':'')+'" onclick="ui.schDay='+i+';SFX.select();render()"><b>'+(i+1)+'일차</b><small>'+(d.getMonth()+1)+'.'+d.getDate()+' '+SCH_W[d.getDay()]+'</small>'+(i===T?'<i class="today">오늘</i>':'')+'</button>'; }).join('')+'</div>';
+  h+='<div class="schdays" style="grid-template-columns:repeat('+N+',1fr)">'+S.sched.days.map((x,i)=>{ const d=schDate(i); return '<button class="cal'+(i===di?' on':'')+'" onclick="ui.schDay='+i+';SFX.select();render()" aria-label="'+(i+1)+'일차 '+(d.getMonth()+1)+'월 '+d.getDate()+'일'+(i===T?' 오늘':'')+'"><div class="calp"><i class="ring l"></i><i class="ring r"></i><div class="hd">'+(i+1)+'일차</div><div class="dt"><span'+(i===T?' class="td"':'')+'>'+d.getDate()+'</span></div><div class="wd">'+(d.getMonth()+1)+'월 · '+SCH_W[d.getDay()]+'</div></div></button>'; }).join('')+'</div>';
   h+='<p class="schtitle">'+esc(D.title||'')+(ed?' <button class="schpen" onclick="schDayTitle()">'+ic('tool','xs')+'</button>':'')+'</p><div class="tlx">';
   const nowM=di===T?new Date().getHours()*60+new Date().getMinutes():-1; let nowDone=nowM<0;
   if(!D.items.length) h+='<p class="schempty">아직 등록된 일정이 없어요</p>';
@@ -2552,7 +2564,7 @@ function noticePopCheck(){ if(!me()||document.querySelector('.npop')) return; ui
 function homeNotice(){ ensureSched(); const V=visNotices(); const n=V.find(x=>x.pin)||V[0]; if(!n||Date.now()-n.ts>36*3600e3) return ''; const un=!(n.reads||[]).includes(me().id);
   return '<button class="hntc'+(un?' un':'')+'" onclick="go(\'sched\')">'+ic('mega','sm')+'<span>'+esc(n.title)+'</span><small>일정 ›</small></button>'; }
 
-const APP_VER='11-26 10:07';
+const APP_VER='11-26 10:18';
 /* ================= 설정 ================= */
 const COIN='시사코인'; let TOTAL=10000, START=500;
 const KEY='sisa-ws-sticker-v3';
